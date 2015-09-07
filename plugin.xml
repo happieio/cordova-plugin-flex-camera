@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:rim="http://www.blackberry.com/ns/widgets"
+        id="happie-plugin-cordova-camera"
+        version="1.0.0">
+    <name>CustomCamera</name>
+    <description>A custom Cordova camera focused on taking multiple high quality images in a single session</description>
+    <license>MIT</license>
+    <keywords>new, camera, multi, photo, modern, ecosystem:cordova</keywords>
+    <repo>https://github.com/jfspencer/happie-plugin-cordova-camera.git</repo>
+    <issue>https://github.com/jfspencer/happie-plugin-cordova-camera/issues</issue>
+
+    <js-module src="www/HappieCamera.js" name="HappieCamera">
+        <clobbers target="HappieCamera"/>
+    </js-module>
+    <platform name="android">
+        <engines>
+            <engine name="cordova" version=">=4.0.0"/>
+        </engines>
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="HappieCamera">
+                <param name="android-package" value="io.happie.cordovaCamera.HappieCamera"/>
+            </feature>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+            <uses-permission android:name="android.permission.CAMERA"/>
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+            <uses-feature android:name="android.hardware.camera" android:required="true"/>
+            <uses-feature android:name="android.hardware.camera.autofocus"/>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="application">
+            <activity android:configChanges="orientation|keyboardHidden|screenSize"
+                      android:name="io.happie.cordovaCamera.HappieCameraActivity"
+                      android:theme="@android:style/Theme.Black.NoTitleBar" />
+        </config-file>
+        <source-file src="src/assets/android/gray.png" target-dir="res/drawable/" />
+        <source-file src="src/assets/android/camera_album_badge.png" target-dir="res/drawable/" />
+        <source-file src="src/assets/android/camera_back.png" target-dir="res/drawable/" />
+        <source-file src="src/assets/android/camera_confirm_button.png" target-dir="res/drawable/" />
+        <source-file src="src/assets/android/camera_flash_auto.png" target-dir="res/drawable/" />
+        <source-file src="src/assets/android/camera_flash_off.png" target-dir="res/drawable/" />
+        <source-file src="src/assets/android/camera_flash_on.png" target-dir="res/drawable/" />
+        <source-file src="src/assets/android/camera_photo_toggle_off.png" target-dir="res/drawable/" />
+        <source-file src="src/assets/android/camera_photo_toggle_on.png" target-dir="res/drawable/" />
+        <source-file src="src/assets/android/camera_photo_video_toggle.png" target-dir="res/drawable/" />
+        <source-file src="src/assets/android/camera_shutter.png" target-dir="res/drawable/" />
+        <source-file src="src/assets/android/camera_video_toggle_off.png" target-dir="res/drawable/" />
+        <source-file src="src/assets/android/camera_video_toggle_on.png" target-dir="res/drawable/" />
+        <source-file src="src/android/happie_cam_layout.xml" target-dir="res/layout/" />
+        <source-file src="src/android/HappieCamera.java" target-dir="src/io/happie/cordovaCamera" />
+        <source-file src="src/android/HappieCameraActivity.java" target-dir="src/io/happie/cordovaCamera" />
+        <source-file src="src/android/HappieCameraJSON.java" target-dir="src/io/happie/cordovaCamera" />
+        <source-file src="src/android/HappieCameraPreview.java" target-dir="src/io/happie/cordovaCamera" />
+        <source-file src="src/android/HappieCameraRoll.java" target-dir="src/io/happie/cordovaCamera" />
+        <source-file src="src/android/HappieCameraThumb.java" target-dir="src/io/happie/cordovaCamera" />
+        <source-file src="src/android/jackson/jackson-annotations-2.5.3.jar" target-dir="libs"/>
+        <source-file src="src/android/jackson/jackson-core-2.5.3.jar" target-dir="libs"/>
+        <source-file src="src/android/jackson/jackson-databind-2.5.3.jar" target-dir="libs"/>
+        <source-file src="src/android/jackson/jackson-module-afterburner-2.5.3.jar" target-dir="libs"/>
+        <framework src="src/android/jackson/jacksonSetup.gradle" custom="true" type="gradleReference"/>
+    </platform>
+    <platform name="ios">
+        <engines>
+            <engine name="cordova" version=">=3.8.0"/>
+        </engines>
+        <config-file target="config.xml" parent="/*">
+            <feature name="HappieCamera">
+                <param name="ios-package" value="HappieCamera"/>
+            </feature>
+        </config-file>
+        <source-file src="src/assets/ios/camera_album_badge@2x.png" />
+        <source-file src="src/assets/ios/camera_album_badge@3x.png" />
+        <source-file src="src/assets/ios/camera_back@2x.png" />
+        <source-file src="src/assets/ios/camera_back@3x.png" />
+        <source-file src="src/assets/ios/camera_confirm_button@2x.png" />
+        <source-file src="src/assets/ios/camera_confirm_button@3x.png" />
+        <source-file src="src/assets/ios/camera_flash_auto@2x.png" />
+        <source-file src="src/assets/ios/camera_flash_auto@3x.png" />
+        <source-file src="src/assets/ios/camera_flash_off@2x.png" />
+        <source-file src="src/assets/ios/camera_flash_off@3x.png" />
+        <source-file src="src/assets/ios/camera_flash_on@2x.png" />
+        <source-file src="src/assets/ios/camera_flash_on@3x.png" />
+        <source-file src="src/assets/ios/camera_shutter@2x.png" />
+        <source-file src="src/assets/ios/camera_shutter@3x.png" />
+        <source-file src="src/assets/ios/gray@2x.png" />
+        <source-file src="src/assets/ios/gray@3x.png" />
+        <source-file src="src/ios/HappieCamera.swift"/>
+        <source-file src="src/ios/HappieCameraViewController.swift"/>
+        <source-file src="src/ios/HappieCameraJSON.swift"/>
+        <source-file src="src/ios/HappieCameraRoll.swift"/>
+        <source-file src="src/ios/HappieCameraThumb.swift"/>
+        <source-file src="src/ios/HappieCameraView.xib"/>
+        <framework src="UIKit.framework"/>
+        <framework src="MobileCoreServices.framework"/>
+        <framework src="AssetsLibrary.framework"/>
+        <framework src="AVFoundation.framework"/>
+        <framework src="ImageIO.framework"/>
+    </platform>
+</plugin>

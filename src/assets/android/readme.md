@@ -1,0 +1,1 @@
+when making android assets use the @3x asset and strip the @3x from the name.

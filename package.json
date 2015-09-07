@@ -1,0 +1,42 @@
+{
+  "name": "CustomCamera",
+  "version": "1.0.0",
+  "description": "Custom Native Camera for iOS and Android",
+  "cordova": {
+    "id": "com.jobnimbus.customcamera",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jfspencer/jobnimbus-modern-camera.git"
+  },
+  "keywords": [
+    "cordova",
+    "camera",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "author": "Apache Software Foundation",
+  "license": "Apache 2.0",
+  "dependencies": {
+    "fs": "0.0.2",
+    "gulp": "^3.5.6",
+    "gulp-sass": "^1.3.3",
+    "gulp-concat": "^2.2.0",
+    "gulp-minify-css": "^0.3.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-shell": "^0.2.9",
+    "path": "^0.11.14",
+    "run-sequence": "^0.3.7"
+  },
+  "devDependencies": {
+    "bower": "^1.3.3",
+    "gulp-util": "^2.2.14",
+    "gulp-wait": "0.0.2",
+    "shelljs": "^0.3.0"
+  }
+}

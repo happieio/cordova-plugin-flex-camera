@@ -1,0 +1,251 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="#555555"
+             tools:context="io.happie.cordovaCamera.CustomCameraActivity">
+
+        <!-- The primary full-screen view. This can be replaced with whatever view
+             is needed to present your content, e.g. VideoView, SurfaceView,
+             TextureView, etc. -->
+        <FrameLayout
+                android:id="@+id/camera_preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:keepScreenOn="true"
+                android:textSize="50sp" />
+
+        <!-- This FrameLayout insets its children based on system windows using
+             android:fitsSystemWindows. -->
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true">
+
+                <LinearLayout
+                        android:id="@+id/upperControls"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|center_horizontal"
+                        android:orientation="horizontal"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="10dp">
+
+                        <RelativeLayout
+                                android:id="@+id/UpperButtonsRelative"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="#00000000">
+
+                                <ImageButton
+                                        android:id="@+id/cancel"
+                                        style="?android:attr/borderlessButtonStyle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentLeft="true"
+                                        android:layout_gravity="bottom|center_horizontal"
+                                        android:adjustViewBounds="true"
+                                        android:background="#00000000"
+                                        android:contentDescription="cancel"
+                                        android:enabled="true"
+                                        android:maxHeight="40dp"
+                                        android:maxWidth="40dp"
+                                        android:scaleType="fitXY"
+                                        android:src="@drawable/camera_back" />
+
+                                <ImageButton
+                                        android:id="@+id/flashToggle"
+                                        style="?android:attr/borderlessButtonStyle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_gravity="bottom|center_horizontal"
+                                        android:adjustViewBounds="true"
+                                        android:background="#00000000"
+                                        android:contentDescription="flash modes"
+                                        android:enabled="true"
+                                        android:maxHeight="40dp"
+                                        android:maxWidth="40dp"
+                                        android:scaleType="fitXY"
+                                        android:src="@drawable/camera_flash_auto" />
+                        </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                        android:id="@+id/lowerControls"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|center_horizontal"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        tools:ignore="UselessParent">
+
+                        <RelativeLayout
+                                android:id="@+id/LowerButtonsRelative"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="#00000000">
+
+                                <RelativeLayout
+                                        android:id="@+id/LibraryPreviewBox"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_centerVertical="true"
+                                        android:background="#00000000"
+                                        android:paddingRight="10dp"
+                                        android:paddingTop="10dp">
+
+                                        <ImageView
+                                                android:id="@+id/UpperLeft"
+                                                style="?android:attr/borderlessButtonStyle"
+                                                android:layout_width="40dp"
+                                                android:layout_height="40dp"
+                                                android:layout_gravity="bottom|start"
+                                                android:background="#00000000"
+                                                android:enabled="true"
+                                                android:maxHeight="40dp"
+                                                android:maxWidth="40dp"
+                                                android:paddingRight="3dp"
+                                                android:paddingTop="3dp"
+                                                android:scaleType="fitCenter"
+                                                android:src="@drawable/gray" />
+
+                                        <ImageView
+                                                android:id="@+id/UpperRight"
+                                                style="?android:attr/borderlessButtonStyle"
+                                                android:layout_width="40dp"
+                                                android:layout_height="40dp"
+                                                android:layout_gravity="bottom|start"
+                                                android:layout_toRightOf="@+id/UpperLeft"
+                                                android:background="#00000000"
+                                                android:enabled="true"
+                                                android:maxHeight="40dp"
+                                                android:maxWidth="40dp"
+                                                android:paddingRight="3dp"
+                                                android:paddingTop="3dp"
+                                                android:scaleType="fitCenter"
+                                                android:src="@drawable/gray" />
+
+                                        <ImageView
+                                                android:id="@+id/LowerLeft"
+                                                style="?android:attr/borderlessButtonStyle"
+                                                android:layout_width="40dp"
+                                                android:layout_height="40dp"
+                                                android:layout_below="@+id/UpperLeft"
+                                                android:layout_gravity="top|end"
+                                                android:background="#00000000"
+                                                android:enabled="true"
+                                                android:paddingRight="3dp"
+                                                android:paddingTop="3dp"
+                                                android:scaleType="fitCenter"
+                                                android:src="@drawable/gray" />
+
+                                        <ImageView
+                                                android:id="@+id/LowerRight"
+                                                style="?android:attr/borderlessButtonStyle"
+                                                android:layout_width="40dp"
+                                                android:layout_height="40dp"
+                                                android:layout_below="@+id/UpperRight"
+                                                android:layout_gravity="bottom|start"
+                                                android:layout_toRightOf="@+id/LowerLeft"
+                                                android:background="#00000000"
+                                                android:enabled="true"
+                                                android:paddingRight="3dp"
+                                                android:paddingTop="3dp"
+                                                android:scaleType="centerInside"
+                                                android:src="@drawable/gray" />
+
+                                        <ImageView
+                                                android:id="@+id/badgeBackground"
+                                                style="?android:attr/borderlessButtonStyle"
+                                                android:layout_alignParentTop="true"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_gravity="top|end"
+                                                android:layout_alignRight="@+id/LowerRight"
+                                                android:adjustViewBounds="true"
+                                                android:background="#00000000"
+                                                android:enabled="true"
+                                                android:maxHeight="30dp"
+                                                android:maxWidth="30dp"
+                                                android:paddingRight="8dp"
+                                                android:paddingTop="5dp"
+                                                android:src="@drawable/camera_album_badge" />
+
+                                        <TextView
+                                                android:id="@+id/badgeCount"
+                                                style="?android:attr/borderlessButtonStyle"
+                                                android:layout_alignParentTop="true"
+                                                android:layout_width="30dp"
+                                                android:layout_height="30dp"
+                                                android:layout_gravity="top|end"
+                                                android:layout_alignRight="@+id/LowerRight"
+                                                android:background="#00000000"
+                                                android:enabled="true"
+                                                android:gravity="center_horizontal|center_vertical"
+                                                android:paddingLeft="20dp"
+                                                android:paddingBottom="0dp"
+                                                android:scaleType="fitXY"
+                                                android:src="@drawable/camera_album_badge"
+                                                android:text="99"
+                                                android:textColor="#FFFFFF"
+                                                android:textSize="14sp" />
+
+                                        <Button
+                                                android:id="@+id/library"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_alignBottom="@+id/LowerRight"
+                                                android:layout_alignLeft="@+id/LowerLeft"
+                                                android:layout_alignRight="@+id/LowerRight"
+                                                android:layout_alignTop="@+id/UpperRight"
+                                                android:background="#00000000" />
+
+                                        <ImageButton
+                                            android:id="@+id/confirm"
+                                            style="?android:attr/borderlessButtonStyle"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerVertical="true"
+                                            android:layout_centerHorizontal="true"
+                                            android:adjustViewBounds="true"
+                                            android:background="#00000000"
+                                            android:clickable="true"
+                                            android:paddingTop="15dp"
+                                            android:paddingRight="40dp"
+                                            android:paddingLeft="40dp"
+                                            android:contentDescription="return to queue"
+                                            android:enabled="true"
+                                            android:gravity="bottom|end"
+                                            android:maxHeight="40dp"
+                                            android:maxWidth="40dp"
+                                            android:scaleType="fitXY"
+                                            android:src="@drawable/camera_confirm_button" />
+                                </RelativeLayout>
+
+                                <ImageButton
+                                        android:id="@+id/shutter"
+                                        style="?android:attr/borderlessButtonStyle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:layout_gravity="bottom|center_horizontal"
+                                        android:layout_marginRight="50dp"
+                                        android:layout_toLeftOf="@+id/LibraryPreviewBox"
+                                        android:adjustViewBounds="true"
+                                        android:background="#00000000"
+                                        android:contentDescription="camera shutter"
+                                        android:enabled="true"
+                                        android:maxHeight="70dp"
+                                        android:maxWidth="70dp"
+                                        android:scaleType="fitXY"
+                                        android:src="@drawable/camera_shutter" />
+                        </RelativeLayout>
+                </LinearLayout>
+        </FrameLayout>
+</FrameLayout>
