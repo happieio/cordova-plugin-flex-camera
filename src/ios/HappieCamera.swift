@@ -16,7 +16,7 @@ import UIKit
         cameraVC.modalTransitionStyle = UIModalTransitionStyle.CoverVertical;
         cameraVC.modalPresentationStyle = UIModalPresentationStyle.FullScreen;
         callBackId = command.callbackId;
-        self.viewController.presentViewController(cameraVC, animated: true, completion:nil)
+        self.viewController!.presentViewController(cameraVC, animated: true, completion:nil)
     }
     
     func getCameraRoll(command: CDVInvokedUrlCommand){
@@ -27,23 +27,23 @@ import UIKit
     func cameraFinished(controller: HappieCameraViewController, JSON: String){
         controller.dismissViewControllerAnimated(true, completion: nil);
         var pluginResult: CDVPluginResult;
-        if(count(JSON) > 0){
+        if(JSON.characters.count > 0){
             pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: JSON)
         }else{
             pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAsString: "no media captured")
         }
-        commandDelegate.sendPluginResult(pluginResult, callbackId:callBackId)
+        commandDelegate!.sendPluginResult(pluginResult, callbackId:callBackId)
     }
     
     func cameraRollFinished(JSON: String){
         var pluginResult: CDVPluginResult;
-        if(count(JSON) > 0){
+        if(JSON.characters.count > 0){
             pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: JSON)
             pluginResult.setKeepCallbackAsBool(true)
         }else{
             pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAsString: "could not find camera roll")
             pluginResult.setKeepCallbackAsBool(false)
         }
-        commandDelegate.sendPluginResult(pluginResult, callbackId:rollCallBackId)
+        commandDelegate!.sendPluginResult(pluginResult, callbackId:rollCallBackId)
     }
 }

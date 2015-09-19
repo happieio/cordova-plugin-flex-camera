@@ -19,7 +19,7 @@ import Foundation
             
             json["paths"] = pathDictionary
             if NSJSONSerialization.isValidJSONObject(json){
-                if let data = NSJSONSerialization.dataWithJSONObject(json, options: nil, error: nil){
+                if let data = try? NSJSONSerialization.dataWithJSONObject(json, options: []){
                     if let jsonString = NSString(data: data, encoding: NSUTF8StringEncoding){
                         resetJSON()
                         return jsonString as String

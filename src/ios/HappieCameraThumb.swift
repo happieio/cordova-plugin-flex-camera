@@ -19,17 +19,17 @@ import UIKit
             let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
             
-            let imageData: NSData = UIImageJPEGRepresentation(scaledImage, 0.7);
+            let imageData: NSData = UIImageJPEGRepresentation(scaledImage, 0.7)!;
             filemgr.createFileAtPath(path, contents: imageData, attributes: nil)
             return imageData
     }
     
     func createThumbOfCamRollImage(image: UIImage) -> String {
         let dirPaths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-        let docsDir = dirPaths[0] as! String
-        let mediaDir = docsDir.stringByAppendingPathComponent("media")
-        let thumbDir = mediaDir.stringByAppendingPathComponent("thumb")
-        let fullThumbFilePath = thumbDir.stringByAppendingPathComponent(generateFileName())
+        let docsDir = dirPaths[0]
+        let mediaDir = docsDir + "media";
+        let thumbDir = mediaDir + "thumb";
+        let fullThumbFilePath = thumbDir + generateFileName();
         let size = CGSizeApplyAffineTransform(image.size, CGAffineTransformMakeScale(0.08, 0.08))
         let scale: CGFloat = 0.0 // Automatically use scale factor of main screen
         
@@ -39,7 +39,7 @@ import UIKit
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        let imageData: NSData = UIImageJPEGRepresentation(scaledImage, 0.7);
+        let imageData: NSData = UIImageJPEGRepresentation(scaledImage, 0.7)!;
         filemgr.createFileAtPath(fullThumbFilePath, contents: imageData, attributes: nil)
         
         return fullThumbFilePath

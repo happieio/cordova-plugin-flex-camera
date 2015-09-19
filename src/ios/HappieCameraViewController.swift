@@ -31,7 +31,7 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil);
     }
     
-    required init(coder aDecoder: NSCoder) { fatalError("NSCoding not supported") }
+    required init?(coder aDecoder: NSCoder) { fatalError("NSCoding not supported") }
     
     override func viewDidLoad(){
         super.viewDidLoad()
@@ -39,15 +39,21 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
         
         //create documents/media folder to contain captured images
         let dirPaths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-        let docsDir = dirPaths[0] as! String
-        mediaDir = docsDir.stringByAppendingPathComponent("media")
-        if !filemgr.createDirectoryAtPath(mediaDir, withIntermediateDirectories: true, attributes: nil, error: &error) {
-            println("Failed to create media dir: \(error!.localizedDescription)")
+        let docsDir = dirPaths[0] 
+        mediaDir = docsDir + "media"
+        do {
+            try filemgr.createDirectoryAtPath(mediaDir, withIntermediateDirectories: true, attributes: nil)
+        } catch let error1 as NSError {
+            error = error1
+            print("Failed to create media dir: \(error!.localizedDescription)")
         }
         //create documents/media/thumb to contain thumbnails of captured images
-        thumbDir = mediaDir.stringByAppendingPathComponent("thumb")
-        if !filemgr.createDirectoryAtPath(thumbDir, withIntermediateDirectories: true, attributes: nil, error: &error) {
-            println("Failed to create thumb dir: \(error!.localizedDescription)")
+        thumbDir = mediaDir + "thumb";
+        do {
+            try filemgr.createDirectoryAtPath(thumbDir, withIntermediateDirectories: true, attributes: nil)
+        } catch let error1 as NSError {
+            error = error1
+            print("Failed to create thumb dir: \(error!.localizedDescription)")
         }
         
         let enumerator:NSDirectoryEnumerator = filemgr.enumeratorAtPath(mediaDir)!
@@ -81,7 +87,7 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
         
         badgeCount.text = String(self.badgeCounter)
         
-        let availableCameras = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
+        _ = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
         
         let devices = AVCaptureDevice.devices()
         
@@ -96,7 +102,13 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
             }
         }
         
-        let possibleCameraInput: AnyObject? = AVCaptureDeviceInput.deviceInputWithDevice(backCameraDevice, error: &error)
+        let possibleCameraInput: AnyObject?
+        do {
+            possibleCameraInput = try AVCaptureDeviceInput(device: backCameraDevice)
+        } catch let error1 as NSError {
+            error = error1
+            possibleCameraInput = nil
+        }
         let backCameraInput = possibleCameraInput as? AVCaptureDeviceInput
         if captureSession.canAddInput(backCameraInput) {
             captureSession.addInput(backCameraInput)
@@ -118,7 +130,7 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
     }
     override func viewDidAppear(animated: Bool){ captureSession.startRunning() }
     
-    override func supportedInterfaceOrientations() -> Int { return Int(UIInterfaceOrientationMask.All.rawValue) }
+    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask { return UIInterfaceOrientationMask.All }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -134,13 +146,13 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
     }
     
     override func willRotateToInterfaceOrientation(newOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
-        (camPreview.layer.sublayers[0] as! AVCaptureVideoPreviewLayer).connection.videoOrientation = AVCaptureVideoOrientation(rawValue: newOrientation.rawValue)!
+        (camPreview.layer as! AVCaptureVideoPreviewLayer).connection.videoOrientation = AVCaptureVideoOrientation(rawValue: newOrientation.rawValue)!
         
         if(newOrientation == UIInterfaceOrientation.LandscapeLeft || newOrientation == UIInterfaceOrientation.LandscapeRight){
-            (camPreview.layer.sublayers[0] as! AVCaptureVideoPreviewLayer).videoGravity = AVLayerVideoGravityResizeAspect
+            (camPreview.layer as! AVCaptureVideoPreviewLayer).videoGravity = AVLayerVideoGravityResizeAspect
         }
         else{
-            (camPreview.layer.sublayers[0] as! AVCaptureVideoPreviewLayer).videoGravity = AVLayerVideoGravityResizeAspectFill
+            (camPreview.layer as! AVCaptureVideoPreviewLayer).videoGravity = AVLayerVideoGravityResizeAspectFill
         }
         
         //TODO implement asset rotation something like this let PortraitImage  : UIImage = UIImage(CGImage: LandscapeImage.CGImage ,
@@ -150,8 +162,8 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
     
     //MARK: AVFoundation Implementation
     func beginSession(){
-        var previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        var orientation: AVCaptureVideoOrientation =  AVCaptureVideoOrientation(rawValue: self.interfaceOrientation.rawValue)!
+        let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+        let orientation: AVCaptureVideoOrientation =  AVCaptureVideoOrientation(rawValue: self.interfaceOrientation.rawValue)!
         previewLayer.connection.videoOrientation = orientation;
         camPreview.layer.addSublayer(previewLayer)
         previewLayer?.frame = self.view.bounds
@@ -205,7 +217,7 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
                         let pathResults: [String] = [path, thumbPath]
                         self.jsonGen.addToPathArray(pathResults)
                     }else{
-                        println("failed to write image to path: " + path)
+                        print("failed to write image to path: " + path)
                     }
 
                     //let image = UIImage.init(data: imageData)!
@@ -237,18 +249,20 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
     }
     
     func setFlashModeToAuto(device: AVCaptureDevice){
-        var error: NSError?
-        if(device.lockForConfiguration(&error)){
+        do{
+            try device.lockForConfiguration();
             device.flashMode = AVCaptureFlashMode.Auto; device.torchMode = AVCaptureTorchMode.Off; flashState = 2
             let image = UIImage(named: "camera_flash_auto.png") as UIImage!
             flashUIButton.setImage(image, forState: .Normal)
             device.unlockForConfiguration()
+        }catch{
+            //TODO write error handling code at some point
         }
     }
     
     func toggleFlashMode(device:AVCaptureDevice){
-        var error: NSError?
-        if(device.lockForConfiguration(&error)){
+        do{
+            try device.lockForConfiguration();
             if(flashState == 0){
                 device.flashMode = AVCaptureFlashMode.Off; device.torchMode = AVCaptureTorchMode.Off; flashState = 1
                 let image = UIImage(named: "camera_flash_off.png") as UIImage!
@@ -265,6 +279,8 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
                 flashUIButton.setImage(image, forState: .Normal)
             }
             device.unlockForConfiguration()
+        }catch{
+            //TODO write error handling code at some point
         }
     }
     
