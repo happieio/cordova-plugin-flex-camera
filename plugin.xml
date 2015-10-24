@@ -55,10 +55,10 @@
         <source-file src="src/android/HappieCameraPreview.java" target-dir="src/io/happie/cordovaCamera" />
         <source-file src="src/android/HappieCameraRoll.java" target-dir="src/io/happie/cordovaCamera" />
         <source-file src="src/android/HappieCameraThumb.java" target-dir="src/io/happie/cordovaCamera" />
-        <source-file src="src/android/jackson/jackson-annotations-2.5.3.jar" target-dir="libs"/>
-        <source-file src="src/android/jackson/jackson-core-2.5.3.jar" target-dir="libs"/>
-        <source-file src="src/android/jackson/jackson-databind-2.5.3.jar" target-dir="libs"/>
-        <source-file src="src/android/jackson/jackson-module-afterburner-2.5.3.jar" target-dir="libs"/>
+        <framework src="com.fasterxml.jackson.core:jackson-annotations:2.5.3"/>
+        <framework src="com.fasterxml.jackson.core:jackson-core:2.5.3"/>
+        <framework src="com.fasterxml.jackson.core:jackson-databind:2.5.3"/>
+        <framework src="com.fasterxml.jackson.module:jackson-module-afterburner:2.5.3"/>
         <framework src="src/android/jackson/jacksonSetup.gradle" custom="true" type="gradleReference"/>
     </platform>
     <platform name="ios">
