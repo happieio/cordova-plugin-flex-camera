@@ -94,11 +94,13 @@
                                         android:id="@+id/LibraryPreviewBox"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_alignParentRight="true"
-                                        android:layout_centerVertical="true"
-                                        android:background="#00000000"
-                                        android:paddingRight="10dp"
-                                        android:paddingTop="10dp">
+                                    android:background="#00000000"
+                                        android:paddingRight="15dp"
+                                        android:paddingTop="10dp"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_marginRight="3dp"
+                                    android:layout_marginTop="0dp">
 
                                         <ImageView
                                                 android:id="@+id/UpperLeft"
@@ -164,7 +166,7 @@
                                                 android:id="@+id/badgeBackground"
                                                 style="?android:attr/borderlessButtonStyle"
                                                 android:layout_alignParentTop="true"
-                                                android:layout_width="wrap_content"
+                                                android:layout_width="40dp"
                                                 android:layout_height="wrap_content"
                                                 android:layout_gravity="top|end"
                                                 android:layout_alignRight="@+id/LowerRight"
@@ -173,16 +175,16 @@
                                                 android:enabled="true"
                                                 android:maxHeight="30dp"
                                                 android:maxWidth="30dp"
-                                                android:paddingRight="8dp"
-                                                android:paddingTop="5dp"
+                                                android:paddingRight="-10dp"
+                                                android:paddingTop="-10dp"
                                                 android:src="@drawable/camera_album_badge" />
 
                                         <TextView
                                                 android:id="@+id/badgeCount"
                                                 style="?android:attr/borderlessButtonStyle"
                                                 android:layout_alignParentTop="true"
-                                                android:layout_width="30dp"
-                                                android:layout_height="30dp"
+                                                android:layout_width="40dp"
+                                                android:layout_height="35dp"
                                                 android:layout_gravity="top|end"
                                                 android:layout_alignRight="@+id/LowerRight"
                                                 android:background="#00000000"
@@ -194,7 +196,9 @@
                                                 android:src="@drawable/camera_album_badge"
                                                 android:text="99"
                                                 android:textColor="#FFFFFF"
-                                                android:textSize="14sp" />
+                                                android:textSize="14sp"
+                                            android:layout_marginRight="5dp"
+                                            android:layout_marginTop="-4dp" />
 
                                         <Button
                                                 android:id="@+id/library"
@@ -206,26 +210,6 @@
                                                 android:layout_alignTop="@+id/UpperRight"
                                                 android:background="#00000000" />
 
-                                        <ImageButton
-                                            android:id="@+id/confirm"
-                                            style="?android:attr/borderlessButtonStyle"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_centerVertical="true"
-                                            android:layout_centerHorizontal="true"
-                                            android:adjustViewBounds="true"
-                                            android:background="#00000000"
-                                            android:clickable="true"
-                                            android:paddingTop="15dp"
-                                            android:paddingRight="40dp"
-                                            android:paddingLeft="40dp"
-                                            android:contentDescription="return to queue"
-                                            android:enabled="true"
-                                            android:gravity="bottom|end"
-                                            android:maxHeight="40dp"
-                                            android:maxWidth="40dp"
-                                            android:scaleType="fitXY"
-                                            android:src="@drawable/camera_confirm_button" />
                                 </RelativeLayout>
 
                                 <ImageButton
@@ -233,19 +217,20 @@
                                         style="?android:attr/borderlessButtonStyle"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_centerVertical="true"
-                                        android:layout_gravity="bottom|center_horizontal"
+                                    android:layout_gravity="bottom|center_horizontal"
                                         android:layout_marginRight="50dp"
-                                        android:layout_toLeftOf="@+id/LibraryPreviewBox"
-                                        android:adjustViewBounds="true"
+                                    android:adjustViewBounds="true"
                                         android:background="#00000000"
                                         android:contentDescription="camera shutter"
                                         android:enabled="true"
                                         android:maxHeight="70dp"
                                         android:maxWidth="70dp"
                                         android:scaleType="fitXY"
-                                        android:src="@drawable/camera_shutter" />
+                                        android:src="@drawable/camera_shutter"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_centerHorizontal="true" />
                         </RelativeLayout>
                 </LinearLayout>
         </FrameLayout>
+
 </FrameLayout>
