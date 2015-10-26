@@ -100,7 +100,7 @@
                                     android:layout_alignParentBottom="true"
                                     android:layout_alignParentEnd="true"
                                     android:layout_marginRight="3dp"
-                                    android:layout_marginTop="0dp">
+                                    android:layout_marginTop="4dp">
 
                                         <ImageView
                                                 android:id="@+id/UpperLeft"
@@ -200,15 +200,18 @@
                                             android:layout_marginRight="5dp"
                                             android:layout_marginTop="-4dp" />
 
-                                        <Button
-                                                android:id="@+id/library"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:layout_alignBottom="@+id/LowerRight"
-                                                android:layout_alignLeft="@+id/LowerLeft"
-                                                android:layout_alignRight="@+id/LowerRight"
-                                                android:layout_alignTop="@+id/UpperRight"
-                                                android:background="#00000000" />
+                                    <ImageButton
+                                        android:layout_width="78dp"
+                                        android:layout_height="78dp"
+                                        android:id="@+id/confirm"
+                                        android:src="@drawable/camera_confirm_button"
+                                        style="?android:attr/borderlessButtonStyle"
+                                        android:adjustViewBounds="true"
+                                        android:background="#00000000"
+                                        android:maxHeight="35dp"
+                                        android:maxWidth="35dp"
+                                        android:scaleType="fitXY"
+                                        android:padding="20dp" />
 
                                 </RelativeLayout>
 

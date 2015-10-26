@@ -43,7 +43,6 @@ public class HappieCameraActivity extends Activity {
     private static final String TAG = "HappieCameraActivity";
 
     private ImageButton cancel;
-    private Button library;
     private ImageButton shutter;
     private ImageButton queue;
     private ImageButton flash;
@@ -86,9 +85,6 @@ public class HappieCameraActivity extends Activity {
 
         cancel = (ImageButton) findViewById(R.id.cancel);
         cancel.setOnClickListener(cancelSession);
-
-        library = (Button) findViewById(R.id.library);
-        library.setOnClickListener(cameraFinishToSelection);
 
         shutter = (ImageButton) findViewById(R.id.shutter);
         shutter.setOnClickListener(captureImage);
@@ -238,15 +234,6 @@ public class HappieCameraActivity extends Activity {
         @Override
         public void onClick(View v) {
             String JSON = jsonGen.getFinalJSON("cancel", false);
-            HappieCamera.sessionFinished(JSON);
-            finish();
-        }
-    };
-
-    private View.OnClickListener cameraFinishToSelection = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            String JSON = jsonGen.getFinalJSON("selection", true);
             HappieCamera.sessionFinished(JSON);
             finish();
         }
