@@ -40,7 +40,7 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
         //create documents/media folder to contain captured images
         let dirPaths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
         let docsDir = dirPaths[0] 
-        mediaDir = docsDir + "media"
+        mediaDir = docsDir + "/media"
         do {
             try filemgr.createDirectoryAtPath(mediaDir, withIntermediateDirectories: true, attributes: nil)
         } catch let error1 as NSError {
@@ -48,7 +48,7 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
             print("Failed to create media dir: \(error!.localizedDescription)")
         }
         //create documents/media/thumb to contain thumbnails of captured images
-        thumbDir = mediaDir + "thumb";
+        thumbDir = mediaDir + "/thumb";
         do {
             try filemgr.createDirectoryAtPath(thumbDir, withIntermediateDirectories: true, attributes: nil)
         } catch let error1 as NSError {
