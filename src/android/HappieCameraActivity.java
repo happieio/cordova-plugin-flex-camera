@@ -41,19 +41,13 @@ public class HappieCameraActivity extends Activity {
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
     private static final String TAG = "HappieCameraActivity";
-
-    private ImageButton cancel;
-    private ImageButton shutter;
-    private ImageButton queue;
+    
     private ImageButton flash;
-
-    private OrientationEventListener orientationListener;
 
     private ImageView upperLeftThumbnail;
     private ImageView upperRightThumbnail;
     private ImageView lowerLeftThumbnail;
     private ImageView lowerRightThumbnail;
-    private ImageView badgeBg;
     private TextView badgeCount;
     private int badgeCounter;
     private int quadState;  //0 = UL , 1 = UR, 2 = LL, 3 = LR
@@ -76,20 +70,20 @@ public class HappieCameraActivity extends Activity {
 
     protected void onCreateTasks() {
 
-        orientationListener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL){
+        OrientationEventListener orientationListener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL){
             @Override
             public void onOrientationChanged(int arg0) {
                 //TODO update camera orientation with arg0
             }};
         if (orientationListener.canDetectOrientation()) orientationListener.enable();
 
-        cancel = (ImageButton) findViewById(R.id.cancel);
+        ImageButton cancel = (ImageButton) findViewById(R.id.cancel);
         cancel.setOnClickListener(cancelSession);
 
-        shutter = (ImageButton) findViewById(R.id.shutter);
+        ImageButton shutter = (ImageButton) findViewById(R.id.shutter);
         shutter.setOnClickListener(captureImage);
 
-        queue = (ImageButton) findViewById(R.id.confirm);
+        ImageButton queue = (ImageButton) findViewById(R.id.confirm);
         queue.setOnClickListener(cameraFinishToQueue);
 
         flash = (ImageButton) findViewById(R.id.flashToggle);
@@ -99,7 +93,6 @@ public class HappieCameraActivity extends Activity {
         upperRightThumbnail = (ImageView) findViewById(R.id.UpperRight);
         lowerLeftThumbnail = (ImageView) findViewById(R.id.LowerLeft);
         lowerRightThumbnail = (ImageView) findViewById(R.id.LowerRight);
-        badgeBg = (ImageView) findViewById(R.id.badgeBackground);
         badgeCount = (TextView) findViewById(R.id.badgeCount);
 
         quadState = 0;
