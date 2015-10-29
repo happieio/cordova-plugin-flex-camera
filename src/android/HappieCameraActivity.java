@@ -41,7 +41,7 @@ public class HappieCameraActivity extends Activity {
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
     private static final String TAG = "HappieCameraActivity";
-    
+
     private ImageButton flash;
 
     private ImageView upperLeftThumbnail;
@@ -98,6 +98,7 @@ public class HappieCameraActivity extends Activity {
         quadState = 0;
 
         String filePath = HappieCamera.context.getExternalFilesDir(null) + "/media/thumb";
+
         File thumbDir = new File(filePath);
         String[] files = thumbDir.list();
         for (String file : files){

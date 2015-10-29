@@ -194,7 +194,7 @@
                                                 android:paddingBottom="0dp"
                                                 android:scaleType="fitXY"
                                                 android:src="@drawable/camera_album_badge"
-                                                android:text="99"
+                                                android:text="0"
                                                 android:textColor="#FFFFFF"
                                                 android:textSize="14sp"
                                             android:layout_marginRight="5dp"
