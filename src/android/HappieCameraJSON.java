@@ -36,8 +36,7 @@ public class HappieCameraJSON {
             ((ObjectNode) json).put("paths", jsonPaths);
             System.out.println(json.toString());
             resetJSON();
-            String output = json.toString();
-            return output;
+            return json.toString();
         } else {
             deleteCapturedImages();
             resetJSON();
