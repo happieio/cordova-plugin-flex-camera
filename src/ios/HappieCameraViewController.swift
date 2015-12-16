@@ -186,15 +186,24 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
     }
     
     @IBAction func cancelSession(sender: AnyObject) {
+        resetThumbImages()
         let pathJSON = jsonGen.getFinalJSON(dest: "cancel", save: false)
         setFlashModeToAuto(backCameraDevice!)
         delegate.cameraFinished(self, JSON: pathJSON)
     }
     
     @IBAction func cameraFinishToQueue(sender: UIButton) {
+        resetThumbImages()
         let pathJSON = jsonGen.getFinalJSON(dest: "queue", save: true)
         setFlashModeToAuto(backCameraDevice!)
         delegate.cameraFinished(self, JSON: pathJSON)
+    }
+    
+    func resetThumbImages(){
+        ULuii.image = UIImage(named:"gray.png")
+        URuii.image = UIImage(named:"gray.png")
+        LLuii.image = UIImage(named:"gray.png")
+        LRuii.image = UIImage(named:"gray.png")
     }
     
     @IBAction func captureImage(sender: UIButton){
