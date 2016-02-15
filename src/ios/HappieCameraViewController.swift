@@ -258,39 +258,39 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
     }
     
     func setFlashModeToAuto(device: AVCaptureDevice){
-        do{
-            try device.lockForConfiguration();
-            device.flashMode = AVCaptureFlashMode.Auto; device.torchMode = AVCaptureTorchMode.Off; flashState = 2
-            let image = UIImage(named: "camera_flash_auto.png") as UIImage!
-            flashUIButton.setImage(image, forState: .Normal)
-            device.unlockForConfiguration()
-        }catch{
-            //TODO write error handling code at some point
-        }
+        //do{
+        //    try device.lockForConfiguration();
+        //    device.flashMode = AVCaptureFlashMode.Auto; device.torchMode = AVCaptureTorchMode.Off; flashState = 2
+        //    let image = UIImage(named: "camera_flash_auto.png") as UIImage!
+        //    flashUIButton.setImage(image, forState: .Normal)
+        //    device.unlockForConfiguration()
+        //}catch{
+        //    //TODO write error handling code at some point
+        //}
     }
     
     func toggleFlashMode(device:AVCaptureDevice){
-        do{
-            try device.lockForConfiguration();
-            if(flashState == 0){
-                device.flashMode = AVCaptureFlashMode.Off; device.torchMode = AVCaptureTorchMode.Off; flashState = 1
-                let image = UIImage(named: "camera_flash_off.png") as UIImage!
-                flashUIButton.setImage(image, forState: .Normal)
-            }
-            else if(flashState == 1){
-                device.flashMode = AVCaptureFlashMode.Auto; device.torchMode = AVCaptureTorchMode.Off; flashState = 2
-                let image = UIImage(named: "camera_flash_auto.png") as UIImage!
-                flashUIButton.setImage(image, forState: .Normal)
-            }
-            else if(flashState == 2){
-                device.flashMode = AVCaptureFlashMode.Off; device.torchMode = AVCaptureTorchMode.On; flashState = 0;
-                let image = UIImage(named: "camera_flash_on.png") as UIImage!
-                flashUIButton.setImage(image, forState: .Normal)
-            }
-            device.unlockForConfiguration()
-        }catch{
-            //TODO write error handling code at some point
-        }
+        //do{
+        //    try device.lockForConfiguration();
+        //    if(flashState == 0){
+        //        device.flashMode = AVCaptureFlashMode.Off; device.torchMode = AVCaptureTorchMode.Off; flashState = 1
+        //        let image = UIImage(named: "camera_flash_off.png") as UIImage!
+        //        flashUIButton.setImage(image, forState: .Normal)
+        //    }
+        //    else if(flashState == 1){
+        //        device.flashMode = AVCaptureFlashMode.Auto; device.torchMode = AVCaptureTorchMode.Off; flashState = 2
+        //        let image = UIImage(named: "camera_flash_auto.png") as UIImage!
+        //        flashUIButton.setImage(image, forState: .Normal)
+        //    }
+        //    else if(flashState == 2){
+        //        device.flashMode = AVCaptureFlashMode.Off; device.torchMode = AVCaptureTorchMode.On; flashState = 0;
+        //        let image = UIImage(named: "camera_flash_on.png") as UIImage!
+        //        flashUIButton.setImage(image, forState: .Normal)
+        //    }
+        //    device.unlockForConfiguration()
+        //}catch{
+        //    //TODO write error handling code at some point
+        // }
     }
     
     func generateFileName() -> String {
