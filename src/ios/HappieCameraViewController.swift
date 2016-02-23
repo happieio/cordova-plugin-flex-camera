@@ -128,49 +128,54 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
     override func viewDidDisappear(animated: Bool){
         captureSession.stopRunning();
     }
-    override func viewDidAppear(animated: Bool){ captureSession.startRunning() }
-    
+    override func viewDidAppear(animated: Bool){
+        captureSession.startRunning()
+    }
+
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask { return UIInterfaceOrientationMask.All }
-    
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
-    
+
     override func shouldAutorotate() -> Bool {
         return false
     }
-    
+
     override func willRotateToInterfaceOrientation(newOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
         (camPreview.layer as! AVCaptureVideoPreviewLayer).connection.videoOrientation = AVCaptureVideoOrientation(rawValue: newOrientation.rawValue)!
-        
+
         if(newOrientation == UIInterfaceOrientation.LandscapeLeft || newOrientation == UIInterfaceOrientation.LandscapeRight){
             (camPreview.layer as! AVCaptureVideoPreviewLayer).videoGravity = AVLayerVideoGravityResizeAspect
         }
         else{
             (camPreview.layer as! AVCaptureVideoPreviewLayer).videoGravity = AVLayerVideoGravityResizeAspectFill
         }
-        
+
         //TODO implement asset rotation something like this let PortraitImage  : UIImage = UIImage(CGImage: LandscapeImage.CGImage ,
          //scale: 1.0 ,
          //orientation: UIImageOrientation.Right)
     }
-    
+
     //MARK: AVFoundation Implementation
     func beginSession(){
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+
         let orientation: AVCaptureVideoOrientation =  AVCaptureVideoOrientation(rawValue: self.interfaceOrientation.rawValue)!
         previewLayer.connection.videoOrientation = orientation;
         camPreview.layer.addSublayer(previewLayer)
-        previewLayer?.frame = self.view.bounds
+
+        previewLayer.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height)
+        previewLayer.bounds = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height)
         previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
         captureSession.startRunning()
     }
-    
+
     //MARK: IB Outlets and Actions
     @IBOutlet weak var camPreview: UIView!
     @IBOutlet weak var flashUIButton: UIButton!
@@ -180,32 +185,32 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
     @IBOutlet weak var LRuii: UIImageView!
     @IBOutlet weak var badgeBg: UIImageView!
     @IBOutlet weak var badgeCount: UILabel!
-    
+
     @IBAction func flashToggle(sender: UIButton) {
         toggleFlashMode(backCameraDevice!)
     }
-    
+
     @IBAction func cancelSession(sender: AnyObject) {
         resetThumbImages()
         let pathJSON = jsonGen.getFinalJSON(dest: "cancel", save: false)
         setFlashModeToAuto(backCameraDevice!)
         delegate.cameraFinished(self, JSON: pathJSON)
     }
-    
+
     @IBAction func cameraFinishToQueue(sender: UIButton) {
         resetThumbImages()
         let pathJSON = jsonGen.getFinalJSON(dest: "queue", save: true)
         setFlashModeToAuto(backCameraDevice!)
         delegate.cameraFinished(self, JSON: pathJSON)
     }
-    
+
     func resetThumbImages(){
         ULuii.image = UIImage(named:"gray.png")
         URuii.image = UIImage(named:"gray.png")
         LLuii.image = UIImage(named:"gray.png")
         LRuii.image = UIImage(named:"gray.png")
     }
-    
+
     @IBAction func captureImage(sender: UIButton){
         let connection = stillImageOutput?.connectionWithMediaType(AVMediaTypeVideo)
         stillImageOutput?.captureStillImageAsynchronouslyFromConnection(connection, completionHandler:
@@ -238,16 +243,16 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
                 }
         })
     }
-    
+
     // MARK: AVCaptureFileOutputRecordingDelegate Delegate Conformance
     func captureOutput(captureOutput: AVCaptureFileOutput!, didFinishRecordingToOutputFileAtURL outputFileURL: NSURL!, fromConnections connections: [AnyObject]!, error: NSError!) {
     }
-    
+
     //MARK: Utility Functions
     func deviceWithMediaType(mediaType: NSString, preferringPosition: AVCaptureDevicePosition) -> AVCaptureDevice{
         let devices: NSArray = AVCaptureDevice.devicesWithMediaType(mediaType as String)
         var captureDevice: AVCaptureDevice = devices.firstObject as! AVCaptureDevice
-        
+
         for device in devices{
             if(device.position == preferringPosition){
                 captureDevice = device as! AVCaptureDevice
@@ -256,11 +261,51 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
         }
         return captureDevice
     }
-    
+
     func setFlashModeToAuto(device: AVCaptureDevice){
-            do{
+        do{
+            try device.lockForConfiguration();
+            if(backCameraDevice!.hasFlash){
+                if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.Auto)){
+                    device.flashMode = AVCaptureFlashMode.Auto;
+                    let image = UIImage(named: "camera_flash_auto.png") as UIImage!
+                    flashUIButton.setImage(image, forState: .Normal)
+                }
+                if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.Off)){
+                    device.torchMode = AVCaptureTorchMode.Off;
+                }
+            }else{
+                let image = UIImage(named: "camera_flash_off.png") as UIImage!
+                flashUIButton.setImage(image, forState: .Normal)
+                flashUIButton.hidden = true;
+            }
+            flashState = 2
+
+
+            device.unlockForConfiguration()
+        }catch{
+            //TODO write error handling code at some point
+        }
+    }
+
+    func toggleFlashMode(device:AVCaptureDevice){
+        do{
+            if(backCameraDevice!.hasFlash){
                 try device.lockForConfiguration();
-                if(backCameraDevice!.hasFlash){
+
+                if(flashState == 0){
+                    if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.Off)){
+                        device.flashMode = AVCaptureFlashMode.Off;
+                        let image = UIImage(named: "camera_flash_off.png") as UIImage!
+                        flashUIButton.setImage(image, forState: .Normal)
+                    }
+                    if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.Off)){
+                        device.torchMode = AVCaptureTorchMode.Off;
+                    }
+                    flashState = 1;
+                }
+
+                else if(flashState == 1){
                     if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.Auto)){
                         device.flashMode = AVCaptureFlashMode.Auto;
                         let image = UIImage(named: "camera_flash_auto.png") as UIImage!
@@ -269,68 +314,27 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
                     if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.Off)){
                         device.torchMode = AVCaptureTorchMode.Off;
                     }
-                }else{
-                    let image = UIImage(named: "camera_flash_off.png") as UIImage!
-                    flashUIButton.setImage(image, forState: .Normal)
-                    flashUIButton.hidden = true;
+                    flashState = 2
                 }
-                flashState = 2
+                else if(flashState == 2){
+                    if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.Off)){
+                        device.flashMode = AVCaptureFlashMode.Off;
+                        let image = UIImage(named: "camera_flash_on.png") as UIImage!
+                        flashUIButton.setImage(image, forState: .Normal)
+                    }
+                    if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.On)){
+                        device.torchMode = AVCaptureTorchMode.On;
+                    }
 
-
+                    flashState = 0;
+                }
                 device.unlockForConfiguration()
-            }catch{
-                //TODO write error handling code at some point
             }
+
+        }catch{
+            //TODO write error handling code at some point
         }
-    
-    func toggleFlashMode(device:AVCaptureDevice){
-            do{
-                if(backCameraDevice!.hasFlash){
-                    try device.lockForConfiguration();
-
-                    if(flashState == 0){
-                        if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.Off)){
-                            device.flashMode = AVCaptureFlashMode.Off;
-                            let image = UIImage(named: "camera_flash_off.png") as UIImage!
-                            flashUIButton.setImage(image, forState: .Normal)
-                        }
-                        if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.Off)){
-                            device.torchMode = AVCaptureTorchMode.Off;
-                        }
-                        flashState = 1;
-                    }
-
-                    else if(flashState == 1){
-                        if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.Auto)){
-                            device.flashMode = AVCaptureFlashMode.Auto;
-                            let image = UIImage(named: "camera_flash_auto.png") as UIImage!
-                            flashUIButton.setImage(image, forState: .Normal)
-                        }
-                        if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.Off)){
-                            device.torchMode = AVCaptureTorchMode.Off;
-                        }
-                        flashState = 2
-                    }
-                    else if(flashState == 2){
-                        if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.Off)){
-                            device.flashMode = AVCaptureFlashMode.Off;
-                            let image = UIImage(named: "camera_flash_on.png") as UIImage!
-                            flashUIButton.setImage(image, forState: .Normal)
-                        }
-                        if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.On)){
-                            device.torchMode = AVCaptureTorchMode.On;
-                        }
-
-                        flashState = 0;
-                    }
-                    device.unlockForConfiguration()
-                }
-
-            }catch{
-                //TODO write error handling code at some point
-            }
-        }
-
+    }
     
     func generateFileName() -> String {
         let date = NSDate()
