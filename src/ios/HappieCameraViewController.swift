@@ -37,6 +37,8 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
         super.viewDidLoad()
         var error: NSError?
         quadState = 0;
+        badgeCount.text = "0"
+        badgeCounter = 0;
 
         //create documents/media folder to contain captured images
         let dirPaths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
