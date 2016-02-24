@@ -36,10 +36,11 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
     override func viewDidLoad(){
         super.viewDidLoad()
         var error: NSError?
-        
+        quadState = 0;
+
         //create documents/media folder to contain captured images
         let dirPaths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-        let docsDir = dirPaths[0] 
+        let docsDir = dirPaths[0]
         mediaDir = docsDir + "/media"
         do {
             try filemgr.createDirectoryAtPath(mediaDir, withIntermediateDirectories: true, attributes: nil)
@@ -55,7 +56,7 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
             error = error1
             print("Failed to create thumb dir: \(error!.localizedDescription)")
         }
-        
+
         let enumerator:NSDirectoryEnumerator = filemgr.enumeratorAtPath(mediaDir)!
         while let element = enumerator.nextObject() as? String {
             if (element.hasSuffix("jpeg") &&
@@ -84,13 +85,13 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
                 }
             }
         }
-        
+
         badgeCount.text = String(self.badgeCounter)
-        
+
         _ = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
-        
+
         let devices = AVCaptureDevice.devices()
-        
+
         // Loop through all the capture devices on this phone
         for device in devices {
             // Make sure this particular device supports video
@@ -101,7 +102,7 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
                 }
             }
         }
-        
+
         let possibleCameraInput: AnyObject?
         do {
             possibleCameraInput = try AVCaptureDeviceInput(device: backCameraDevice)
@@ -113,7 +114,7 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
         if captureSession.canAddInput(backCameraInput) {
             captureSession.addInput(backCameraInput)
         }
-        
+
         stillImageOutput = AVCaptureStillImageOutput()
         if captureSession.canAddOutput(stillImageOutput) {
             stillImageOutput?.highResolutionStillImageOutputEnabled = true;
@@ -124,7 +125,7 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
         setFlashModeToAuto(backCameraDevice!)
         beginSession()
     }
-    
+
     override func viewDidDisappear(animated: Bool){
         captureSession.stopRunning();
     }
