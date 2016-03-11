@@ -1,5 +1,6 @@
 package io.happie.cordovaCamera;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 
@@ -11,6 +12,7 @@ import org.json.JSONException;
 
 import java.io.File;
 
+import android.content.pm.PackageManager;
 import android.os.Environment;
 
 public class HappieCamera extends CordovaPlugin {
@@ -18,9 +20,25 @@ public class HappieCamera extends CordovaPlugin {
     public static CallbackContext callbackContext;
     public static Context context;
     protected HappieCameraRoll camRoll = new HappieCameraRoll();
+    public static String currentAction = "";
+
+    public static final String CAMERA = Manifest.permission.CAMERA;
 
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         this.callbackContext = callbackContext;
+        currentAction = action;
+
+        if(cordova.hasPermission(CAMERA)) {
+            return executeLogic(action);
+        }
+        else {
+            getCamPermission(0);
+            return false;
+        }
+    }
+
+
+    public boolean executeLogic(String action) {
         if (action.equals("openCamera") || action.equals("getCameraRoll")) {
             try {
                 if (action.equals("openCamera")) { //run thread safe camera
@@ -60,8 +78,31 @@ public class HappieCamera extends CordovaPlugin {
         context.startActivity(pictureIntent);
     }
 
+    public void getCamPermission(int requestCode){
+        cordova.requestPermission(this, requestCode, CAMERA);
+    }
+
+    public void onRequestPermissionResult(int requestCode, String[] permissions,
+                                          int[] grantResults) throws JSONException
+    {
+        for(int r:grantResults)
+        {
+            if(r == PackageManager.PERMISSION_DENIED)
+            {
+                this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "Permission Denied"));
+                return;
+            }
+        }
+        switch(requestCode)
+        {
+            case 0:
+                executeLogic(currentAction);
+                break;
+        }
+    }
+
     public static void sessionFinished(String JSON) {
         if (JSON != null && JSON.length() > 0) callbackContext.success(JSON);
-         else callbackContext.error("no json");
+        else callbackContext.error("no json");
     }
 }
