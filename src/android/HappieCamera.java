@@ -23,6 +23,7 @@ public class HappieCamera extends CordovaPlugin {
     public static String currentAction = "";
 
     public static final String CAMERA = Manifest.permission.CAMERA;
+    public static final int CAM_REQUEST_CODE = 0;
 
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         this.callbackContext = callbackContext;
@@ -32,7 +33,7 @@ public class HappieCamera extends CordovaPlugin {
             return executeLogic(action);
         }
         else {
-            getCamPermission(0);
+            getCamPermission(CAM_REQUEST_CODE);
             return false;
         }
     }
@@ -95,7 +96,7 @@ public class HappieCamera extends CordovaPlugin {
         }
         switch(requestCode)
         {
-            case 0:
+            case CAM_REQUEST_CODE:
                 executeLogic(currentAction);
                 break;
         }
