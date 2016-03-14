@@ -4,41 +4,44 @@ import MobileCoreServices
 import AVFoundation
 import AssetsLibrary
 
-protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewController, JSON: String) }
+@objc protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewController, JSON: String) }
 
 @objc(HappieCameraViewController) class HappieCameraViewController : UIViewController, AVCaptureFileOutputRecordingDelegate  {
-    
+
     //MARK: Class Variables
     let captureSession = AVCaptureSession() //provides a UI context for capturing media
     var backCameraDevice: AVCaptureDevice? //represents the camera
     var stillImageInput: AVCaptureDeviceInput? //registers an input port for communicating with the connection
     var stillImageOutput: AVCaptureStillImageOutput? //output
-    
+
     let filemgr = NSFileManager.defaultManager()
     var mediaDir: String = "";
     var thumbDir: String = "";
-    
+
     var flashState = 2; //0 = off, 1 = On, 2 = Auto
     var quadState = 0; //0 = UL , 1 = UR, 2 = LL, 3 = LR
     var badgeCounter = 0;
-    
-    var delegate:cameraDelegate! = nil  //send data back to the plugin class
+
+     //send data back to the plugin class
     var jsonGen = HappieCameraJSON();
     var thumbGen = HappieCameraThumb();
-    
+
+    var delegate:cameraDelegate?
+
     //MARK: State Functions
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?){
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil);
     }
-    
+
     required init?(coder aDecoder: NSCoder) { fatalError("NSCoding not supported") }
-    
+
     override func viewDidLoad(){
         super.viewDidLoad()
         var error: NSError?
         quadState = 0;
         badgeCount.text = "0"
         badgeCounter = 0;
+
 
         //create documents/media folder to contain captured images
         let dirPaths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
@@ -196,15 +199,21 @@ protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewControl
     @IBAction func cancelSession(sender: AnyObject) {
         resetThumbImages()
         let pathJSON = jsonGen.getFinalJSON(dest: "cancel", save: false)
-        setFlashModeToAuto(backCameraDevice!)
-        delegate.cameraFinished(self, JSON: pathJSON)
+//        if(backCameraDevice?.flashAvailable){
+//            setFlashModeToAuto(backCameraDevice!)
+//        }
+
+        delegate!.cameraFinished(self, JSON: pathJSON)
     }
 
     @IBAction func cameraFinishToQueue(sender: UIButton) {
         resetThumbImages()
         let pathJSON = jsonGen.getFinalJSON(dest: "queue", save: true)
-        setFlashModeToAuto(backCameraDevice!)
-        delegate.cameraFinished(self, JSON: pathJSON)
+//        if(backCameraDevice?.flashAvailable){
+//            setFlashModeToAuto(backCameraDevice!)
+//        }
+
+        delegate!.cameraFinished(self, JSON: pathJSON)
     }
 
     func resetThumbImages(){

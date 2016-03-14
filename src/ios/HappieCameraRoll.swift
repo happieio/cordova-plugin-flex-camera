@@ -1,20 +1,20 @@
 import Foundation
 import AssetsLibrary
 
-protocol cameraRollDelegate{ func cameraRollFinished(JSON: String) }
+//protocol cameraRollDelegate{ func cameraRollFinished(JSON: String) }
 
 
-@objc(HappieCameraRoll) class HappieCameraRoll: CDVPlugin {
-    
+class HappieCameraRoll: CDVPlugin {
+
       //send data back to the plugin class
     var thumbGen = HappieCameraThumb();
     var jsonGen = HappieCameraJSON();
-    var delegate:cameraRollDelegate?
-    
+    //var delegate:cameraRollDelegate?
+
     override init(){
         super.init()
     }
-    
+
     func getCameraRoll() {
         let library: ALAssetsLibrary = ALAssetsLibrary()
         //run the job in a background thread
@@ -24,10 +24,10 @@ protocol cameraRollDelegate{ func cameraRollFinished(JSON: String) }
         {
             library.enumerateGroupsWithTypes(ALAssetsGroupSavedPhotos,
                 usingBlock: {(group: ALAssetsGroup!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-                    
+
                     //All images have been fetched
                     if(group == nil){
-                        self.delegate?.cameraRollFinished("undefined")
+                        //self.delegate?.cameraRollFinished("undefined")
                     }
                     else{ //Enumerate through Camera Roll
                         group.enumerateAssetsUsingBlock({ (result: ALAsset!, index: Int, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
@@ -43,7 +43,7 @@ protocol cameraRollDelegate{ func cameraRollFinished(JSON: String) }
                                         let paths: Array<String> = [obj.absoluteString!, thumbPath]
                                         self.jsonGen.addToPathArray(paths)
                                         let jsonPaths = self.jsonGen.getFinalJSON(dest: "selection", save: true)
-                                        self.delegate?.cameraRollFinished(jsonPaths)
+                                        //self.delegate?.cameraRollFinished(jsonPaths)
                                     }
                                 })
                             }
@@ -51,7 +51,7 @@ protocol cameraRollDelegate{ func cameraRollFinished(JSON: String) }
                     }
                 })
                 {(error: NSError!) -> Void in //it broke
-                    self.delegate?.cameraRollFinished("{route:\"selection\", paths:[]}")
+                    //self.delegate?.cameraRollFinished("{route:\"selection\", paths:[]}")
                 }
         })
     }

@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-@objc(HappieCameraThumb) class HappieCameraThumb : NSObject  {
+@objc class HappieCameraThumb : NSObject  {
     
     let filemgr = NSFileManager.defaultManager()
     var counter = 0;

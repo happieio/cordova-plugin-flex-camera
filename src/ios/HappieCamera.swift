@@ -1,27 +1,27 @@
 import Foundation
 import UIKit
 
-@objc(HappieCamera) class HappieCamera : CDVPlugin, cameraDelegate, cameraRollDelegate  {
-    let cameraVC: HappieCameraViewController = HappieCameraViewController(nibName:"HappieCameraView", bundle:nil);
-    
-    let cameraRoll: HappieCameraRoll = HappieCameraRoll();
+@objc(HappieCamera) class HappieCamera : CDVPlugin, cameraDelegate  {
+
+    //let cameraRoll: HappieCameraRoll = HappieCameraRoll();
     //let cameraView = HappieCameraViewController(nibName:"HappieCameraView", bundle:nil);
-    
+
     var callBackId: String = "";
     var rollCallBackId: String = "";
 
     func openCamera(command: CDVInvokedUrlCommand) {
+        //cameraRoll.delegate = self;
+        let cameraVC: HappieCameraViewController = HappieCameraViewController(nibName:"HappieCameraView", bundle:nil);
         cameraVC.delegate = self;
-        cameraRoll.delegate = self;
         cameraVC.modalTransitionStyle = UIModalTransitionStyle.CoverVertical;
         cameraVC.modalPresentationStyle = UIModalPresentationStyle.FullScreen;
         callBackId = command.callbackId;
-        self.viewController!.presentViewController(cameraVC, animated: true, completion:nil)
+        self.viewController?.presentViewController(cameraVC, animated: true, completion:nil)
     }
-    
+
     func getCameraRoll(command: CDVInvokedUrlCommand){
         rollCallBackId = command.callbackId;
-        cameraRoll.getCameraRoll()
+        //cameraRoll.getCameraRoll()
     }
     
     func cameraFinished(controller: HappieCameraViewController, JSON: String){

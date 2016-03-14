@@ -1,6 +1,6 @@
 import Foundation
 
-@objc(HappieCameraJSON) class HappieCameraJSON : NSObject  {
+@objc class HappieCameraJSON : NSObject  {
     override init(){ super.init() }
     //index 0 = original image path, 1 = thumb path
     var paths: Array<Array<String>> = []
