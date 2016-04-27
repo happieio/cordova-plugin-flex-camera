@@ -17,7 +17,6 @@ import android.view.Surface;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.hardware.SensorManager;
@@ -43,6 +42,7 @@ public class HappieCameraActivity extends Activity {
     public static final int MEDIA_TYPE_VIDEO = 2;
     private static final String TAG = "HappieCameraActivity";
 
+    private ImageButton shutter;
     private ImageButton flash;
 
     private ImageView upperLeftThumbnail;
@@ -85,7 +85,7 @@ public class HappieCameraActivity extends Activity {
         ImageButton cancel = (ImageButton) findViewById(R.id.cancel);
         cancel.setOnClickListener(cancelSession);
 
-        ImageButton shutter = (ImageButton) findViewById(R.id.shutter);
+        shutter = (ImageButton) findViewById(R.id.shutter);
         shutter.setOnClickListener(captureImage);
 
         ImageButton queue = (ImageButton) findViewById(R.id.confirm);
@@ -257,6 +257,7 @@ public class HappieCameraActivity extends Activity {
     private View.OnClickListener captureImage = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            shutter.setEnabled(false);
             mCamera.takePicture(null, null, capturePicture); //shutter, raw, jpeg
         }
     };
@@ -315,6 +316,7 @@ public class HappieCameraActivity extends Activity {
             new ProcessImage(badgeCounter, badgeCount, quadState, upperLeftThumbnail,
                     upperRightThumbnail, lowerLeftThumbnail, lowerRightThumbnail, thisRef,
                     mediaStorageDir, mediaThumbStorageDir).execute(data);
+            shutter.setEnabled(true);
 
         }
     };
