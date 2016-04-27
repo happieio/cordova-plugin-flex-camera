@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -52,6 +53,9 @@ public class HappieCameraActivity extends Activity {
     private int badgeCounter;
     private int quadState;  //0 = UL , 1 = UR, 2 = LL, 3 = LR
     private int flashState;
+    private android.content.Context thisRef;
+    File mediaStorageDir;
+    File mediaThumbStorageDir;
 
     protected HappieCameraThumb thumbGen = new HappieCameraThumb();
     protected HappieCameraJSON jsonGen = new HappieCameraJSON();
@@ -70,11 +74,12 @@ public class HappieCameraActivity extends Activity {
 
     protected void onCreateTasks() {
 
-        OrientationEventListener orientationListener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL){
+        OrientationEventListener orientationListener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
             @Override
             public void onOrientationChanged(int arg0) {
                 //TODO update camera orientation with arg0
-            }};
+            }
+        };
         if (orientationListener.canDetectOrientation()) orientationListener.enable();
 
         ImageButton cancel = (ImageButton) findViewById(R.id.cancel);
@@ -97,24 +102,40 @@ public class HappieCameraActivity extends Activity {
 
         quadState = 0;
 
+        thisRef = this;
+
+        mediaStorageDir = new File(HappieCamera.context.getExternalFilesDir(null) + "/media");
+        mediaThumbStorageDir = new File(HappieCamera.context.getExternalFilesDir(null) + "/media/thumb");
+        if (mediaStorageDir.mkdirs()) {
+            Log.d(TAG, "media directory created");
+        } else {
+            Log.d(TAG, "media directory already created");
+        }
+
+        if (mediaThumbStorageDir.mkdirs()) {
+            Log.d(TAG, "media thumbnail directory created");
+        } else {
+            Log.d(TAG, "media thumbnail directory already created");
+        }
+
         String filePath = HappieCamera.context.getExternalFilesDir(null) + "/media/thumb";
 
         File thumbDir = new File(filePath);
         String[] files = thumbDir.list();
-        for (String file : files){
+        for (String file : files) {
             File image = new File(filePath, file);
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-            Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
-            if(badgeCounter == 0){
+            Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
+            if (badgeCounter == 0) {
                 upperLeftThumbnail.setImageBitmap(bitmap);
                 quadState = 1;
-            }else if(badgeCounter == 1){
+            } else if (badgeCounter == 1) {
                 upperRightThumbnail.setImageBitmap(bitmap);
                 quadState = 2;
-            }else if(badgeCounter == 2){
+            } else if (badgeCounter == 2) {
                 lowerLeftThumbnail.setImageBitmap(bitmap);
                 quadState = 3;
-            }else if(badgeCounter == 3){
+            } else if (badgeCounter == 3) {
                 lowerRightThumbnail.setImageBitmap(bitmap);
                 quadState = 0;
             }
@@ -251,17 +272,17 @@ public class HappieCameraActivity extends Activity {
 
     private View.OnClickListener switchFlash = new View.OnClickListener() {
         @Override
-        public void onClick(View v){
+        public void onClick(View v) {
             Camera.Parameters params = mCamera.getParameters();
-            if(flashState == 0){
+            if (flashState == 0) {
                 params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                 flash.setImageResource(R.drawable.camera_flash_off);
                 flashState = 1;
-            }else if(flashState == 1){
+            } else if (flashState == 1) {
                 params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
                 flash.setImageResource(R.drawable.camera_flash_auto);
                 flashState = 2;
-            }else if(flashState == 2){
+            } else if (flashState == 2) {
                 params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                 flash.setImageResource(R.drawable.camera_flash_on);
                 flashState = 0;
@@ -276,47 +297,84 @@ public class HappieCameraActivity extends Activity {
     private Camera.PictureCallback capturePicture = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
+
+            mCamera.startPreview();
+
+            if (quadState == 0) {
+                quadState = 1;
+            } else if (quadState == 1) {
+                quadState = 2;
+            } else if (quadState == 2) {
+                quadState = 3;
+            } else if (quadState == 3) {
+                quadState = 0;
+            }
+            badgeCounter += 1;
+            badgeCount.setText(Integer.toString(badgeCounter));
+
+            new ProcessImage(badgeCounter, badgeCount, quadState, upperLeftThumbnail,
+                    upperRightThumbnail, lowerLeftThumbnail, lowerRightThumbnail, thisRef,
+                    mediaStorageDir, mediaThumbStorageDir).execute(data);
+
+        }
+    };
+
+    private class ProcessImage extends AsyncTask<byte[], Integer, android.graphics.Bitmap> {
+
+        private android.content.Context thisRef;
+        private ImageView upperLeftThumbnail;
+        private ImageView upperRightThumbnail;
+        private ImageView lowerLeftThumbnail;
+        private ImageView lowerRightThumbnail;
+        private TextView badgeCount;
+        private int badgeCounter;
+        private int quadState;  //0 = UL , 1 = UR, 2 = LL, 3 = LR
+        private File mediaStorageDir;
+        private File mediaThumbStorageDir;
+
+        ProcessImage(int badgeCounter, TextView badgeCount, int quadState, ImageView upperLeftThumb,
+                     ImageView upperRightThumb, ImageView lowerLeftThumb, ImageView lowerRightThumb,
+                     android.content.Context thisRef, File media, File thumb) {
+            this.upperLeftThumbnail = upperLeftThumb;
+            this.upperRightThumbnail = upperRightThumb;
+            this.lowerLeftThumbnail = lowerLeftThumb;
+            this.lowerRightThumbnail = lowerRightThumb;
+            this.quadState = quadState;
+            this.badgeCounter = badgeCounter;
+            this.badgeCount = badgeCount;
+            this.thisRef = thisRef;
+            this.mediaStorageDir = media;
+            this.mediaThumbStorageDir = thumb;
+
+        }
+
+        protected android.graphics.Bitmap doInBackground(byte[]... bytes) {
             if (Environment.getExternalStorageState().equals("MEDIA_MOUNTED") ||
                     Environment.getExternalStorageState().equals("mounted")) {
                 final File[] pictureFiles = getOutputMediaFiles(MEDIA_TYPE_IMAGE);
 
                 if (pictureFiles == null) {
                     Log.d(TAG, "Error creating media file, check storage permissions: ");
-                    return;
                 }
 
                 try {
                     //save image
                     FileOutputStream fos = new FileOutputStream(pictureFiles[0]);
-                    fos.write(data);
+                    fos.write(bytes[0]);
                     fos.close();
 
                     //save thumbnail
-                    thumbGen.createThumbOfImage(pictureFiles[1], data);
+                    thumbGen.createThumbOfImage(pictureFiles[1], bytes[0]);
 
                     String[] pathAndThumb = new String[2];
                     pathAndThumb[0] = Uri.fromFile(pictureFiles[0]).toString();
                     pathAndThumb[1] = Uri.fromFile(pictureFiles[1]).toString();
                     jsonGen.addToPathArray(pathAndThumb);
                     Bitmap preview = BitmapFactory.decodeFile(pictureFiles[1].getAbsolutePath());
-                    if (quadState == 0) {
-                        upperLeftThumbnail.setImageBitmap(preview);
-                        quadState = 1;
-                    } else if (quadState == 1) {
-                        upperRightThumbnail.setImageBitmap((preview));
-                        quadState = 2;
-                    } else if (quadState == 2) {
-                        lowerLeftThumbnail.setImageBitmap((preview));
-                        quadState = 3;
-                    } else if (quadState == 3) {
-                        lowerRightThumbnail.setImageBitmap((preview));
-                        quadState = 0;
-                    }
-                    badgeCounter += 1;
-                    badgeCount.setText(Integer.toString(badgeCounter));
+
+                    return preview;
 
 
-                    mCamera.startPreview();
                 } catch (FileNotFoundException e) {
                     Log.d(TAG, "File not found: " + e.getMessage());
                 } catch (IOException e) {
@@ -324,51 +382,57 @@ public class HappieCameraActivity extends Activity {
                 }
             } else {
                 presentSDCardWarning();
+                Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+                Bitmap bmp = Bitmap.createBitmap(100, 100, conf);
+                return bmp;
+            }
+
+            Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+            Bitmap bmp = Bitmap.createBitmap(100, 100, conf);
+            return bmp;
+        }
+
+
+        protected void onPostExecute(android.graphics.Bitmap preview) {
+            if (quadState == 0) {
+                upperLeftThumbnail.setImageBitmap(preview);
+            } else if (quadState == 1) {
+                upperRightThumbnail.setImageBitmap((preview));
+            } else if (quadState == 2) {
+                lowerLeftThumbnail.setImageBitmap((preview));
+            } else if (quadState == 3) {
+                lowerRightThumbnail.setImageBitmap((preview));
             }
         }
-    };
 
-    private void presentSDCardWarning() {
-        new AlertDialog.Builder(this)
-                .setTitle("SD Card Not Found")
-                .setMessage("Cannot reach SD card, closing camera.")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-        Log.d(TAG, "Error accessing file: SD Card Not Available");
-    }
+        private File[] getOutputMediaFiles(int type) {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            File[] FileAndThumb = new File[2];
+            if (type == MEDIA_TYPE_IMAGE) {
+                FileAndThumb[0] = new File(mediaStorageDir.getPath() + File.separator + timeStamp + "photo" + Integer.toString(badgeCounter) + ".jpg");
+                FileAndThumb[1] = new File(mediaThumbStorageDir.getPath() + File.separator + timeStamp + "photo" + Integer.toString(badgeCounter) + ".jpg");
+            } else if (type == MEDIA_TYPE_VIDEO) {
+                FileAndThumb[0] = new File(mediaStorageDir.getPath() + File.separator + timeStamp + "vid" + Integer.toString(badgeCounter) + ".mp4");
+                FileAndThumb[1] = new File(mediaThumbStorageDir.getPath() + File.separator + timeStamp + "vid" + Integer.toString(badgeCounter) + ".mp4");
+            } else {
+                return null;
+            }
 
-    private File[] getOutputMediaFiles(int type) {
-        File mediaStorageDir = new File(HappieCamera.context.getExternalFilesDir(null) + "/media");
-        File mediaThumbStorageDir = new File(HappieCamera.context.getExternalFilesDir(null) + "/media/thumb");
-        if (mediaStorageDir.mkdirs()) {
-            Log.d(TAG, "media directory created");
-        } else {
-            Log.d(TAG, "media directory already created");
+            return FileAndThumb;
         }
 
-        if (mediaThumbStorageDir.mkdirs()) {
-            Log.d(TAG, "media thumbnail directory created");
-        } else {
-            Log.d(TAG, "media thumbnail directory already created");
+        private void presentSDCardWarning() {
+            new AlertDialog.Builder(thisRef)
+                    .setTitle("SD Card Not Found")
+                    .setMessage("Cannot reach SD card, closing camera.")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+            Log.d(TAG, "Error accessing file: SD Card Not Available");
         }
-
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File[] FileAndThumb = new File[2];
-        if (type == MEDIA_TYPE_IMAGE) {
-            FileAndThumb[0] = new File(mediaStorageDir.getPath() + File.separator + timeStamp + "photo" + Integer.toString(badgeCounter) + ".jpg");
-            FileAndThumb[1] = new File(mediaThumbStorageDir.getPath() + File.separator + timeStamp + "photo" + Integer.toString(badgeCounter) + ".jpg");
-        } else if (type == MEDIA_TYPE_VIDEO) {
-            FileAndThumb[0] = new File(mediaStorageDir.getPath() + File.separator + timeStamp + "vid" + Integer.toString(badgeCounter) + ".mp4");
-            FileAndThumb[1] = new File(mediaThumbStorageDir.getPath() + File.separator + timeStamp + "vid" + Integer.toString(badgeCounter) + ".mp4");
-        } else {
-            return null;
-        }
-
-        return FileAndThumb;
     }
 }
