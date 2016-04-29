@@ -228,6 +228,29 @@ public class HappieCameraActivity extends Activity {
         if (mCamera == null) {
             initCameraSession();             // restart camera session when view returns
         }
+        String filePath = HappieCamera.context.getExternalFilesDir(null) + "/media/thumb";
+        File thumbDir = new File(filePath);
+        String[] files = thumbDir.list();
+        for (String file : files) {
+            File image = new File(filePath, file);
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
+            if (badgeCounter == 0) {
+                upperLeftThumbnail.setImageBitmap(bitmap);
+                quadState = 1;
+            } else if (badgeCounter == 1) {
+                upperRightThumbnail.setImageBitmap(bitmap);
+                quadState = 2;
+            } else if (badgeCounter == 2) {
+                lowerLeftThumbnail.setImageBitmap(bitmap);
+                quadState = 3;
+            } else if (badgeCounter == 3) {
+                lowerRightThumbnail.setImageBitmap(bitmap);
+                quadState = 0;
+            }
+            badgeCounter++;
+            badgeCount.setText(Integer.toString(badgeCounter));
+        }
     }
 
     protected void onDestroy() {
@@ -310,10 +333,10 @@ public class HappieCameraActivity extends Activity {
             } else if (quadState == 3) {
                 quadState = 0;
             }
-            badgeCounter += 1;
+            badgeCounter ++;
             badgeCount.setText(Integer.toString(badgeCounter));
 
-            new ProcessImage(badgeCounter, badgeCount, quadState, upperLeftThumbnail,
+            new ProcessImage(quadState, upperLeftThumbnail,
                     upperRightThumbnail, lowerLeftThumbnail, lowerRightThumbnail, thisRef,
                     mediaStorageDir, mediaThumbStorageDir).execute(data);
             shutter.setEnabled(true);
@@ -328,13 +351,11 @@ public class HappieCameraActivity extends Activity {
         private ImageView upperRightThumbnail;
         private ImageView lowerLeftThumbnail;
         private ImageView lowerRightThumbnail;
-        private TextView badgeCount;
-        private int badgeCounter;
         private int quadState;  //0 = UL , 1 = UR, 2 = LL, 3 = LR
         private File mediaStorageDir;
         private File mediaThumbStorageDir;
 
-        ProcessImage(int badgeCounter, TextView badgeCount, int quadState, ImageView upperLeftThumb,
+        ProcessImage(int quadState, ImageView upperLeftThumb,
                      ImageView upperRightThumb, ImageView lowerLeftThumb, ImageView lowerRightThumb,
                      android.content.Context thisRef, File media, File thumb) {
             this.upperLeftThumbnail = upperLeftThumb;
@@ -342,8 +363,6 @@ public class HappieCameraActivity extends Activity {
             this.lowerLeftThumbnail = lowerLeftThumb;
             this.lowerRightThumbnail = lowerRightThumb;
             this.quadState = quadState;
-            this.badgeCounter = badgeCounter;
-            this.badgeCount = badgeCount;
             this.thisRef = thisRef;
             this.mediaStorageDir = media;
             this.mediaThumbStorageDir = thumb;
