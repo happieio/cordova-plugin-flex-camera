@@ -118,10 +118,12 @@ public class HappieCameraActivity extends Activity {
             Log.d(TAG, "media thumbnail directory already created");
         }
 
+
         String filePath = HappieCamera.context.getExternalFilesDir(null) + "/media/thumb";
 
         File thumbDir = new File(filePath);
         String[] files = thumbDir.list();
+        badgeCounter = 0;
         for (String file : files) {
             File image = new File(filePath, file);
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -228,29 +230,6 @@ public class HappieCameraActivity extends Activity {
         if (mCamera == null) {
             initCameraSession();             // restart camera session when view returns
         }
-        String filePath = HappieCamera.context.getExternalFilesDir(null) + "/media/thumb";
-        File thumbDir = new File(filePath);
-        String[] files = thumbDir.list();
-        for (String file : files) {
-            File image = new File(filePath, file);
-            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-            Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
-            if (badgeCounter == 0) {
-                upperLeftThumbnail.setImageBitmap(bitmap);
-                quadState = 1;
-            } else if (badgeCounter == 1) {
-                upperRightThumbnail.setImageBitmap(bitmap);
-                quadState = 2;
-            } else if (badgeCounter == 2) {
-                lowerLeftThumbnail.setImageBitmap(bitmap);
-                quadState = 3;
-            } else if (badgeCounter == 3) {
-                lowerRightThumbnail.setImageBitmap(bitmap);
-                quadState = 0;
-            }
-            badgeCounter++;
-            badgeCount.setText(Integer.toString(badgeCounter));
-        }
     }
 
     protected void onDestroy() {
@@ -333,7 +312,7 @@ public class HappieCameraActivity extends Activity {
             } else if (quadState == 3) {
                 quadState = 0;
             }
-            badgeCounter ++;
+            badgeCounter++;
             badgeCount.setText(Integer.toString(badgeCounter));
 
             new ProcessImage(quadState, upperLeftThumbnail,
