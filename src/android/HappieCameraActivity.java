@@ -303,6 +303,14 @@ public class HappieCameraActivity extends Activity {
 
             mCamera.startPreview();
 
+            badgeCounter++;
+            badgeCount.setText(Integer.toString(badgeCounter));
+
+            new ProcessImage(quadState, upperLeftThumbnail,
+                    upperRightThumbnail, lowerLeftThumbnail, lowerRightThumbnail, thisRef,
+                    mediaStorageDir, mediaThumbStorageDir).execute(data);
+            shutter.setEnabled(true);
+
             if (quadState == 0) {
                 quadState = 1;
             } else if (quadState == 1) {
@@ -312,14 +320,6 @@ public class HappieCameraActivity extends Activity {
             } else if (quadState == 3) {
                 quadState = 0;
             }
-            badgeCounter++;
-            badgeCount.setText(Integer.toString(badgeCounter));
-
-            new ProcessImage(quadState, upperLeftThumbnail,
-                    upperRightThumbnail, lowerLeftThumbnail, lowerRightThumbnail, thisRef,
-                    mediaStorageDir, mediaThumbStorageDir).execute(data);
-            shutter.setEnabled(true);
-
         }
     };
 
