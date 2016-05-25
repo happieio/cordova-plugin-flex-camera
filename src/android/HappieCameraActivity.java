@@ -44,6 +44,8 @@ public class HappieCameraActivity extends Activity {
 
     private ImageButton shutter;
     private ImageButton flash;
+    private ImageButton queue;
+    private ImageButton cancel;
 
     private ImageView upperLeftThumbnail;
     private ImageView upperRightThumbnail;
@@ -82,14 +84,15 @@ public class HappieCameraActivity extends Activity {
         };
         if (orientationListener.canDetectOrientation()) orientationListener.enable();
 
-        ImageButton cancel = (ImageButton) findViewById(R.id.cancel);
+        cancel = (ImageButton) findViewById(R.id.cancel);
         cancel.setOnClickListener(cancelSession);
 
         shutter = (ImageButton) findViewById(R.id.shutter);
         shutter.setOnClickListener(captureImage);
 
-        ImageButton queue = (ImageButton) findViewById(R.id.confirm);
+        queue = (ImageButton) findViewById(R.id.confirm);
         queue.setOnClickListener(cameraFinishToQueue);
+
 
         flash = (ImageButton) findViewById(R.id.flashToggle);
         flash.setOnClickListener(switchFlash);
@@ -259,7 +262,9 @@ public class HappieCameraActivity extends Activity {
     private View.OnClickListener captureImage = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            queue.setEnabled(false);
             shutter.setEnabled(false);
+            cancel.setEnabled(false);
             mCamera.takePicture(null, null, capturePicture); //shutter, raw, jpeg
         }
     };
@@ -308,8 +313,7 @@ public class HappieCameraActivity extends Activity {
 
             new ProcessImage(quadState, upperLeftThumbnail,
                     upperRightThumbnail, lowerLeftThumbnail, lowerRightThumbnail, thisRef,
-                    mediaStorageDir, mediaThumbStorageDir).execute(data);
-            shutter.setEnabled(true);
+                    mediaStorageDir, mediaThumbStorageDir, queue, cancel).execute(data);
 
             if (quadState == 0) {
                 quadState = 1;
@@ -320,6 +324,8 @@ public class HappieCameraActivity extends Activity {
             } else if (quadState == 3) {
                 quadState = 0;
             }
+
+            shutter.setEnabled(true);
         }
     };
 
@@ -333,10 +339,12 @@ public class HappieCameraActivity extends Activity {
         private int quadState;  //0 = UL , 1 = UR, 2 = LL, 3 = LR
         private File mediaStorageDir;
         private File mediaThumbStorageDir;
+        private ImageButton queueRef;
+        private ImageButton cancelRef;
 
         ProcessImage(int quadState, ImageView upperLeftThumb,
                      ImageView upperRightThumb, ImageView lowerLeftThumb, ImageView lowerRightThumb,
-                     android.content.Context thisRef, File media, File thumb) {
+                     android.content.Context thisRef, File media, File thumb, ImageButton queue, ImageButton cancel) {
             this.upperLeftThumbnail = upperLeftThumb;
             this.upperRightThumbnail = upperRightThumb;
             this.lowerLeftThumbnail = lowerLeftThumb;
@@ -345,6 +353,8 @@ public class HappieCameraActivity extends Activity {
             this.thisRef = thisRef;
             this.mediaStorageDir = media;
             this.mediaThumbStorageDir = thumb;
+            this.queueRef = queue;
+            this.cancelRef = cancel;
 
         }
 
@@ -403,6 +413,8 @@ public class HappieCameraActivity extends Activity {
             } else if (quadState == 3) {
                 lowerRightThumbnail.setImageBitmap((preview));
             }
+            queueRef.setEnabled(true);
+            cancelRef.setEnabled(true);
         }
 
         private File[] getOutputMediaFiles(int type) {
