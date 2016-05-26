@@ -24,7 +24,7 @@ public class HappieCameraJSON {
         paths.add(path);
     }
 
-    public String getFinalJSON(String route, Boolean shouldSave) {
+    public String getFinalJSON(String route, Boolean shouldSave, int count) {
         if (shouldSave) {
             JsonNode json = jacksonMapper.createObjectNode();
             JsonNode jsonPaths = jacksonMapper.createArrayNode();
@@ -33,6 +33,7 @@ public class HappieCameraJSON {
                 ((ArrayNode) jsonPaths).addObject().put("url", strings[0]).put("thumb", strings[1]);
 
             ((ObjectNode) json).put("route", route);
+            ((ObjectNode) json).put("count", count);
             ((ObjectNode) json).put("paths", jsonPaths);
             System.out.println(json.toString());
             resetJSON();
@@ -40,7 +41,7 @@ public class HappieCameraJSON {
         } else {
             deleteCapturedImages();
             resetJSON();
-            return "{\"route\":\"cancel\", \"paths\":null }";
+            return "{\"route\":\"cancel\", \"paths\":null, \"count\":" + count +"}";
         }
     }
     

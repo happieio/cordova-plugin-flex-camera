@@ -42,7 +42,7 @@ class HappieCameraRoll: CDVPlugin {
                                         let thumbPath = self.thumbGen.createThumbOfCamRollImage(imageData);
                                         let paths: Array<String> = [obj.absoluteString!, thumbPath]
                                         self.jsonGen.addToPathArray(paths)
-                                        let jsonPaths = self.jsonGen.getFinalJSON(dest: "selection", save: true)
+                                        _ = self.jsonGen.getFinalJSON(dest: "selection", save: true, counter:1)
                                         //self.delegate?.cameraRollFinished(jsonPaths)
                                     }
                                 })

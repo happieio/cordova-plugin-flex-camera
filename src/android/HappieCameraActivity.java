@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.Surface;
@@ -253,7 +254,7 @@ public class HappieCameraActivity extends Activity {
     private View.OnClickListener cancelSession = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String JSON = jsonGen.getFinalJSON("cancel", false);
+            String JSON = jsonGen.getFinalJSON("cancel", false, badgeCounter);
             HappieCamera.sessionFinished(JSON);
             finish();
         }
@@ -272,7 +273,7 @@ public class HappieCameraActivity extends Activity {
     private View.OnClickListener cameraFinishToQueue = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String JSON = jsonGen.getFinalJSON("queue", true);
+            String JSON = jsonGen.getFinalJSON("queue", true, badgeCounter);
             HappieCamera.sessionFinished(JSON);
             finish();
         }
@@ -413,6 +414,7 @@ public class HappieCameraActivity extends Activity {
             } else if (quadState == 3) {
                 lowerRightThumbnail.setImageBitmap((preview));
             }
+
             queueRef.setEnabled(true);
             cancelRef.setEnabled(true);
         }

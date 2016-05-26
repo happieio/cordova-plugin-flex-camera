@@ -7,10 +7,12 @@ import Foundation
     
     func addToPathArray(path:Array<String>){ paths.append(path) }
 
-    func getFinalJSON(dest route: String, save shouldSave: Bool) -> String{
+    func getFinalJSON(dest route: String, save shouldSave: Bool, counter count:Int) -> String{
+        let stringCount = String(count)
         if(shouldSave){
             var json = [String: AnyObject]()
             json["route"] = route
+            json["count"] = stringCount
             
             var pathDictionary: [Dictionary<String, String>] = [];
             for pathPair in paths {
@@ -30,9 +32,10 @@ import Foundation
         else{
             deleteCapturedImages()
             resetJSON()
-            return "{\"route\":\"cancel\", \"paths\":null }"
+            
+            return "{\"route\":\"cancel\", \"paths\":null, \"\":" + stringCount + " }"
         }
-        return "{\"route\":\"cancel\", \"paths\":null }"
+        return "{\"route\":\"cancel\", \"paths\":null, \"\":" + stringCount + " }"
     }
     
     func resetJSON(){

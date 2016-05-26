@@ -70,22 +70,22 @@ import AssetsLibrary
                 let path = mediaDir + "/" + element
                 if(badgeCounter == 0){
                     ULuii.image = UIImage(contentsOfFile: path)
-                    self.badgeCounter++
+                    self.badgeCounter += 1
                     self.quadState = 1
                 }
                 else if(badgeCounter == 1){
                     URuii.image = UIImage(contentsOfFile: path)
-                    self.badgeCounter++
+                    self.badgeCounter += 1
                     self.quadState = 2
                 }
                 else if(badgeCounter == 2){
                     LLuii.image = UIImage(contentsOfFile: path);
-                    self.badgeCounter++
+                    self.badgeCounter += 1
                     self.quadState = 3
                 }
                 else if(badgeCounter == 3){
                     LRuii.image = UIImage(contentsOfFile: path);
-                    self.badgeCounter++
+                    self.badgeCounter += 1
                     self.quadState = 0
                 }
             }
@@ -198,7 +198,7 @@ import AssetsLibrary
 
     @IBAction func cancelSession(sender: AnyObject) {
         resetThumbImages()
-        let pathJSON = jsonGen.getFinalJSON(dest: "cancel", save: false)
+        let pathJSON = jsonGen.getFinalJSON(dest: "cancel", save: false, counter:badgeCounter)
 //        if(backCameraDevice?.flashAvailable){
 //            setFlashModeToAuto(backCameraDevice!)
 //        }
@@ -208,7 +208,7 @@ import AssetsLibrary
 
     @IBAction func cameraFinishToQueue(sender: UIButton) {
         resetThumbImages()
-        let pathJSON = jsonGen.getFinalJSON(dest: "queue", save: true)
+        let pathJSON = jsonGen.getFinalJSON(dest: "queue", save: true, counter:badgeCounter)
 //        if(backCameraDevice?.flashAvailable){
 //            setFlashModeToAuto(backCameraDevice!)
 //        }

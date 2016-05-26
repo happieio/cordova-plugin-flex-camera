@@ -50,7 +50,7 @@ public class HappieCameraRoll {
             paths[0] = file.getAbsolutePath();
             paths[1] = thumbPath.getAbsolutePath();
             jsonGen.addToPathArray(paths);
-            PluginResult r = new PluginResult(PluginResult.Status.OK, jsonGen.getFinalJSON("select", true));
+            PluginResult r = new PluginResult(PluginResult.Status.OK, jsonGen.getFinalJSON("select", true, 1));
             r.setKeepCallback(true);
             HappieCamera.callbackContext.sendPluginResult(r);
         } else {
