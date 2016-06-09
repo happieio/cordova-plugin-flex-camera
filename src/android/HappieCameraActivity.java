@@ -263,7 +263,7 @@ public class HappieCameraActivity extends Activity {
     private View.OnClickListener captureImage = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            queue.setEnabled(false);
+            //queue.setEnabled(false);
             shutter.setEnabled(false);
             cancel.setEnabled(false);
             mCamera.takePicture(null, null, capturePicture); //shutter, raw, jpeg
@@ -415,7 +415,7 @@ public class HappieCameraActivity extends Activity {
                 lowerRightThumbnail.setImageBitmap((preview));
             }
 
-            queueRef.setEnabled(true);
+            //queueRef.setEnabled(true);
             cancelRef.setEnabled(true);
         }
 
