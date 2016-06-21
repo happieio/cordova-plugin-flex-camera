@@ -219,7 +219,10 @@ public class HappieCameraActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        releaseCamera();              // release the camera immediately on pause event
+        releaseCamera();
+        String JSON = jsonGen.getFinalJSON("queue", true, badgeCounter);
+        HappieCamera.sessionFinished(JSON);
+        finish();
     }
 
     @Override
