@@ -46,7 +46,7 @@ import UIKit
     }
     
     func generateFileName() -> String {
-        counter++;
+        counter += 1;
         let date = NSDate()
         let format = NSDateFormatter()
         format.dateFormat = "yyyyMMdd_HHmmss"
