@@ -6,7 +6,9 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -59,6 +61,8 @@ public class HappieCameraActivity extends Activity {
     private android.content.Context thisRef;
     File mediaStorageDir;
     File mediaThumbStorageDir;
+
+    private int degrees = 0;
 
     protected HappieCameraThumb thumbGen = new HappieCameraThumb();
     protected HappieCameraJSON jsonGen = new HappieCameraJSON();
@@ -184,7 +188,6 @@ public class HappieCameraActivity extends Activity {
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(0, info);
         int rotation = this.getWindowManager().getDefaultDisplay().getRotation();
-        int degrees = 0;
         switch (rotation) {
             case Surface.ROTATION_0:
                 degrees = 0;
@@ -317,7 +320,7 @@ public class HappieCameraActivity extends Activity {
 
             new ProcessImage(quadState, upperLeftThumbnail,
                     upperRightThumbnail, lowerLeftThumbnail, lowerRightThumbnail, thisRef,
-                    mediaStorageDir, mediaThumbStorageDir, queue, cancel).execute(data);
+                    mediaStorageDir, mediaThumbStorageDir, queue, cancel, degrees).execute(data);
 
             if (quadState == 0) {
                 quadState = 1;
@@ -345,10 +348,11 @@ public class HappieCameraActivity extends Activity {
         private File mediaThumbStorageDir;
         private ImageButton queueRef;
         private ImageButton cancelRef;
+        private int degrees;
 
         ProcessImage(int quadState, ImageView upperLeftThumb,
                      ImageView upperRightThumb, ImageView lowerLeftThumb, ImageView lowerRightThumb,
-                     android.content.Context thisRef, File media, File thumb, ImageButton queue, ImageButton cancel) {
+                     android.content.Context thisRef, File media, File thumb, ImageButton queue, ImageButton cancel, int deg) {
             this.upperLeftThumbnail = upperLeftThumb;
             this.upperRightThumbnail = upperRightThumb;
             this.lowerLeftThumbnail = lowerLeftThumb;
@@ -359,6 +363,7 @@ public class HappieCameraActivity extends Activity {
             this.mediaThumbStorageDir = thumb;
             this.queueRef = queue;
             this.cancelRef = cancel;
+            this.degrees = deg;
 
         }
 
@@ -372,22 +377,35 @@ public class HappieCameraActivity extends Activity {
                 }
 
                 try {
+
+                    Bitmap bmp;
+                    bmp = BitmapFactory.decodeByteArray(bytes[0], 0, bytes[0].length);
+
+                    Matrix matrix = new Matrix();
+                    if(degrees == 0 || degrees == 180){
+                        matrix.postRotate(degrees-90);
+                    }else {
+                        matrix.postRotate(degrees+90);
+                    }
+
+                    bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+
                     //save image
                     FileOutputStream fos = new FileOutputStream(pictureFiles[0]);
-                    fos.write(bytes[0]);
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 85, fos);
+                    fos.flush();
                     fos.close();
 
                     //save thumbnail
-                    thumbGen.createThumbOfImage(pictureFiles[1], bytes[0]);
+                    Bitmap thumb = thumbGen.createThumbOfImage(pictureFiles[1], bmp);
 
                     String[] pathAndThumb = new String[2];
                     pathAndThumb[0] = Uri.fromFile(pictureFiles[0]).toString();
                     pathAndThumb[1] = Uri.fromFile(pictureFiles[1]).toString();
                     jsonGen.addToPathArray(pathAndThumb);
-                    Bitmap preview = BitmapFactory.decodeFile(pictureFiles[1].getAbsolutePath());
+                    //Bitmap preview = BitmapFactory.decodeFile(pictureFiles[1].getAbsolutePath());
 
-                    return preview;
-
+                    return thumb;
 
                 } catch (FileNotFoundException e) {
                     Log.d(TAG, "File not found: " + e.getMessage());
@@ -405,7 +423,6 @@ public class HappieCameraActivity extends Activity {
             Bitmap bmp = Bitmap.createBitmap(100, 100, conf);
             return bmp;
         }
-
 
         protected void onPostExecute(android.graphics.Bitmap preview) {
             if (quadState == 0) {
