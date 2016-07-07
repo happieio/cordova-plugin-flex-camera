@@ -136,16 +136,16 @@ public class HappieCameraActivity extends Activity {
             File image = new File(filePath, file);
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
-            if (badgeCounter == 0) {
+            if (quadState == 0) {
                 upperLeftThumbnail.setImageBitmap(bitmap);
                 quadState = 1;
-            } else if (badgeCounter == 1) {
+            } else if (quadState == 1) {
                 upperRightThumbnail.setImageBitmap(bitmap);
                 quadState = 2;
-            } else if (badgeCounter == 2) {
+            } else if (quadState == 2) {
                 lowerLeftThumbnail.setImageBitmap(bitmap);
                 quadState = 3;
-            } else if (badgeCounter == 3) {
+            } else if (quadState == 3) {
                 lowerRightThumbnail.setImageBitmap(bitmap);
                 quadState = 0;
             }

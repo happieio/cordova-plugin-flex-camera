@@ -17,7 +17,7 @@ import AssetsLibrary
     let filemgr = NSFileManager.defaultManager()
     var mediaDir: String = "";
     var thumbDir: String = "";
-
+    
     var flashState = 2; //0 = off, 1 = On, 2 = Auto
     var quadState = 0; //0 = UL , 1 = UR, 2 = LL, 3 = LR
     var badgeCounter = 0;
@@ -41,7 +41,6 @@ import AssetsLibrary
         quadState = 0;
         badgeCount.text = "0"
         badgeCounter = 0;
-
 
         //create documents/media folder to contain captured images
         let dirPaths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
@@ -68,22 +67,22 @@ import AssetsLibrary
                 (element as NSString).containsString("thumb") &&
                 element != "thumb"){
                 let path = mediaDir + "/" + element
-                if(badgeCounter == 0){
+                if(self.quadState == 0){
                     ULuii.image = UIImage(contentsOfFile: path)
                     self.badgeCounter += 1
                     self.quadState = 1
                 }
-                else if(badgeCounter == 1){
+                else if(self.quadState == 1){
                     URuii.image = UIImage(contentsOfFile: path)
                     self.badgeCounter += 1
                     self.quadState = 2
                 }
-                else if(badgeCounter == 2){
+                else if(self.quadState == 2){
                     LLuii.image = UIImage(contentsOfFile: path);
                     self.badgeCounter += 1
                     self.quadState = 3
                 }
-                else if(badgeCounter == 3){
+                else if(self.quadState == 3){
                     LRuii.image = UIImage(contentsOfFile: path);
                     self.badgeCounter += 1
                     self.quadState = 0
@@ -138,7 +137,9 @@ import AssetsLibrary
         captureSession.startRunning()
     }
 
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask { return UIInterfaceOrientationMask.All }
+    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+        return UIInterfaceOrientationMask.All
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -150,9 +151,19 @@ import AssetsLibrary
     }
 
     override func shouldAutorotate() -> Bool {
-        return false
+        return true
     }
 
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator);
+        coordinator.animateAlongsideTransition(nil, completion: {
+            _ in
+            _ = 0;
+            self.captureSession.stopRunning();
+            self.beginSession();
+        })
+    }
+    
     override func willRotateToInterfaceOrientation(newOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
         (camPreview.layer as! AVCaptureVideoPreviewLayer).connection.videoOrientation = AVCaptureVideoOrientation(rawValue: newOrientation.rawValue)!
 
@@ -163,7 +174,8 @@ import AssetsLibrary
             (camPreview.layer as! AVCaptureVideoPreviewLayer).videoGravity = AVLayerVideoGravityResizeAspectFill
         }
 
-        //TODO implement asset rotation something like this let PortraitImage  : UIImage = UIImage(CGImage: LandscapeImage.CGImage ,
+        //TODO implement asset rotation something like this 
+        //let PortraitImage  : UIImage = UIImage(CGImage: LandscapeImage.CGImage ,
          //scale: 1.0 ,
          //orientation: UIImageOrientation.Right)
     }
@@ -172,13 +184,16 @@ import AssetsLibrary
     func beginSession(){
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
 
-        let orientation: AVCaptureVideoOrientation =  AVCaptureVideoOrientation(rawValue: self.interfaceOrientation.rawValue)!
-        previewLayer.connection.videoOrientation = orientation;
-        camPreview.layer.addSublayer(previewLayer)
-
         previewLayer.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height)
         previewLayer.bounds = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height)
         previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+        
+        let currentDevice: UIDevice = UIDevice.currentDevice()
+        let orientation: UIDeviceOrientation = currentDevice.orientation
+        
+        previewLayer.connection.videoOrientation = AVCaptureVideoOrientation(rawValue: orientation.rawValue)!;
+        camPreview.layer.addSublayer(previewLayer)
+
         captureSession.startRunning()
     }
 
@@ -229,12 +244,37 @@ import AssetsLibrary
             { (imageBuffer: CMSampleBufferRef!, error: NSError!) -> Void in
                 if((imageBuffer) != nil){
                     let imageData: NSData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageBuffer)
+                    let UIImageFromData = UIImage(data: imageData)
+                    
+                    let currentDevice: UIDevice = UIDevice.currentDevice()
+                    let orientation: UIDeviceOrientation = currentDevice.orientation
+                    
+                    let rawOrient = orientation.rawValue
+                    
+                    var  orient = UIImageOrientation.Right;
+                    if(rawOrient == 1){//portait
+                        orient = UIImageOrientation.Right
+                    }
+                    else if(rawOrient == 2){// inverted portrait
+                        orient = UIImageOrientation.Left
+                    }
+                    else if(rawOrient == 3){ //landscape home right
+                        orient = UIImageOrientation.Up
+                    }
+                    else if(rawOrient == 4){ //landscape home left
+                        orient = UIImageOrientation.Down
+                    }
+                    
+                    let image = UIImage(CGImage: UIImageFromData!.CGImage!, scale: CGFloat(1.0), orientation: orient)
+                    
+                    let orientedNSData: NSData = UIImageJPEGRepresentation(image, 1)!
+                    
                     self.badgeCounter += 1;
                     let fileName = self.generateFileName()
                     let path = self.mediaDir + "/" + fileName
                     let thumbPath = self.thumbDir + "/" + fileName
-                    if self.filemgr.createFileAtPath(path, contents: imageData, attributes: nil) {
-                        let thumbData = self.thumbGen.createThumbOfImage(thumbPath, data: imageData)
+                    if self.filemgr.createFileAtPath(path, contents: orientedNSData, attributes: nil) {
+                        let thumbData = self.thumbGen.createThumbOfImage(thumbPath, data: orientedNSData)
                         self.badgeCount.text = String(self.badgeCounter)
                         if(self.quadState == 0) {self.ULuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 1}
                         else if(self.quadState == 1) {self.URuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 2}
