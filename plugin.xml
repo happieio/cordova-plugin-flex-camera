@@ -48,6 +48,7 @@
         <source-file src="src/assets/android/camera_shutter.png" target-dir="res/drawable/" />
         <source-file src="src/assets/android/camera_video_toggle_off.png" target-dir="res/drawable/" />
         <source-file src="src/assets/android/camera_video_toggle_on.png" target-dir="res/drawable/" />
+        <source-file src="src/assets/common/App_Camera-BG.jpg" target-dir="res/drawable/" />
         <source-file src="src/android/happie_cam_layout.xml" target-dir="res/layout/" />
         <source-file src="src/android/HappieCamera.java" target-dir="src/io/happie/cordovaCamera" />
         <source-file src="src/android/HappieCameraActivity.java" target-dir="src/io/happie/cordovaCamera" />
@@ -86,6 +87,7 @@
         <source-file src="src/assets/ios/camera_shutter@3x.png" />
         <source-file src="src/assets/ios/gray@2x.png" />
         <source-file src="src/assets/ios/gray@3x.png" />
+        <source-file src="src/assets/common/App_Camera-BG.jpg" />
         <source-file src="src/ios/HappieCamera.swift"/>
         <source-file src="src/ios/HappieCameraViewController.swift"/>
         <source-file src="src/ios/HappieCameraJSON.swift"/>

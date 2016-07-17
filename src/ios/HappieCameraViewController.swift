@@ -42,6 +42,12 @@ import AssetsLibrary
         badgeCount.text = "0"
         badgeCounter = 0;
 
+        //make demo image accessible during runtime
+        demoBackground.hidden = true;
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(HappieCameraViewController.LongPressDemo))
+        tapGesture.numberOfTapsRequired = 10;
+        demoButton.addGestureRecognizer(tapGesture)
+        
         //create documents/media folder to contain captured images
         let dirPaths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
         let docsDir = dirPaths[0]
@@ -198,6 +204,12 @@ import AssetsLibrary
     }
 
     //MARK: IB Outlets and Actions
+    
+    
+    @IBOutlet weak var demoBackground: UIImageView!
+    
+    @IBOutlet weak var demoButton: UIButton!
+    @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var camPreview: UIView!
     @IBOutlet weak var flashUIButton: UIButton!
     @IBOutlet weak var ULuii: UIImageView!
@@ -231,6 +243,10 @@ import AssetsLibrary
         delegate!.cameraFinished(self, JSON: pathJSON)
     }
 
+    func LongPressDemo() {
+        demoBackground.hidden = !demoBackground.hidden;
+    }
+    
     func resetThumbImages(){
         ULuii.image = UIImage(named:"gray.png")
         URuii.image = UIImage(named:"gray.png")
