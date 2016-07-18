@@ -44,9 +44,9 @@ import AssetsLibrary
 
         //make demo image accessible during runtime
         demoBackground.hidden = true;
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(HappieCameraViewController.LongPressDemo))
-        tapGesture.numberOfTapsRequired = 10;
-        demoButton.addGestureRecognizer(tapGesture)
+        //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(HappieCameraViewController.LongPressDemo))
+        //tapGesture.numberOfTapsRequired = 10;
+        //demoButton.addGestureRecognizer(tapGesture)
         
         //create documents/media folder to contain captured images
         let dirPaths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
