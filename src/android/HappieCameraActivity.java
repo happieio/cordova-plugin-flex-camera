@@ -57,7 +57,7 @@ public class HappieCameraActivity extends Activity {
     private TextView badgeCount;
     private int badgeCounter;
     private int quadState;  //0 = UL , 1 = UR, 2 = LL, 3 = LR
-    private int flashState;
+    private int flashState = 2;//camera_flash_auto
     private android.content.Context thisRef;
     File mediaStorageDir;
     File mediaThumbStorageDir;
@@ -170,11 +170,19 @@ public class HappieCameraActivity extends Activity {
             mCamera = Camera.open();
             Camera.Parameters params = mCamera.getParameters();
             params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-            params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-            mCamera.setParameters(params);
-            params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
-            flash.setImageResource(R.drawable.camera_flash_auto);
-            flashState = 1;
+            switch (flashState){
+                case 1:
+                    params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                    flash.setImageResource(R.drawable.camera_flash_off);
+                break;
+                case 2:
+                    params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+                    flash.setImageResource(R.drawable.camera_flash_auto);
+                    break;
+                default:
+                    params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                    flash.setImageResource(R.drawable.camera_flash_on);
+            }
             mCamera.setParameters(params);
         } catch (Exception e) {
             HappieCamera.callbackContext.error("Failed to initialize the camera");
@@ -383,9 +391,9 @@ public class HappieCameraActivity extends Activity {
 
                     Matrix matrix = new Matrix();
                     if(degrees == 0 || degrees == 180){
-                        matrix.postRotate(degrees-90);
-                    }else {
                         matrix.postRotate(degrees+90);
+                    }else {
+                        matrix.postRotate(degrees-90);
                     }
 
                     bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
