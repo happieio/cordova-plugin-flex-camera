@@ -2,7 +2,9 @@ package io.happie.cordovaCamera;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
+
 import java.io.File;
 
 import android.util.Log;
@@ -17,74 +19,31 @@ import java.io.IOException;
  */
 public class HappieCameraThumb {
 
-    public Bitmap createThumbOfImage(File file, Bitmap imageData) {
-        Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(imageData, 400, 400);
+    public Bitmap createThumbOfImage(File file, byte[] imageData, int degrees) {
+        Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeByteArray(imageData, 0, imageData.length), 400, 400);
+
+        Matrix matrix = new Matrix();
+        if(degrees == 0 || degrees == 180){
+            matrix.postRotate(degrees+90);
+        }else {
+            matrix.postRotate(degrees-90);
+        }
+
+        Bitmap orientedBmp = Bitmap.createBitmap(ThumbImage, 0, 0, ThumbImage.getWidth(), ThumbImage.getHeight(), matrix, true);
+
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        ThumbImage.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+        orientedBmp.compress(Bitmap.CompressFormat.JPEG, 85, stream);
         byte[] thumbnailByteArray = stream.toByteArray();
 
         try {
             FileOutputStream fosThumb = new FileOutputStream(file);
             fosThumb.write(thumbnailByteArray);
             fosThumb.close();
-
-            return ThumbImage;
-        } catch (FileNotFoundException e) {
-            Log.d("HappieThumb", "File not found: " + e.getMessage());
-            Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-            Bitmap bmp = Bitmap.createBitmap(100, 100, conf);
-            return bmp;
-        } catch (IOException e) {
-            Log.d("HappieThumb", "Error accessing file: " + e.getMessage());
-            Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-            Bitmap bmp = Bitmap.createBitmap(100, 100, conf);
-            return bmp;
-        }
-    }
-
-    public void createThumbOfImage(File file, File thumbPath) {
-        Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(file.getPath()), 400, 400);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        ThumbImage.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-        byte[] thumbnailByteArray = stream.toByteArray();
-
-        try {
-            FileOutputStream fosThumb = new FileOutputStream(thumbPath);
-            fosThumb.write(thumbnailByteArray);
-            fosThumb.close();
         } catch (FileNotFoundException e) {
             Log.d("HappieThumb", "File not found: " + e.getMessage());
         } catch (IOException e) {
             Log.d("HappieThumb", "Error accessing file: " + e.getMessage());
         }
-    }
-
-//    public void createThumbOfVideo (File file){
-//        try {
-//            int size = (int) file.length();
-//            byte[] ImageBytes = new byte[size];
-//
-//            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
-//            buf.read(ImageBytes, 0, ImageBytes.length);
-//            buf.close();
-//
-//            Bitmap ThumbImage = ThumbnailUtils.createVideoThumbnail(file.getPath(), MediaStore.Video.Thumbnails.MINI_KIND);
-//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//            ThumbImage.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-//            byte[] thumbnailByteArray = stream.toByteArray();
-//
-//            FileOutputStream fosThumb = new FileOutputStream(file);
-//            fosThumb.write(thumbnailByteArray);
-//            fosThumb.close();
-//        } catch (FileNotFoundException e) {
-//            Log.d("HappieThumb", "File not found: " + e.getMessage());
-//        } catch (IOException e) {
-//            Log.d("HappieThumb", "Error accessing file: " + e.getMessage());
-//        }
-//    }
-
-    public File getThumbFile(String filename) {
-        File mediaThumbStorageDir = new File(HappieCamera.context.getExternalFilesDir(null) + "/media/thumb");
-        return new File(mediaThumbStorageDir.getPath() + File.separator + filename);
+        return ThumbImage;
     }
 }

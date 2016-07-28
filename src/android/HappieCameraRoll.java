@@ -43,25 +43,25 @@ public class HappieCameraRoll {
     }
 
     public void generateMediaPaths(File file, Boolean isImage) {
-        if (isImage) {
-            File thumbPath = thumbGen.getThumbFile("roll_" + file.getName());
-            thumbGen.createThumbOfImage(file, thumbPath);
-            String[] paths = new String[2];
-            paths[0] = file.getAbsolutePath();
-            paths[1] = thumbPath.getAbsolutePath();
-            jsonGen.addToPathArray(paths);
-            PluginResult r = new PluginResult(PluginResult.Status.OK, jsonGen.getFinalJSON("select", true, 1));
-            r.setKeepCallback(true);
-            HappieCamera.callbackContext.sendPluginResult(r);
-        } else {
-            String notImplemented = "";
-            //handles videos
+//        if (isImage) {
+//            File thumbPath = thumbGen.getThumbFile("roll_" + file.getName());
+//            thumbGen.createThumbOfImage(file, thumbPath);
+//            String[] paths = new String[2];
+//            paths[0] = file.getAbsolutePath();
+//            paths[1] = thumbPath.getAbsolutePath();
+//            jsonGen.addToPathArray(paths);
+//            PluginResult r = new PluginResult(PluginResult.Status.OK, jsonGen.getFinalJSON("select", true, 1));
+//            r.setKeepCallback(true);
+//            HappieCamera.callbackContext.sendPluginResult(r);
+//        } else {
+//            String notImplemented = "";
+
 //            File thumbPath = HappieThumb.getThumbFile("roll_" + file.getName());
 //            HappieThumb.createThumbOfVideo(file);
 //            String[] paths = new String[2];
 //            paths[0] = file.getAbsolutePath();
 //            paths[1] = thumbPath.getAbsolutePath();
 //            HappieCameraJSON.addToPathArray(paths);
-        }
+//       }
     }
 }

@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.View;
@@ -45,6 +46,11 @@ public class HappieCameraActivity extends Activity {
     public static final int MEDIA_TYPE_VIDEO = 2;
     private static final String TAG = "HappieCameraActivity";
 
+    private static final String ORIENTATION_PORTRAIT_NORMAL = "1";
+    private static final String ORIENTATION_PORTRAIT_INVERTED = "2";
+    private static final String ORIENTATION_LANDSCAPE_NORMAL = "3";
+    private static final String ORIENTATION_LANDSCAPE_INVERTED = "4";
+
     private ImageButton shutter;
     private ImageButton flash;
     private ImageButton queue;
@@ -61,6 +67,7 @@ public class HappieCameraActivity extends Activity {
     private android.content.Context thisRef;
     File mediaStorageDir;
     File mediaThumbStorageDir;
+    Display display;
 
     private int degrees = 0;
 
@@ -87,6 +94,9 @@ public class HappieCameraActivity extends Activity {
                 //TODO update camera orientation with arg0
             }
         };
+
+        display = getWindowManager().getDefaultDisplay();
+
         if (orientationListener.canDetectOrientation()) orientationListener.enable();
 
         cancel = (ImageButton) findViewById(R.id.cancel);
@@ -174,7 +184,7 @@ public class HappieCameraActivity extends Activity {
                 case 1:
                     params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                     flash.setImageResource(R.drawable.camera_flash_off);
-                break;
+                    break;
                 case 2:
                     params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
                     flash.setImageResource(R.drawable.camera_flash_auto);
@@ -386,32 +396,22 @@ public class HappieCameraActivity extends Activity {
 
                 try {
 
-                    Bitmap bmp;
-                    bmp = BitmapFactory.decodeByteArray(bytes[0], 0, bytes[0].length);
-
-                    Matrix matrix = new Matrix();
-                    if(degrees == 0 || degrees == 180){
-                        matrix.postRotate(degrees+90);
-                    }else {
-                        matrix.postRotate(degrees-90);
-                    }
-
-                    bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
-
                     //save image
                     FileOutputStream fos = new FileOutputStream(pictureFiles[0]);
-                    bmp.compress(Bitmap.CompressFormat.JPEG, 85, fos);
-                    fos.flush();
+                    fos.write(bytes[0]);
                     fos.close();
 
-                    //save thumbnail
-                    Bitmap thumb = thumbGen.createThumbOfImage(pictureFiles[1], bmp);
+                    ExifInterface exif = new ExifInterface(pictureFiles[0].getAbsolutePath());
+                    exif.setAttribute(ExifInterface.TAG_ORIENTATION, computeExifOrientation(degrees));
+                    exif.saveAttributes();
 
-                    String[] pathAndThumb = new String[2];
+                    //save thumbnail
+                    Bitmap thumb = thumbGen.createThumbOfImage(pictureFiles[1], bytes[0], degrees);
+
+                    String[] pathAndThumb = new String[3];
                     pathAndThumb[0] = Uri.fromFile(pictureFiles[0]).toString();
                     pathAndThumb[1] = Uri.fromFile(pictureFiles[1]).toString();
                     jsonGen.addToPathArray(pathAndThumb);
-                    //Bitmap preview = BitmapFactory.decodeFile(pictureFiles[1].getAbsolutePath());
 
                     return thumb;
 
@@ -475,6 +475,31 @@ public class HappieCameraActivity extends Activity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
             Log.d(TAG, "Error accessing file: SD Card Not Available");
+        }
+
+        private String computeExifOrientation(int degrees){
+            if (display.getOrientation() == Surface.ROTATION_0) {   // landscape oriented devices
+                if (degrees >= 315 || degrees < 45) {
+                    return ORIENTATION_LANDSCAPE_NORMAL;
+                } else if (degrees < 315 && degrees >= 225) {
+                    return ORIENTATION_PORTRAIT_INVERTED;
+                } else if (degrees < 225 && degrees >= 135) {
+                    return ORIENTATION_LANDSCAPE_INVERTED;
+                } else if (degrees < 135 && degrees > 45) {
+                    return ORIENTATION_PORTRAIT_NORMAL;
+                }
+            } else {  // portrait oriented devices
+                if (degrees >= 315 || degrees < 45) {
+                    return ORIENTATION_PORTRAIT_NORMAL;
+                } else if (degrees < 315 && degrees >= 225) {
+                    return ORIENTATION_LANDSCAPE_NORMAL;
+                } else if (degrees < 225 && degrees >= 135) {
+                    return ORIENTATION_PORTRAIT_INVERTED;
+                } else if (degrees < 135 && degrees > 45) {
+                    return ORIENTATION_LANDSCAPE_INVERTED;
+                }
+            }
+            return "0";
         }
     }
 }
