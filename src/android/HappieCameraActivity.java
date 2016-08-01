@@ -84,6 +84,7 @@ public class HappieCameraActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.happie_cam_layout);
         onCreateTasks();
+        setCamOrientation();
     }
 
     protected void onCreateTasks() {
@@ -92,6 +93,8 @@ public class HappieCameraActivity extends Activity {
             @Override
             public void onOrientationChanged(int arg0) {
                 //TODO update camera orientation with arg0
+                //Log.d(TAG, "onOrientationChanged called: " + arg0);
+                degrees = arg0;
             }
         };
 
@@ -165,7 +168,7 @@ public class HappieCameraActivity extends Activity {
 
         initCameraSession();
         initCameraPreview();
-        setCamOrientation();
+
     }
 
     protected void initCameraPreview() {
@@ -406,7 +409,7 @@ public class HappieCameraActivity extends Activity {
                     exif.saveAttributes();
 
                     //save thumbnail
-                    Bitmap thumb = thumbGen.createThumbOfImage(pictureFiles[1], bytes[0], degrees);
+                    Bitmap thumb = thumbGen.createThumbOfImage(pictureFiles[1], bytes[0], degreeForThumbnail(degrees));
 
                     String[] pathAndThumb = new String[3];
                     pathAndThumb[0] = Uri.fromFile(pictureFiles[0]).toString();
@@ -478,28 +481,33 @@ public class HappieCameraActivity extends Activity {
         }
 
         private String computeExifOrientation(int degrees){
-            if (display.getOrientation() == Surface.ROTATION_0) {   // landscape oriented devices
-                if (degrees >= 315 || degrees < 45) {
-                    return ORIENTATION_LANDSCAPE_NORMAL;
-                } else if (degrees < 315 && degrees >= 225) {
-                    return ORIENTATION_PORTRAIT_INVERTED;
-                } else if (degrees < 225 && degrees >= 135) {
-                    return ORIENTATION_LANDSCAPE_INVERTED;
-                } else if (degrees < 135 && degrees > 45) {
-                    return ORIENTATION_PORTRAIT_NORMAL;
-                }
-            } else {  // portrait oriented devices
-                if (degrees >= 315 || degrees < 45) {
-                    return ORIENTATION_PORTRAIT_NORMAL;
-                } else if (degrees < 315 && degrees >= 225) {
-                    return ORIENTATION_LANDSCAPE_NORMAL;
-                } else if (degrees < 225 && degrees >= 135) {
-                    return ORIENTATION_PORTRAIT_INVERTED;
-                } else if (degrees < 135 && degrees > 45) {
-                    return ORIENTATION_LANDSCAPE_INVERTED;
-                }
+            if (degrees >= 315 || degrees < 45) {
+                return ORIENTATION_LANDSCAPE_NORMAL;
             }
-            return "0";
+            else if (degrees < 315 && degrees >= 225) {
+                return ORIENTATION_PORTRAIT_INVERTED;
+            }
+            else if (degrees < 225 && degrees >= 135) {
+                return ORIENTATION_LANDSCAPE_INVERTED;
+            }
+            else { // orientation <135 && orientation > 45
+                return ORIENTATION_PORTRAIT_NORMAL;
+            }
+        }
+
+        private int degreeForThumbnail(int degrees){
+            if (degrees >= 315 || degrees < 45) {
+                return 0;
+            }
+            else if (degrees < 315 && degrees >= 225) {
+                return 90;
+            }
+            else if (degrees < 225 && degrees >= 135) {
+                return 180;
+            }
+            else { // orientation <135 && orientation > 45
+                return 270;
+            }
         }
     }
 }
