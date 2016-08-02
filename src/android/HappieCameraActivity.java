@@ -46,10 +46,10 @@ public class HappieCameraActivity extends Activity {
     public static final int MEDIA_TYPE_VIDEO = 2;
     private static final String TAG = "HappieCameraActivity";
 
-    private static final String ORIENTATION_PORTRAIT_NORMAL = "1";
-    private static final String ORIENTATION_PORTRAIT_INVERTED = "2";
-    private static final String ORIENTATION_LANDSCAPE_NORMAL = "3";
-    private static final String ORIENTATION_LANDSCAPE_INVERTED = "4";
+    private static final String ORIENTATION_ROTATE_90 = "6";
+    private static final String ORIENTATION_NORMAL = "1";
+    private static final String ORIENTATION_ROTATE_270 = "8";
+    private static final String ORIENTATION_ROTATE_180 = "3";
 
     private ImageButton shutter;
     private ImageButton flash;
@@ -93,7 +93,7 @@ public class HappieCameraActivity extends Activity {
             @Override
             public void onOrientationChanged(int arg0) {
                 //TODO update camera orientation with arg0
-                //Log.d(TAG, "onOrientationChanged called: " + arg0);
+                //Log.d(TAG, "OrientationChanged called: " + arg0);
                 degrees = arg0;
             }
         };
@@ -481,18 +481,16 @@ public class HappieCameraActivity extends Activity {
         }
 
         private String computeExifOrientation(int degrees){
-            if (degrees >= 315 || degrees < 45) {
-                return ORIENTATION_LANDSCAPE_NORMAL;
-            }
-            else if (degrees < 315 && degrees >= 225) {
-                return ORIENTATION_PORTRAIT_INVERTED;
-            }
-            else if (degrees < 225 && degrees >= 135) {
-                return ORIENTATION_LANDSCAPE_INVERTED;
-            }
-            else { // orientation <135 && orientation > 45
-                return ORIENTATION_PORTRAIT_NORMAL;
-            }
+             if (degrees >= 315 || degrees < 45) {
+                 return ORIENTATION_ROTATE_90;
+             } else if (degrees < 315 && degrees >= 225) {
+                 return ORIENTATION_NORMAL;
+             } else if (degrees < 225 && degrees >= 135) {
+                 return ORIENTATION_ROTATE_270;
+             } else if (degrees < 135 && degrees > 45) {
+                 return ORIENTATION_ROTATE_180;
+             }
+            return ORIENTATION_NORMAL;
         }
 
         private int degreeForThumbnail(int degrees){
