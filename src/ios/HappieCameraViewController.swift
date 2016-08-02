@@ -44,7 +44,6 @@ import CoreMotion
                         :   p!.acceleration.y > 0 ? "Down"   :   "Up"
                 if self.rawOrient != newRawOrient {
                     self.rawOrient = newRawOrient
-                    print(self.rawOrient)
                 }
             }
         }
