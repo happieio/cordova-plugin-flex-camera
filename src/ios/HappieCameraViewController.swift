@@ -3,6 +3,7 @@ import UIKit
 import MobileCoreServices
 import AVFoundation
 import AssetsLibrary
+import CoreMotion
 
 @objc protocol cameraDelegate{ func cameraFinished(controller: HappieCameraViewController, JSON: String) }
 
@@ -17,6 +18,7 @@ import AssetsLibrary
     let filemgr = NSFileManager.defaultManager()
     var mediaDir: String = "";
     var thumbDir: String = "";
+    var rawOrient: String = "";
     
     var flashState = 2; //0 = off, 1 = On, 2 = Auto
     var quadState = 0; //0 = UL , 1 = UR, 2 = LL, 3 = LR
@@ -28,6 +30,33 @@ import AssetsLibrary
 
     var delegate:cameraDelegate?
 
+    var uMM: CMMotionManager!
+    
+    override func viewWillAppear( p: Bool ) {
+        super.viewWillAppear( p )
+        uMM = CMMotionManager()
+        uMM.accelerometerUpdateInterval = 0.2
+        uMM.startAccelerometerUpdatesToQueue( NSOperationQueue() ) { p, _ in
+            if p != nil {
+                var newRawOrient:String = "";
+                   newRawOrient = abs( p!.acceleration.y ) < abs( p!.acceleration.x )
+                        ?   p!.acceleration.x > 0 ? "Right"  :   "Left"
+                        :   p!.acceleration.y > 0 ? "Down"   :   "Up"
+                if self.rawOrient != newRawOrient {
+                    self.rawOrient = newRawOrient
+                    print(self.rawOrient)
+                }
+            }
+        }
+        captureSession.startRunning()
+    }
+    
+    override func viewDidDisappear( p: Bool ) {
+        super.viewDidDisappear( p )
+        uMM.stopAccelerometerUpdates()
+        captureSession.stopRunning()
+    }
+    
     //MARK: State Functions
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?){
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil);
@@ -135,16 +164,8 @@ import AssetsLibrary
         setFlashModeToAuto(backCameraDevice!)
         beginSession()
     }
-
-    override func viewDidDisappear(animated: Bool){
-        captureSession.stopRunning();
-    }
-    override func viewDidAppear(animated: Bool){
-        captureSession.startRunning()
-    }
-
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return UIInterfaceOrientationMask.All
+        return UIInterfaceOrientationMask.Portrait;
     }
 
     override func didReceiveMemoryWarning() {
@@ -155,9 +176,9 @@ import AssetsLibrary
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
-
+    
     override func shouldAutorotate() -> Bool {
-        return true
+        return false
     }
 
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
@@ -170,22 +191,6 @@ import AssetsLibrary
         })
     }
     
-    override func willRotateToInterfaceOrientation(newOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
-        (camPreview.layer as! AVCaptureVideoPreviewLayer).connection.videoOrientation = AVCaptureVideoOrientation(rawValue: newOrientation.rawValue)!
-
-        if(newOrientation == UIInterfaceOrientation.LandscapeLeft || newOrientation == UIInterfaceOrientation.LandscapeRight){
-            (camPreview.layer as! AVCaptureVideoPreviewLayer).videoGravity = AVLayerVideoGravityResizeAspect
-        }
-        else{
-            (camPreview.layer as! AVCaptureVideoPreviewLayer).videoGravity = AVLayerVideoGravityResizeAspectFill
-        }
-
-        //TODO implement asset rotation something like this 
-        //let PortraitImage  : UIImage = UIImage(CGImage: LandscapeImage.CGImage ,
-         //scale: 1.0 ,
-         //orientation: UIImageOrientation.Right)
-    }
-
     //MARK: AVFoundation Implementation
     func beginSession(){
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
@@ -253,7 +258,7 @@ import AssetsLibrary
         LLuii.image = UIImage(named:"gray.png")
         LRuii.image = UIImage(named:"gray.png")
     }
-
+    
     @IBAction func captureImage(sender: UIButton){
         let connection = stillImageOutput?.connectionWithMediaType(AVMediaTypeVideo)
         stillImageOutput?.captureStillImageAsynchronouslyFromConnection(connection, completionHandler:
@@ -262,23 +267,26 @@ import AssetsLibrary
                     let imageData: NSData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageBuffer)
                     let UIImageFromData = UIImage(data: imageData)
                     
-                    let currentDevice: UIDevice = UIDevice.currentDevice()
-                    let orientation: UIDeviceOrientation = currentDevice.orientation
+                    //let currentDevice: UIDevice = UIDevice.currentDevice()
+                    //let orientation: UIDeviceOrientation = currentDevice.orientation
+                    //let rawOrient = orientation.rawValue
                     
-                    let rawOrient = orientation.rawValue
-                    
+                    //case Up // default orientation
+                    //case Down // 180 deg rotation
+                    //case Left // 90 deg CCW
+                    //case Right // 90 deg CW
                     var  orient = UIImageOrientation.Right;
-                    if(rawOrient == 1){//portait
-                        orient = UIImageOrientation.Right
+                    if(self.rawOrient == "Right"){
+                        orient = UIImageOrientation.Down
                     }
-                    else if(rawOrient == 2){// inverted portrait
-                        orient = UIImageOrientation.Left
-                    }
-                    else if(rawOrient == 3){ //landscape home right
+                    else if(self.rawOrient == "Left"){
                         orient = UIImageOrientation.Up
                     }
-                    else if(rawOrient == 4){ //landscape home left
-                        orient = UIImageOrientation.Down
+                    else if(self.rawOrient == "Up"){
+                        orient = UIImageOrientation.Right
+                    }
+                    else if(self.rawOrient == "Down"){
+                        orient = UIImageOrientation.Left
                     }
                     
                     let image = UIImage(CGImage: UIImageFromData!.CGImage!, scale: CGFloat(1.0), orientation: orient)
@@ -301,7 +309,7 @@ import AssetsLibrary
                     }else{
                         print("failed to write image to path: " + path)
                     }
-
+                    
                     //let image = UIImage.init(data: imageData)!
                     //let imageRotation = ALAssetOrientation(rawValue: image.imageOrientation.rawValue)
                     //ALAssetsLibrary().writeImageToSavedPhotosAlbum(image.CGImage!, orientation: imageRotation!,
@@ -311,7 +319,7 @@ import AssetsLibrary
                 }
         })
     }
-
+    
     // MARK: AVCaptureFileOutputRecordingDelegate Delegate Conformance
     func captureOutput(captureOutput: AVCaptureFileOutput!, didFinishRecordingToOutputFileAtURL outputFileURL: NSURL!, fromConnections connections: [AnyObject]!, error: NSError!) {
     }
