@@ -125,8 +125,8 @@ public class HappieCameraActivity extends Activity {
 
         thisRef = this;
 
-        mediaStorageDir = new File(HappieCamera.context.getExternalFilesDir(null) + "/media");
-        mediaThumbStorageDir = new File(HappieCamera.context.getExternalFilesDir(null) + "/media/thumb");
+        mediaStorageDir = new File(HappieCamera.context.getFilesDir() + "/media");
+        mediaThumbStorageDir = new File(HappieCamera.context.getFilesDir() + "/media/thumb");
         if (mediaStorageDir.mkdirs()) {
             Log.d(TAG, "media directory created");
         } else {
@@ -140,7 +140,7 @@ public class HappieCameraActivity extends Activity {
         }
 
 
-        String filePath = HappieCamera.context.getExternalFilesDir(null) + "/media/thumb";
+        String filePath = HappieCamera.context.getFilesDir() + "/media/thumb";
 
         File thumbDir = new File(filePath);
         String[] files = thumbDir.list();
