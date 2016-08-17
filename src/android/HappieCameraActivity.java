@@ -196,6 +196,15 @@ public class HappieCameraActivity extends Activity {
                     params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                     flash.setImageResource(R.drawable.camera_flash_on);
             }
+            if(params.getSupportedPictureSizes()!=null) {
+                Camera.Size currentSize = params.getPictureSize();
+                Camera.Size maxSize = params.getSupportedPictureSizes().get(0);
+                if(currentSize.height<maxSize.height ||
+                        currentSize.width < maxSize.width) {
+                    params.setPictureSize(maxSize.width, maxSize.height);
+                }
+            }
+            params.setJpegQuality(100);
             mCamera.setParameters(params);
         } catch (Exception e) {
             HappieCamera.callbackContext.error("Failed to initialize the camera");
