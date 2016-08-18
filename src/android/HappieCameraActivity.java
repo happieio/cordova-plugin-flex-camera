@@ -204,7 +204,7 @@ public class HappieCameraActivity extends Activity {
                     params.setPictureSize(maxSize.width, maxSize.height);
                 }
             }
-            params.setJpegQuality(100);
+            params.setJpegQuality(85);
             mCamera.setParameters(params);
         } catch (Exception e) {
             HappieCamera.callbackContext.error("Failed to initialize the camera");
