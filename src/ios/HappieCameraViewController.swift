@@ -23,7 +23,8 @@ import CoreMotion
     var flashState = 2; //0 = off, 1 = On, 2 = Auto
     var quadState = 0; //0 = UL , 1 = UR, 2 = LL, 3 = LR
     var badgeCounter = 0;
-
+    var oldOrientationValue: UIDeviceOrientation = UIDeviceOrientation.Portrait;
+    
      //send data back to the plugin class
     var jsonGen = HappieCameraJSON();
     var thumbGen = HappieCameraThumb();
@@ -194,6 +195,7 @@ import CoreMotion
     func beginSession(){
         let currentDevice: UIDevice = UIDevice.currentDevice()
         var orientation: UIDeviceOrientation = currentDevice.orientation;
+        oldOrientationValue = orientation;
         var width = UIScreen.mainScreen().bounds.size.width;
         var height = UIScreen.mainScreen().bounds.size.height;
         if(orientation == UIDeviceOrientation.LandscapeLeft ||
@@ -241,7 +243,7 @@ import CoreMotion
 //        if(backCameraDevice?.flashAvailable){
 //            setFlashModeToAuto(backCameraDevice!)
 //        }
-
+        UIDevice.currentDevice().setValue(oldOrientationValue.rawValue, forKey: "orientation")
         delegate!.cameraFinished(self, JSON: pathJSON)
     }
 
@@ -251,7 +253,7 @@ import CoreMotion
 //        if(backCameraDevice?.flashAvailable){
 //            setFlashModeToAuto(backCameraDevice!)
 //        }
-
+        UIDevice.currentDevice().setValue(oldOrientationValue.rawValue, forKey: "orientation")
         delegate!.cameraFinished(self, JSON: pathJSON)
     }
 
