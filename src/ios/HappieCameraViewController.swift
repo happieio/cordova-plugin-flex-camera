@@ -192,14 +192,22 @@ import CoreMotion
     
     //MARK: AVFoundation Implementation
     func beginSession(){
+        let currentDevice: UIDevice = UIDevice.currentDevice()
+        var orientation: UIDeviceOrientation = currentDevice.orientation;
+        var width = UIScreen.mainScreen().bounds.size.width;
+        var height = UIScreen.mainScreen().bounds.size.height;
+        if(orientation == UIDeviceOrientation.LandscapeLeft ||
+            orientation == UIDeviceOrientation.LandscapeRight){
+            orientation = UIDeviceOrientation.Portrait;
+            let dummyVar = width;
+            width=height;
+            height=dummyVar;
+        }
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
 
-        previewLayer.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height)
-        previewLayer.bounds = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height)
-        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-        
-        let currentDevice: UIDevice = UIDevice.currentDevice()
-        let orientation: UIDeviceOrientation = currentDevice.orientation
+        previewLayer.frame = CGRectMake(0, 0, width,height)
+        previewLayer.bounds = CGRectMake(0, 0,width,height)
+        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;        
         
         previewLayer.connection.videoOrientation = AVCaptureVideoOrientation(rawValue: orientation.rawValue)!;
         camPreview.layer.addSublayer(previewLayer)
