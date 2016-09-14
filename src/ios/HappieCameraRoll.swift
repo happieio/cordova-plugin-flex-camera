@@ -35,12 +35,12 @@ class HappieCameraRoll: CDVPlugin {
                                 let urls: AnyObject = result.valueForProperty(ALAssetPropertyURLs)
                                 urls.enumerateKeysAndObjectsUsingBlock({ (id: AnyObject!, obj: AnyObject!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
                                     //generate thumbnail
-                                    if obj.absoluteString!.lowercaseString.rangeOfString("mov") == nil {
-                                        let url = NSURL(string: obj.absoluteString!)
+                                    if obj.absoluteString!!.lowercaseString.rangeOfString("mov") == nil {
+                                        let url = NSURL(string: obj.absoluteString!!)
                                         let data = NSData(contentsOfURL: url!)
                                         let imageData: UIImage = UIImage(data: data!)!
                                         let thumbPath = self.thumbGen.createThumbOfCamRollImage(imageData);
-                                        let paths: Array<String> = [obj.absoluteString!, thumbPath]
+                                        let paths: Array<String> = [obj.absoluteString!!, thumbPath]
                                         self.jsonGen.addToPathArray(paths)
                                         _ = self.jsonGen.getFinalJSON(dest: "selection", save: true, counter:1)
                                         //self.delegate?.cameraRollFinished(jsonPaths)

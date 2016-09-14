@@ -19,7 +19,7 @@ import UIKit
             let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
             
-            let imageData: NSData = UIImageJPEGRepresentation(scaledImage, 0.7)!;
+            let imageData: NSData = UIImageJPEGRepresentation(scaledImage!, 0.7)!;
             filemgr.createFileAtPath(path, contents: imageData, attributes: nil)
             return imageData
     }
@@ -39,7 +39,7 @@ import UIKit
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        let imageData: NSData = UIImageJPEGRepresentation(scaledImage, 0.7)!;
+        let imageData: NSData = UIImageJPEGRepresentation(scaledImage!, 0.7)!;
         filemgr.createFileAtPath(fullThumbFilePath, contents: imageData, attributes: nil)
         
         return fullThumbFilePath
