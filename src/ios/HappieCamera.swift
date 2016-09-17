@@ -9,41 +9,41 @@ import UIKit
     var callBackId: String = "";
     var rollCallBackId: String = "";
 
-    func openCamera(command: CDVInvokedUrlCommand) {
+    func openCamera(_ command: CDVInvokedUrlCommand) {
         //cameraRoll.delegate = self;
         let cameraVC: HappieCameraViewController = HappieCameraViewController(nibName:"HappieCameraView", bundle:nil);
         cameraVC.delegate = self;
-        cameraVC.modalTransitionStyle = UIModalTransitionStyle.CoverVertical;
-        cameraVC.modalPresentationStyle = UIModalPresentationStyle.FullScreen;
+        cameraVC.modalTransitionStyle = UIModalTransitionStyle.coverVertical;
+        cameraVC.modalPresentationStyle = UIModalPresentationStyle.fullScreen;
         callBackId = command.callbackId;
-        self.viewController?.presentViewController(cameraVC, animated: true, completion:nil)
+        self.viewController?.present(cameraVC, animated: true, completion:nil)
     }
 
-    func getCameraRoll(command: CDVInvokedUrlCommand){
+    func getCameraRoll(_ command: CDVInvokedUrlCommand){
         rollCallBackId = command.callbackId;
         //cameraRoll.getCameraRoll()
     }
     
-    func cameraFinished(controller: HappieCameraViewController, JSON: String){
-        controller.dismissViewControllerAnimated(true, completion: nil);
+    func cameraFinished(_ controller: HappieCameraViewController, JSON: String){
+        controller.dismiss(animated: true, completion: nil);
         var pluginResult: CDVPluginResult;
         if(JSON.characters.count > 0){
-            pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: JSON)
+            pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: JSON)
         }else{
-            pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAsString: "no media captured")
+            pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "no media captured")
         }
-        commandDelegate!.sendPluginResult(pluginResult, callbackId:callBackId)
+        commandDelegate!.send(pluginResult, callbackId:callBackId)
     }
     
-    func cameraRollFinished(JSON: String){
+    func cameraRollFinished(_ JSON: String){
         var pluginResult: CDVPluginResult;
         if(JSON.characters.count > 0){
-            pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: JSON)
-            pluginResult.setKeepCallbackAsBool(true)
+            pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: JSON)
+            pluginResult.setKeepCallbackAs(true)
         }else{
-            pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAsString: "could not find camera roll")
-            pluginResult.setKeepCallbackAsBool(false)
+            pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "could not find camera roll")
+            pluginResult.setKeepCallbackAs(false)
         }
-        commandDelegate!.sendPluginResult(pluginResult, callbackId:rollCallBackId)
+        commandDelegate!.send(pluginResult, callbackId:rollCallBackId)
     }
 }

@@ -3,54 +3,54 @@ import UIKit
 
 @objc class HappieCameraThumb : NSObject  {
     
-    let filemgr = NSFileManager.defaultManager()
+    let filemgr = FileManager.default
     var counter = 0;
     
     override init(){ super.init() }
     
-    func createThumbOfImage(path: String, data: NSData) -> NSData{
+    func createThumbOfImage(_ path: String, data: Data) -> Data{
             let image = UIImage(data: data)
-            let size = CGSizeApplyAffineTransform(image!.size, CGAffineTransformMakeScale(0.08, 0.08))
+            let size = image!.size.applying(CGAffineTransform(scaleX: 0.08, y: 0.08))
             let scale: CGFloat = 0.0 // Automatically use scale factor of main screen
             
             UIGraphicsBeginImageContextWithOptions(size, false, scale)
-            image!.drawInRect(CGRect(origin: CGPointZero, size: size))
+            image!.draw(in: CGRect(origin: CGPoint.zero, size: size))
             
             let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
             
-            let imageData: NSData = UIImageJPEGRepresentation(scaledImage!, 0.7)!;
-            filemgr.createFileAtPath(path, contents: imageData, attributes: nil)
+            let imageData: Data = UIImageJPEGRepresentation(scaledImage!, 0.7)!;
+            filemgr.createFile(atPath: path, contents: imageData, attributes: nil)
             return imageData
     }
     
-    func createThumbOfCamRollImage(image: UIImage) -> String {
-        let dirPaths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+    func createThumbOfCamRollImage(_ image: UIImage) -> String {
+        let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let docsDir = dirPaths[0]
         let mediaDir = docsDir + "media";
         let thumbDir = mediaDir + "thumb";
         let fullThumbFilePath = thumbDir + generateFileName();
-        let size = CGSizeApplyAffineTransform(image.size, CGAffineTransformMakeScale(0.08, 0.08))
+        let size = image.size.applying(CGAffineTransform(scaleX: 0.08, y: 0.08))
         let scale: CGFloat = 0.0 // Automatically use scale factor of main screen
         
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        image.drawInRect(CGRect(origin: CGPointZero, size: size))
+        image.draw(in: CGRect(origin: CGPoint.zero, size: size))
         
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        let imageData: NSData = UIImageJPEGRepresentation(scaledImage!, 0.7)!;
-        filemgr.createFileAtPath(fullThumbFilePath, contents: imageData, attributes: nil)
+        let imageData: Data = UIImageJPEGRepresentation(scaledImage!, 0.7)!;
+        filemgr.createFile(atPath: fullThumbFilePath, contents: imageData, attributes: nil)
         
         return fullThumbFilePath
     }
     
     func generateFileName() -> String {
         counter += 1;
-        let date = NSDate()
-        let format = NSDateFormatter()
+        let date = Date()
+        let format = DateFormatter()
         format.dateFormat = "yyyyMMdd_HHmmss"
-        let stringDate = format.stringFromDate(date)
+        let stringDate = format.string(from: date)
         return "role_" + stringDate + "photo" + String(counter) + ".jpeg"
     }
 }
