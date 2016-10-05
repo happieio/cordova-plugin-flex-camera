@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <dependencies>
         <deployment version="2064" identifier="iOS"/>
-        <development version="7000" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HappieCameraViewController">
@@ -28,96 +28,84 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
                 <view autoresizesSubviews="NO" tag="1" contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="S15-Nd-Pe2" userLabel="CamPreview">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                     <accessibility key="accessibilityConfiguration">
                         <accessibilityTraits key="traits" updatesFrequently="YES"/>
                     </accessibility>
                 </view>
-                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="App_Camera-BG.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="Rz2-5C-CWW">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                </imageView>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="App_Camera-BG.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="Rz2-5C-CWW"/>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qLB-fH-fCx" userLabel="flashToggle">
-                    <rect key="frame" x="326" y="15" width="34" height="34"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="34" id="Sg8-Vt-3ch"/>
                         <constraint firstAttribute="height" constant="34" id="uwC-A2-N52"/>
                     </constraints>
                     <state key="normal" image="camera_flash_auto.png">
-                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </state>
                     <connections>
                         <action selector="flashToggle:" destination="-1" eventType="touchUpInside" id="MSs-jg-ytA"/>
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TuE-sV-ro2" userLabel="cancel">
-                    <rect key="frame" x="15" y="15" width="34" height="34"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="34" id="o99-0w-o5m"/>
                         <constraint firstAttribute="height" constant="34" id="yOe-Hf-jaC"/>
                     </constraints>
                     <state key="normal" image="camera_back.png">
-                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </state>
                     <connections>
                         <action selector="cancelSession:" destination="-1" eventType="touchUpInside" id="HeS-ek-7uf"/>
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MWl-mm-CgO" userLabel="shutter">
-                    <rect key="frame" x="150" y="592" width="60" height="60"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="60" id="dB3-Lt-5Jc"/>
                         <constraint firstAttribute="width" constant="60" id="gfm-xp-7Qy"/>
                     </constraints>
-                    <state key="normal" image="camera_shutter.png">
-                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    <state key="normal" image="camera_shutter.tiff">
+                        <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </state>
                     <connections>
                         <action selector="captureImage:" destination="-1" eventType="touchUpInside" id="RVq-Gr-UiH"/>
                     </connections>
                 </button>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LJA-Wj-KiS" userLabel="Image Select">
-                    <rect key="frame" x="300" y="592" width="60" height="60"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gray.png" translatesAutoresizingMaskIntoConstraints="NO" id="ghF-jF-NGw" userLabel="UL">
-                            <rect key="frame" x="0.0" y="0.0" width="29" height="29"/>
-                            <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="29" id="JxT-Ux-7Yh"/>
                                 <constraint firstAttribute="width" constant="29" id="p38-vD-DxM"/>
                             </constraints>
                         </imageView>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gray.png" translatesAutoresizingMaskIntoConstraints="NO" id="Qnj-6w-Mx7" userLabel="UR">
-                            <rect key="frame" x="31" y="0.0" width="29" height="29"/>
-                            <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="29" id="0xg-ve-09I"/>
                                 <constraint firstAttribute="height" constant="29" id="NDJ-P1-HZn"/>
                             </constraints>
                         </imageView>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gray.png" translatesAutoresizingMaskIntoConstraints="NO" id="wop-Me-56q" userLabel="LL">
-                            <rect key="frame" x="0.0" y="31" width="29" height="29"/>
-                            <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="29" id="tv8-jn-0EO"/>
                                 <constraint firstAttribute="height" constant="29" id="xX6-gf-ajt"/>
                             </constraints>
                         </imageView>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gray.png" translatesAutoresizingMaskIntoConstraints="NO" id="FOZ-Gx-p3H" userLabel="LR">
-                            <rect key="frame" x="31" y="31" width="29" height="29"/>
-                            <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="29" id="8dJ-tG-dch"/>
                                 <constraint firstAttribute="height" constant="29" id="ILj-o9-JI9"/>
                             </constraints>
                         </imageView>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dnM-o4-3Y7" userLabel="confirm">
-                            <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="60" id="EtX-Ez-dWH"/>
                                 <constraint firstAttribute="width" constant="60" id="Ty1-h1-6uG"/>
                             </constraints>
                             <state key="normal" image="camera_confirm_button.png">
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </state>
                             <connections>
                                 <action selector="cameraFinishToQueue:" destination="-1" eventType="touchUpInside" id="FhU-7w-LWi"/>
@@ -140,27 +128,26 @@
                     </constraints>
                 </view>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="camera_album_badge.png" translatesAutoresizingMaskIntoConstraints="NO" id="oPb-6P-s96" userLabel="badge">
-                    <rect key="frame" x="347" y="580" width="22" height="22"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="22" id="tk5-cw-mOt"/>
                         <constraint firstAttribute="height" constant="22" id="vrb-Y4-TGY"/>
                     </constraints>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="99" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lsy-Hc-59e" userLabel="badge Count">
-                    <rect key="frame" x="348" y="580" width="20" height="21"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="21" id="4fn-oO-vgT"/>
                         <constraint firstAttribute="width" constant="20" id="nA6-U9-yqd"/>
                     </constraints>
                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="11"/>
-                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hWh-yu-0sr" userLabel="DemoButton">
-                    <rect key="frame" x="57" y="8" width="91" height="49"/>
+                    <frame key="frameInset" minX="57" minY="8" width="91" height="49"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 </button>
             </subviews>
-            <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+            <color key="backgroundColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="lsy-Hc-59e" firstAttribute="centerY" secondItem="oPb-6P-s96" secondAttribute="centerY" constant="-1" id="3UQ-wb-lP8"/>
                 <constraint firstAttribute="centerY" secondItem="S15-Nd-Pe2" secondAttribute="centerY" id="4ei-cD-O8D"/>
@@ -187,8 +174,6 @@
             </constraints>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
             <nil key="simulatedTopBarMetrics"/>
-            <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
-            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
             <point key="canvasLocation" x="694.5" y="484.5"/>
         </view>
     </objects>
@@ -198,7 +183,7 @@
         <image name="camera_back.png" width="34" height="34"/>
         <image name="camera_confirm_button.png" width="22" height="22"/>
         <image name="camera_flash_auto.png" width="34" height="34"/>
-        <image name="camera_shutter.png" width="60" height="60"/>
+        <image name="camera_shutter.tiff" width="60" height="60"/>
         <image name="gray.png" width="25" height="25"/>
     </resources>
 </document>

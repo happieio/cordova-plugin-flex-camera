@@ -83,8 +83,8 @@
         <source-file src="src/assets/ios/camera_flash_off@3x.png" />
         <source-file src="src/assets/ios/camera_flash_on@2x.png" />
         <source-file src="src/assets/ios/camera_flash_on@3x.png" />
-        <source-file src="src/assets/ios/camera_shutter@2x.png" />
-        <source-file src="src/assets/ios/camera_shutter@3x.png" />
+        <source-file src="src/assets/ios/camera_shutter@2x.tiff" />
+        <source-file src="src/assets/ios/camera_shutter@3x.tiff" />
         <source-file src="src/assets/ios/gray@2x.png" />
         <source-file src="src/assets/ios/gray@3x.png" />
         <source-file src="src/assets/common/App_Camera-BG.jpg" />
