@@ -71,22 +71,22 @@
                 <param name="ios-package" value="HappieCamera"/>
             </feature>
         </config-file>
-        <source-file src="src/assets/ios/camera_album_badge@2x.png" />
-        <source-file src="src/assets/ios/camera_album_badge@3x.png" />
-        <source-file src="src/assets/ios/camera_back@2x.png" />
-        <source-file src="src/assets/ios/camera_back@3x.png" />
-        <source-file src="src/assets/ios/camera_confirm_button@2x.png" />
-        <source-file src="src/assets/ios/camera_confirm_button@3x.png" />
-        <source-file src="src/assets/ios/camera_flash_auto@2x.png" />
-        <source-file src="src/assets/ios/camera_flash_auto@3x.png" />
-        <source-file src="src/assets/ios/camera_flash_off@2x.png" />
-        <source-file src="src/assets/ios/camera_flash_off@3x.png" />
-        <source-file src="src/assets/ios/camera_flash_on@2x.png" />
-        <source-file src="src/assets/ios/camera_flash_on@3x.png" />
+        <source-file src="src/assets/ios/camera_album_badge@2x.tiff" />
+        <source-file src="src/assets/ios/camera_album_badge@3x.tiff" />
+        <source-file src="src/assets/ios/camera_back@2x.tiff" />
+        <source-file src="src/assets/ios/camera_back@3x.tiff" />
+        <source-file src="src/assets/ios/camera_confirm_button@2x.tiff" />
+        <source-file src="src/assets/ios/camera_confirm_button@3x.tiff" />
+        <source-file src="src/assets/ios/camera_flash_auto@2x.tiff" />
+        <source-file src="src/assets/ios/camera_flash_auto@3x.tiff" />
+        <source-file src="src/assets/ios/camera_flash_off@2x.tiff" />
+        <source-file src="src/assets/ios/camera_flash_off@3x.tiff" />
+        <source-file src="src/assets/ios/camera_flash_on@2x.tiff" />
+        <source-file src="src/assets/ios/camera_flash_on@3x.tiff" />
         <source-file src="src/assets/ios/camera_shutter@2x.tiff" />
         <source-file src="src/assets/ios/camera_shutter@3x.tiff" />
-        <source-file src="src/assets/ios/gray@2x.png" />
-        <source-file src="src/assets/ios/gray@3x.png" />
+        <source-file src="src/assets/ios/gray@2x.tiff" />
+        <source-file src="src/assets/ios/gray@3x.tiff" />
         <source-file src="src/assets/common/App_Camera-BG.jpg" />
         <source-file src="src/ios/HappieCamera.swift"/>
         <source-file src="src/ios/HappieCameraViewController.swift"/>
