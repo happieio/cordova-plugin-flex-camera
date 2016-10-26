@@ -3,17 +3,13 @@ package io.happie.cordovaCamera;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
-
-import java.io.File;
-
-import android.content.pm.PackageManager;
-import android.os.Environment;
 
 public class HappieCamera extends CordovaPlugin {
 
@@ -25,7 +21,11 @@ public class HappieCamera extends CordovaPlugin {
     public static final String CAMERA = Manifest.permission.CAMERA;
     public static final int CAM_REQUEST_CODE = 0;
 
+    public static Integer quality;
+
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+
+        this.quality = (Integer) args.getJSONObject(0).get("quality");
         this.callbackContext = callbackContext;
         currentAction = action;
 

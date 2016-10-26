@@ -6,14 +6,13 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.hardware.SensorManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.OrientationEventListener;
@@ -23,8 +22,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.hardware.SensorManager;
-
 
 import com.jobnimbus.JobNimbus2.R; //parent project package
 
@@ -196,11 +193,26 @@ public class HappieCameraActivity extends Activity {
                     params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                     flash.setImageResource(R.drawable.camera_flash_on);
             }
-            if(params.getSupportedPictureSizes()!=null) {
+
+            if(params.getSupportedPictureSizes() != null) {
+                Camera.Size maxSize;
+                switch(HappieCamera.quality){
+                    case 0: // High Compression
+                        maxSize = mCamera.new Size(1024,  768);
+                        break;
+                    case 1: // Medium Compression
+                        maxSize = mCamera.new Size(2560, 1440);
+                        break;
+                    case 2: // Low Compression
+                        maxSize = mCamera.new Size(4096, 2304);
+                        break;
+                    case 3: // No Compression
+                    default:
+                        maxSize = params.getSupportedPictureSizes().get(0);
+                }
+
                 Camera.Size currentSize = params.getPictureSize();
-                Camera.Size maxSize = params.getSupportedPictureSizes().get(0);
-                if(currentSize.height<maxSize.height ||
-                        currentSize.width < maxSize.width) {
+                if(currentSize.height < maxSize.height || currentSize.width < maxSize.width) {
                     params.setPictureSize(maxSize.width, maxSize.height);
                 }
             }
