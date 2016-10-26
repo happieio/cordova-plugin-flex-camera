@@ -11,6 +11,9 @@ import UIKit
 
     func openCamera(_ command: CDVInvokedUrlCommand) {
         //cameraRoll.delegate = self;
+        let params: AnyObject = command.arguments[0] as AnyObject!
+        let qual: Int = params["quality"] as! Int
+        HappieCameraJSON.setQuality(newQual: qual);
         let cameraVC: HappieCameraViewController = HappieCameraViewController(nibName:"HappieCameraView", bundle:nil);
         cameraVC.delegate = self;
         cameraVC.modalTransitionStyle = UIModalTransitionStyle.coverVertical;

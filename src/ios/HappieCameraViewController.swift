@@ -276,38 +276,32 @@ import CoreMotion
                 let imageData: Data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageBuffer)
                 let UIImageFromData = UIImage(data: imageData)
                 
-                //let currentDevice: UIDevice = UIDevice.currentDevice()
-                //let orientation: UIDeviceOrientation = currentDevice.orientation
-                //let rawOrient = orientation.rawValue
-                
-                //case Up // default orientation
-                //case Down // 180 deg rotation
-                //case Left // 90 deg CCW
-                //case Right // 90 deg CW
                 var  orient = UIImageOrientation.right;
-                if(self.rawOrient == "Right"){
+                if(self.rawOrient == "Right"){//case Right // 90 deg CW
                     orient = UIImageOrientation.down
                 }
-                else if(self.rawOrient == "Left"){
+                else if(self.rawOrient == "Left"){ //case Left // 90 deg CCW
                     orient = UIImageOrientation.up
                 }
-                else if(self.rawOrient == "Up"){
+                else if(self.rawOrient == "Up"){ //case Up // default orientation
                     orient = UIImageOrientation.right
                 }
-                else if(self.rawOrient == "Down"){
+                else if(self.rawOrient == "Down"){ //case Down // 180 deg rotation
                     orient = UIImageOrientation.left
                 }
                 
-                let image = UIImage(cgImage: UIImageFromData!.cgImage!, scale: CGFloat(1.0), orientation: orient)
                 
-                let orientedNSData: Data = UIImageJPEGRepresentation(image, 1)!
+                let oImage = UIImage(cgImage: (UIImageFromData?.cgImage!)!, scale: CGFloat(0.0), orientation: orient)
+                
+                let orientedAndScaledNSData: Data =
+                    UIImageJPEGRepresentation(self.sizeUIImage(image: oImage, size: self.getCGFloat()), 0.84)!
                 
                 self.badgeCounter += 1;
                 let fileName = self.generateFileName()
                 let path = self.mediaDir + "/" + fileName
                 let thumbPath = self.thumbDir + "/" + fileName
-                if self.filemgr.createFile(atPath: path, contents: orientedNSData, attributes: nil) {
-                    let thumbData = self.thumbGen.createThumbOfImage(thumbPath, data: orientedNSData)
+                if self.filemgr.createFile(atPath: path, contents: orientedAndScaledNSData, attributes: nil) {
+                    let thumbData = self.thumbGen.createThumbOfImage(thumbPath, data: orientedAndScaledNSData)
                     self.badgeCount.text = String(self.badgeCounter)
                     if(self.quadState == 0) {self.ULuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 1}
                     else if(self.quadState == 1) {self.URuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 2}
@@ -318,16 +312,51 @@ import CoreMotion
                 }else{
                     print("failed to write image to path: " + path)
                 }
-                
-                //let image = UIImage.init(data: imageData)!
-                //let imageRotation = ALAssetOrientation(rawValue: image.imageOrientation.rawValue)
-                //ALAssetsLibrary().writeImageToSavedPhotosAlbum(image.CGImage!, orientation: imageRotation!,
-                //    completionBlock: {(imagePath: NSURL!, Error: NSError!) -> Void in
-                //        //do stuff after image is saved to the camera roll
-                //    })
             }
         }
     }
+    
+    func getCGFloat()->CGFloat{
+        let quality = HappieCameraJSON.getQuality();
+        if(quality == 0){
+            return CGFloat(0.175);
+        }
+        else if(quality == 1){
+            return CGFloat(0.325);
+        }
+        else if(quality == 2){
+            return CGFloat(0.42);
+        }
+        else{
+            return CGFloat(0.5);
+        }
+    }
+    
+    func sizeUIImage(image:UIImage, size:CGFloat) ->UIImage{
+        //modify image resolution if needed
+        /**
+         '0 =  High Compression (1024 x 768) *this option will offer the best performance'
+         '1 = Medium Compression (2560 x 1440)'
+         '2 = Low Compression (4096 x 2304)'
+         '3 = No Compression',
+         **/
+        let quality = HappieCameraJSON.getQuality();
+        if(quality == 3){
+            return image;
+        }
+        
+        let size:CGSize = (image.size).applying(CGAffineTransform(scaleX: CGFloat(0.5), y: CGFloat(0.5)));
+        let hasAlpha = false
+        let scale: CGFloat = 2.0 // Automatically use scale factor of main screen
+        
+        UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+        image.draw(in: CGRect(origin: CGPoint.zero, size: size))
+        
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return scaledImage!;
+    }
+    
     
     // MARK: AVCaptureFileOutputRecordingDelegate Delegate Conformance
     func capture(_ captureOutput: AVCaptureFileOutput!, didFinishRecordingToOutputFileAt outputFileURL: URL!, fromConnections connections: [Any]!, error: Error!) {
