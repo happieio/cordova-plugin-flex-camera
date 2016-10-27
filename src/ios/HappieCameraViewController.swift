@@ -205,6 +205,20 @@ import CoreMotion
             width=height;
             height=dummyVar;
         }
+        else if(orientation == UIDeviceOrientation.faceUp ||
+                orientation == UIDeviceOrientation.faceDown){
+            orientation = UIDeviceOrientation.portrait;
+//            let dummyVar = width;
+//            width=height;
+//            height=dummyVar;
+        }
+        else if(orientation == UIDeviceOrientation.portraitUpsideDown){
+            orientation = UIDeviceOrientation.portrait;
+            let dummyVar = width;
+            width=height;
+            height=dummyVar;
+        }
+        
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
 
         previewLayer?.frame = CGRect(x: 0, y: 0, width: width,height: height)
