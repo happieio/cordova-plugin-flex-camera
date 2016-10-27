@@ -319,13 +319,13 @@ import CoreMotion
     func getCGFloat()->CGFloat{
         let quality = HappieCameraJSON.getQuality();
         if(quality == 0){
-            return CGFloat(0.175);
+            return CGFloat(0.20);
         }
         else if(quality == 1){
-            return CGFloat(0.325);
+            return CGFloat(0.35);
         }
         else if(quality == 2){
-            return CGFloat(0.42);
+            return CGFloat(0.43);
         }
         else{
             return CGFloat(0.5);
