@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * import com.jobnimbus.moderncamera.R; //Used For testing with the intenral ionic project
@@ -194,28 +195,45 @@ public class HappieCameraActivity extends Activity {
                     flash.setImageResource(R.drawable.camera_flash_on);
             }
 
-            if(params.getSupportedPictureSizes() != null) {
-                Camera.Size maxSize;
-                switch(HappieCamera.quality){
-                    case 0: // High Compression
-                        maxSize = mCamera.new Size(1024,  768);
-                        break;
-                    case 1: // Medium Compression
-                        maxSize = mCamera.new Size(2560, 1440);
-                        break;
-                    case 2: // Low Compression
-                        maxSize = mCamera.new Size(4096, 2304);
-                        break;
-                    case 3: // No Compression
-                    default:
-                        maxSize = params.getSupportedPictureSizes().get(0);
-                }
 
-                Camera.Size currentSize = params.getPictureSize();
-                if(currentSize.height < maxSize.height || currentSize.width < maxSize.width) {
-                    params.setPictureSize(maxSize.width, maxSize.height);
+            List<Camera.Size> validPhotoDimensions = params.getSupportedPictureSizes();
+            int i = 0;
+            Camera.Size jnLimit = null;
+            switch(HappieCamera.quality){
+                case 0: // High Compression
+                    jnLimit = mCamera.new Size(1024,  768);
+                    break;
+                case 1: // Medium Compression
+                    jnLimit = mCamera.new Size(2560, 1440);
+                    break;
+                case 2: // Low Compression
+                    jnLimit = mCamera.new Size(4096, 2304);
+                    break;
+            }
+
+            if(jnLimit != null && validPhotoDimensions.size() != 1) {
+                i = validPhotoDimensions.size();
+                while(--i > 0) {
+                    Camera.Size tmp = validPhotoDimensions.get(i);
+                    int longSide, shortSide;
+                    if(tmp.width > tmp.height) {
+                        longSide  = tmp.width;
+                        shortSide = tmp.height;
+                    } else {
+                        longSide  = tmp.height;
+                        shortSide = tmp.width;
+                    }
+                    if(jnLimit.width >= longSide && jnLimit.height >= shortSide) {
+                        break;
+                    }
                 }
             }
+            Camera.Size currentSize = params.getPictureSize();
+            Camera.Size maxSize = validPhotoDimensions.get(i);
+            if(currentSize.height < maxSize.height || currentSize.width < maxSize.width) {
+                params.setPictureSize(maxSize.width, maxSize.height);
+            }
+
             params.setJpegQuality(85);
             mCamera.setParameters(params);
         } catch (Exception e) {

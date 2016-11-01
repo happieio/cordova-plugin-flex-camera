@@ -1,0 +1,7 @@
+if( file('../../../Plugins/cordova-plugin-flex-camera').exists()){
+	println "Found CordovaCamera.happie.io"
+    copy{
+        from 'src/io/happie/cordovaCamera'
+        into '../../../Plugins/cordova-plugin-flex-camera/src/android'
+    }
+}
