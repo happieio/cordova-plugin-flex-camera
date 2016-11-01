@@ -4,6 +4,15 @@ import Foundation
     override init(){ super.init() }
     //index 0 = original image path, 1 = thumb path
     var paths: Array<Array<String>> = []
+    private static var quality = 3;
+    
+    static func getQuality()->Int{
+        return HappieCameraJSON.quality;
+    }
+    
+    static func setQuality(newQual:Int){
+        HappieCameraJSON.quality = newQual;
+    }
     
     func addToPathArray(_ path:Array<String>){ paths.append(path) }
 
