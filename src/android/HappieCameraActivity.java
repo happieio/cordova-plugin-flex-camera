@@ -237,9 +237,11 @@ public class HappieCameraActivity extends Activity {
             params.setJpegQuality(85);
             mCamera.setParameters(params);
         } catch (Exception e) {
-            HappieCamera.callbackContext.error("Failed to initialize the camera");
-            PluginResult r = new PluginResult(PluginResult.Status.ERROR);
-            HappieCamera.callbackContext.sendPluginResult(r);
+            //There is an intermittent failure while running setParameters, do not close the camera in that case
+            //since the call back will fire pre-maturely and JN will not get notified.
+            //HappieCamera.callbackContext.error("Failed to initialize the camera");
+            //PluginResult r = new PluginResult(PluginResult.Status.ERROR);
+            //HappieCamera.callbackContext.sendPluginResult(r);
         }
     }
 
