@@ -71,8 +71,6 @@ import CoreMotion
         badgeCount.text = "0"
         badgeCounter = 0;
 
-        //make demo image accessible during runtime
-        demoBackground.isHidden = true;
         //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(HappieCameraViewController.LongPressDemo))
         //tapGesture.numberOfTapsRequired = 10;
         //demoButton.addGestureRecognizer(tapGesture)
@@ -232,9 +230,6 @@ import CoreMotion
     }
 
     //MARK: IB Outlets and Actions
-    
-    
-    @IBOutlet weak var demoBackground: UIImageView!
     
     @IBOutlet weak var demoButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
