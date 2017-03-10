@@ -7,7 +7,6 @@ import UIKit
     //let cameraView = HappieCameraViewController(nibName:"HappieCameraView", bundle:nil);
 
     var callBackId: String = "";
-    var rollCallBackId: String = "";
 
     func openCamera(_ command: CDVInvokedUrlCommand) {
         //cameraRoll.delegate = self;
@@ -22,31 +21,19 @@ import UIKit
         self.viewController?.present(cameraVC, animated: true, completion:nil)
     }
 
-    func getCameraRoll(_ command: CDVInvokedUrlCommand){
-        rollCallBackId = command.callbackId;
-        //cameraRoll.getCameraRoll()
-    }
-    
-    func cameraFinished(_ controller: HappieCameraViewController, JSON: String){
+    func cameraFinished(_ controller: HappieCameraViewController){
         controller.dismiss(animated: true, completion: nil);
         var pluginResult: CDVPluginResult;
-        if(JSON.characters.count > 0){
-            pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: JSON)
-        }else{
-            pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "no media captured")
-        }
+        pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: "true")
         commandDelegate!.send(pluginResult, callbackId:callBackId)
     }
-    
-    func cameraRollFinished(_ JSON: String){
-        var pluginResult: CDVPluginResult;
-        if(JSON.characters.count > 0){
-            pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: JSON)
-            pluginResult.setKeepCallbackAs(true)
-        }else{
-            pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "could not find camera roll")
-            pluginResult.setKeepCallbackAs(false)
-        }
-        commandDelegate!.send(pluginResult, callbackId:rollCallBackId)
+
+    func generateThumbnail(_ command: CDVInvokedUrlCommand){
+        let params: AnyObject = command.arguments[0] as AnyObject!
+        let qual: Int = params["path"] as! String
+
+        
+
     }
+
 }

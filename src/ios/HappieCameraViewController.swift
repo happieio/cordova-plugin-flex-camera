@@ -5,7 +5,7 @@ import AVFoundation
 import AssetsLibrary
 import CoreMotion
 
-@objc protocol cameraDelegate{ func cameraFinished(_ controller: HappieCameraViewController, JSON: String) }
+@objc protocol cameraDelegate{ func cameraFinished(_ controller: HappieCameraViewController) }
 
 @objc(HappieCameraViewController) class HappieCameraViewController : UIViewController, AVCaptureFileOutputRecordingDelegate  {
 
@@ -251,28 +251,10 @@ import CoreMotion
         toggleFlashMode(backCameraDevice!)
     }
 
-    @IBAction func cancelSession(_ sender: AnyObject) {
+    @IBAction func closeSession(_ sender: AnyObject) {
         resetThumbImages()
-        let pathJSON = jsonGen.getFinalJSON(dest: "cancel", save: false, counter:badgeCounter)
-//        if(backCameraDevice?.flashAvailable){
-//            setFlashModeToAuto(backCameraDevice!)
-//        }
         UIDevice.current.setValue(oldOrientationValue.rawValue, forKey: "orientation")
-        delegate!.cameraFinished(self, JSON: pathJSON)
-    }
-
-    @IBAction func cameraFinishToQueue(_ sender: UIButton) {
-        resetThumbImages()
-        let pathJSON = jsonGen.getFinalJSON(dest: "queue", save: true, counter:badgeCounter)
-//        if(backCameraDevice?.flashAvailable){
-//            setFlashModeToAuto(backCameraDevice!)
-//        }
-        UIDevice.current.setValue(oldOrientationValue.rawValue, forKey: "orientation")
-        delegate!.cameraFinished(self, JSON: pathJSON)
-    }
-
-    func LongPressDemo() {
-        demoBackground.isHidden = !demoBackground.isHidden;
+        delegate!.cameraFinished(self)
     }
     
     func resetThumbImages(){
@@ -321,8 +303,6 @@ import CoreMotion
                     else if(self.quadState == 1) {self.URuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 2}
                     else if(self.quadState == 2) {self.LLuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 3}
                     else if(self.quadState == 3) {self.LRuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 0}
-                    let pathResults: [String] = [path, thumbPath]
-                    self.jsonGen.addToPathArray(pathResults)
                 }else{
                     print("failed to write image to path: " + path)
                 }

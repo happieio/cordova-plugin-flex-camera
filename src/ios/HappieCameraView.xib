@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2555" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,9 +18,6 @@
                 <outlet property="badgeBg" destination="oPb-6P-s96" id="HZZ-Zs-bQj"/>
                 <outlet property="badgeCount" destination="lsy-Hc-59e" id="zjY-oI-8xq"/>
                 <outlet property="camPreview" destination="S15-Nd-Pe2" id="ffN-Ci-dZ9"/>
-                <outlet property="cancelButton" destination="TuE-sV-ro2" id="vXp-B4-W7o"/>
-                <outlet property="demoBackground" destination="Rz2-5C-CWW" id="46u-UA-EwC"/>
-                <outlet property="demoButton" destination="hWh-yu-0sr" id="Wp5-Ww-Xlv"/>
                 <outlet property="flashUIButton" destination="qLB-fH-fCx" id="WaR-lt-3VP"/>
                 <outlet property="view" destination="2kt-r3-ors" id="KHx-Wi-h1p"/>
             </connections>
@@ -36,9 +33,6 @@
                         <accessibilityTraits key="traits" updatesFrequently="YES"/>
                     </accessibility>
                 </view>
-                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="App_Camera-BG.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="Rz2-5C-CWW">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                </imageView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qLB-fH-fCx" userLabel="flashToggle">
                     <rect key="frame" x="326" y="15" width="34" height="34"/>
                     <constraints>
@@ -62,7 +56,7 @@
                         <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </state>
                     <connections>
-                        <action selector="cancelSession:" destination="-1" eventType="touchUpInside" id="HeS-ek-7uf"/>
+                        <action selector="closeSession:" destination="-1" eventType="touchUpInside" id="Kd5-W8-MSH"/>
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MWl-mm-CgO" userLabel="shutter">
@@ -123,7 +117,7 @@
                                 <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </state>
                             <connections>
-                                <action selector="cameraFinishToQueue:" destination="-1" eventType="touchUpInside" id="FhU-7w-LWi"/>
+                                <action selector="closeSession:" destination="-1" eventType="touchUpInside" id="ito-Mr-24m"/>
                             </connections>
                         </button>
                     </subviews>
@@ -142,15 +136,15 @@
                         <constraint firstAttribute="bottom" secondItem="FOZ-Gx-p3H" secondAttribute="bottom" id="reU-ZH-bFt"/>
                     </constraints>
                 </view>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="camera_album_badge.png" translatesAutoresizingMaskIntoConstraints="NO" id="oPb-6P-s96" userLabel="badge">
-                    <rect key="frame" x="347" y="580" width="22" height="22"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="camera_album_badge.png" translatesAutoresizingMaskIntoConstraints="NO" id="oPb-6P-s96" userLabel="badge">
+                    <rect key="frame" x="345" y="576" width="27" height="27"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="22" id="tk5-cw-mOt"/>
-                        <constraint firstAttribute="height" constant="22" id="vrb-Y4-TGY"/>
+                        <constraint firstAttribute="width" constant="27" id="tk5-cw-mOt"/>
+                        <constraint firstAttribute="height" constant="27" id="vrb-Y4-TGY"/>
                     </constraints>
                 </imageView>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="99" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lsy-Hc-59e" userLabel="badge Count">
-                    <rect key="frame" x="348" y="579.5" width="20" height="21"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="999" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lsy-Hc-59e" userLabel="badge Count">
+                    <rect key="frame" x="348" y="580" width="20" height="20"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="21" id="4fn-oO-vgT"/>
                         <constraint firstAttribute="width" constant="20" id="nA6-U9-yqd"/>
@@ -159,18 +153,12 @@
                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hWh-yu-0sr" userLabel="DemoButton">
-                    <rect key="frame" x="57" y="8" width="91" height="49"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                </button>
             </subviews>
             <color key="backgroundColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="lsy-Hc-59e" firstAttribute="centerY" secondItem="oPb-6P-s96" secondAttribute="centerY" constant="-1" id="3UQ-wb-lP8"/>
                 <constraint firstAttribute="centerY" secondItem="S15-Nd-Pe2" secondAttribute="centerY" id="4ei-cD-O8D"/>
-                <constraint firstItem="Rz2-5C-CWW" firstAttribute="leading" secondItem="S15-Nd-Pe2" secondAttribute="leading" id="8cF-CH-Uj7"/>
                 <constraint firstItem="TuE-sV-ro2" firstAttribute="top" secondItem="2kt-r3-ors" secondAttribute="top" constant="15" id="9tx-i9-6A3"/>
-                <constraint firstItem="Rz2-5C-CWW" firstAttribute="top" secondItem="S15-Nd-Pe2" secondAttribute="top" id="KAm-rE-IuH"/>
                 <constraint firstItem="S15-Nd-Pe2" firstAttribute="leading" secondItem="2kt-r3-ors" secondAttribute="leading" id="KLz-oj-6JD"/>
                 <constraint firstAttribute="trailing" secondItem="S15-Nd-Pe2" secondAttribute="trailing" id="NEI-Fi-iX8"/>
                 <constraint firstAttribute="bottom" secondItem="MWl-mm-CgO" secondAttribute="bottom" constant="15" id="Ner-6M-Q5u"/>
@@ -184,10 +172,8 @@
                 <constraint firstAttribute="centerX" secondItem="S15-Nd-Pe2" secondAttribute="centerX" id="fEy-uW-yZQ"/>
                 <constraint firstItem="lsy-Hc-59e" firstAttribute="centerX" secondItem="oPb-6P-s96" secondAttribute="centerX" id="gYv-d6-5Jo"/>
                 <constraint firstAttribute="trailing" secondItem="qLB-fH-fCx" secondAttribute="trailing" constant="15" id="nDJ-2t-F5J"/>
-                <constraint firstItem="LJA-Wj-KiS" firstAttribute="leading" secondItem="oPb-6P-s96" secondAttribute="leading" constant="-47" id="pYw-H3-Hik"/>
+                <constraint firstItem="LJA-Wj-KiS" firstAttribute="leading" secondItem="oPb-6P-s96" secondAttribute="leading" constant="-52" id="pYw-H3-Hik"/>
                 <constraint firstItem="S15-Nd-Pe2" firstAttribute="top" secondItem="2kt-r3-ors" secondAttribute="top" id="pe2-M1-wUW"/>
-                <constraint firstItem="Rz2-5C-CWW" firstAttribute="trailing" secondItem="S15-Nd-Pe2" secondAttribute="trailing" id="sau-6a-XTQ"/>
-                <constraint firstItem="Rz2-5C-CWW" firstAttribute="bottom" secondItem="S15-Nd-Pe2" secondAttribute="bottom" id="uy8-l3-ehQ"/>
             </constraints>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
             <nil key="simulatedTopBarMetrics"/>
@@ -195,7 +181,6 @@
         </view>
     </objects>
     <resources>
-        <image name="App_Camera-BG.jpg" width="3639" height="2400"/>
         <image name="camera_album_badge.png" width="17" height="17"/>
         <image name="camera_back.png" width="34" height="34"/>
         <image name="camera_confirm_button.png" width="22" height="22"/>
