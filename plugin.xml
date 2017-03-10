@@ -54,7 +54,6 @@
         <source-file src="src/android/HappieCameraActivity.java" target-dir="src/io/happie/cordovaCamera" />
         <source-file src="src/android/HappieCameraJSON.java" target-dir="src/io/happie/cordovaCamera" />
         <source-file src="src/android/HappieCameraPreview.java" target-dir="src/io/happie/cordovaCamera" />
-        <source-file src="src/android/HappieCameraRoll.java" target-dir="src/io/happie/cordovaCamera" />
         <source-file src="src/android/HappieCameraThumb.java" target-dir="src/io/happie/cordovaCamera" />
         <framework src="com.fasterxml.jackson.core:jackson-annotations:2.5.3"/>
         <framework src="com.fasterxml.jackson.core:jackson-core:2.5.3"/>
@@ -91,7 +90,6 @@
         <source-file src="src/ios/HappieCamera.swift"/>
         <source-file src="src/ios/HappieCameraViewController.swift"/>
         <source-file src="src/ios/HappieCameraJSON.swift"/>
-        <source-file src="src/ios/HappieCameraRoll.swift"/>
         <source-file src="src/ios/HappieCameraThumb.swift"/>
         <source-file src="src/ios/HappieCameraView.xib"/>
         <framework src="UIKit.framework"/>

@@ -15,7 +15,6 @@ public class HappieCamera extends CordovaPlugin {
 
     public static CallbackContext callbackContext;
     public static Context context;
-    protected HappieCameraRoll camRoll = new HappieCameraRoll();
     public static String currentAction = "";
 
     public static final String CAMERA = Manifest.permission.CAMERA;
@@ -29,7 +28,16 @@ public class HappieCamera extends CordovaPlugin {
         this.callbackContext = callbackContext;
         currentAction = action;
 
-        if(cordova.hasPermission(CAMERA)) {
+        if(action.equals("generateThumbnail")){
+            try{
+                return generateThumbnail(args);
+            }catch (java.io.IOException e){
+                return false;
+            }
+
+        }
+
+        else if(cordova.hasPermission(CAMERA)) {
             return executeLogic(action);
         }
         else {
@@ -40,20 +48,13 @@ public class HappieCamera extends CordovaPlugin {
 
 
     public boolean executeLogic(String action) {
-        if (action.equals("openCamera") || action.equals("getCameraRoll")) {
+        if (action.equals("openCamera")) {
             try {
                 if (action.equals("openCamera")) { //run thread safe camera
                     cordova.getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             openCamera();
-                        }
-                    });
-                } else if (action.equals("getCameraRoll")) {
-                    cordova.getThreadPool().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            camRoll.getAndroidCameraRoll();
                         }
                     });
                 }
@@ -79,23 +80,31 @@ public class HappieCamera extends CordovaPlugin {
         context.startActivity(pictureIntent);
     }
 
+    public boolean generateThumbnail(JSONArray args) throws JSONException, java.io.IOException {
+        String name = (String) args.getJSONObject(0).get("name");
+        HappieCameraThumb thumbGen = new HappieCameraThumb();
+
+        try{
+            return thumbGen.createThumbAtPathWithName(name, this.cordova.getActivity().getApplicationContext());
+        }
+        catch(java.io.IOException E){
+            return false;
+        }
+    }
+
     public void getCamPermission(int requestCode){
         cordova.requestPermission(this, requestCode, CAMERA);
     }
 
     public void onRequestPermissionResult(int requestCode, String[] permissions,
-                                          int[] grantResults) throws JSONException
-    {
-        for(int r:grantResults)
-        {
-            if(r == PackageManager.PERMISSION_DENIED)
-            {
+                                          int[] grantResults) throws JSONException {
+        for(int r:grantResults) {
+            if(r == PackageManager.PERMISSION_DENIED) {
                 this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "Permission Denied"));
                 return;
             }
         }
-        switch(requestCode)
-        {
+        switch(requestCode) {
             case CAM_REQUEST_CODE:
                 executeLogic(currentAction);
                 break;
