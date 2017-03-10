@@ -230,8 +230,6 @@ import CoreMotion
     }
 
     //MARK: IB Outlets and Actions
-    
-    @IBOutlet weak var demoButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var camPreview: UIView!
     @IBOutlet weak var flashUIButton: UIButton!
