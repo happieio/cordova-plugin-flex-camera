@@ -30,9 +30,18 @@ import UIKit
 
     func generateThumbnail(_ command: CDVInvokedUrlCommand){
         let params: AnyObject = command.arguments[0] as AnyObject!
-        let qual: Int = params["path"] as! String
+        let name: String = params["name"] as! String
 
-        
+        let thumbGen = HappieCameraThumb();
+        let res = thumbGen.createThumbAtPathWithName(name: name);
+        if(res){
+            let pluginResult: CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: "true")
+            commandDelegate!.send(pluginResult, callbackId:callBackId)
+        }
+        else {
+            let pluginResult: CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: "false")
+            commandDelegate!.send(pluginResult, callbackId:callBackId)
+        }
 
     }
 

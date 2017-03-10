@@ -23,7 +23,29 @@ import UIKit
             filemgr.createFile(atPath: path, contents: imageData, attributes: nil)
             return imageData
     }
-    
+
+    func createThumbAtPathWithName(name:String) -> Bool{
+        let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        let docsDir = dirPaths[0]
+        let cacheDir = docsDir + "mainCache";
+        let fullFilePath = cacheDir + name + "_thumb";
+
+        let fullSizeImage = UIImage(contentsOfFile: cacheDir + name)
+
+        let size = fullSizeImage?.size.applying(CGAffineTransform(scaleX: 0.08, y: 0.08))
+        let scale: CGFloat = 0.0 // Automatically use scale factor of main screen
+
+        UIGraphicsBeginImageContextWithOptions(size!, false, scale)
+        fullSizeImage?.draw(in: CGRect(origin: CGPoint.zero, size: size!))
+
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        let imageData: Data = UIImageJPEGRepresentation(scaledImage!, 0.7)!;
+        filemgr.createFile(atPath: fullFilePath, contents: imageData, attributes: nil)
+        return true;
+    }
+
     func createThumbOfCamRollImage(_ image: UIImage) -> String {
         let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let docsDir = dirPaths[0]

@@ -136,19 +136,15 @@
                         <constraint firstAttribute="bottom" secondItem="FOZ-Gx-p3H" secondAttribute="bottom" id="reU-ZH-bFt"/>
                     </constraints>
                 </view>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="camera_album_badge.png" translatesAutoresizingMaskIntoConstraints="NO" id="oPb-6P-s96" userLabel="badge">
-                    <rect key="frame" x="345" y="576" width="27" height="27"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="camera_album_badge.png" translatesAutoresizingMaskIntoConstraints="NO" id="oPb-6P-s96" userLabel="badge">
+                    <rect key="frame" x="343" y="577" width="27" height="27"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="27" id="tk5-cw-mOt"/>
-                        <constraint firstAttribute="height" constant="27" id="vrb-Y4-TGY"/>
+                        <constraint firstAttribute="height" constant="27" id="NIg-dP-oq1"/>
+                        <constraint firstAttribute="width" constant="27" id="RH0-ro-KDa"/>
                     </constraints>
                 </imageView>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="999" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lsy-Hc-59e" userLabel="badge Count">
-                    <rect key="frame" x="348" y="580" width="20" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="21" id="4fn-oO-vgT"/>
-                        <constraint firstAttribute="width" constant="20" id="nA6-U9-yqd"/>
-                    </constraints>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="999" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lsy-Hc-59e" userLabel="badge Count">
+                    <rect key="frame" x="346" y="580" width="20" height="21"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="11"/>
                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
@@ -156,7 +152,7 @@
             </subviews>
             <color key="backgroundColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="lsy-Hc-59e" firstAttribute="centerY" secondItem="oPb-6P-s96" secondAttribute="centerY" constant="-1" id="3UQ-wb-lP8"/>
+                <constraint firstAttribute="bottom" secondItem="lsy-Hc-59e" secondAttribute="bottom" constant="66" id="1c4-sL-h1p"/>
                 <constraint firstAttribute="centerY" secondItem="S15-Nd-Pe2" secondAttribute="centerY" id="4ei-cD-O8D"/>
                 <constraint firstItem="TuE-sV-ro2" firstAttribute="top" secondItem="2kt-r3-ors" secondAttribute="top" constant="15" id="9tx-i9-6A3"/>
                 <constraint firstItem="S15-Nd-Pe2" firstAttribute="leading" secondItem="2kt-r3-ors" secondAttribute="leading" id="KLz-oj-6JD"/>
@@ -165,15 +161,17 @@
                 <constraint firstAttribute="bottom" secondItem="S15-Nd-Pe2" secondAttribute="bottom" id="SEn-wS-fvZ"/>
                 <constraint firstAttribute="bottom" secondItem="LJA-Wj-KiS" secondAttribute="bottom" constant="15" id="Uj3-GK-Fr9"/>
                 <constraint firstItem="qLB-fH-fCx" firstAttribute="top" secondItem="2kt-r3-ors" secondAttribute="top" constant="15" id="ZFN-uL-G4o"/>
-                <constraint firstItem="LJA-Wj-KiS" firstAttribute="top" secondItem="oPb-6P-s96" secondAttribute="top" constant="12" id="ZOl-Nx-iAQ"/>
                 <constraint firstAttribute="trailing" secondItem="MWl-mm-CgO" secondAttribute="trailing" constant="165" id="Zqp-P1-HAW"/>
                 <constraint firstItem="TuE-sV-ro2" firstAttribute="leading" secondItem="2kt-r3-ors" secondAttribute="leading" constant="15" id="eiR-gx-Pcy"/>
                 <constraint firstItem="LJA-Wj-KiS" firstAttribute="trailing" secondItem="2kt-r3-ors" secondAttribute="trailing" constant="-15" id="fEu-Xu-zHK"/>
                 <constraint firstAttribute="centerX" secondItem="S15-Nd-Pe2" secondAttribute="centerX" id="fEy-uW-yZQ"/>
-                <constraint firstItem="lsy-Hc-59e" firstAttribute="centerX" secondItem="oPb-6P-s96" secondAttribute="centerX" id="gYv-d6-5Jo"/>
+                <constraint firstAttribute="trailing" secondItem="oPb-6P-s96" secondAttribute="trailing" constant="5" id="mDZ-lP-aO2"/>
                 <constraint firstAttribute="trailing" secondItem="qLB-fH-fCx" secondAttribute="trailing" constant="15" id="nDJ-2t-F5J"/>
-                <constraint firstItem="LJA-Wj-KiS" firstAttribute="leading" secondItem="oPb-6P-s96" secondAttribute="leading" constant="-52" id="pYw-H3-Hik"/>
                 <constraint firstItem="S15-Nd-Pe2" firstAttribute="top" secondItem="2kt-r3-ors" secondAttribute="top" id="pe2-M1-wUW"/>
+                <constraint firstItem="lsy-Hc-59e" firstAttribute="centerX" secondItem="oPb-6P-s96" secondAttribute="centerX" id="wBr-jf-Fbd"/>
+                <constraint firstItem="lsy-Hc-59e" firstAttribute="centerY" secondItem="oPb-6P-s96" secondAttribute="centerY" id="xDU-3c-loH"/>
+                <constraint firstAttribute="trailing" secondItem="lsy-Hc-59e" secondAttribute="trailing" constant="9" id="xfJ-87-srF"/>
+                <constraint firstAttribute="bottom" secondItem="oPb-6P-s96" secondAttribute="bottom" constant="63" id="zNq-x6-Xuh"/>
             </constraints>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
             <nil key="simulatedTopBarMetrics"/>
