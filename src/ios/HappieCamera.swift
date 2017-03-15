@@ -32,17 +32,18 @@ import UIKit
         let params: AnyObject = command.arguments[0] as AnyObject!
         let name: String = params["name"] as! String
 
-        let thumbGen = HappieCameraThumb();
-        let res = thumbGen.createThumbAtPathWithName(name: name);
-        if(res){
-            let pluginResult: CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: "true")
-            commandDelegate!.send(pluginResult, callbackId:callBackId)
+        self.commandDelegate.run { 
+            let thumbGen = HappieCameraThumb();
+            let res = thumbGen.createThumbAtPathWithName(name: name);
+            if(res){
+                let pluginResult: CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: "true")
+                self.commandDelegate!.send(pluginResult, callbackId:self.callBackId)
+            }
+            else {
+                let pluginResult: CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: "false")
+                self.commandDelegate!.send(pluginResult, callbackId:self.callBackId)
+            }
         }
-        else {
-            let pluginResult: CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: "false")
-            commandDelegate!.send(pluginResult, callbackId:callBackId)
-        }
-
     }
 
 }
