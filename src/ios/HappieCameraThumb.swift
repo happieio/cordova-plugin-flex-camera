@@ -27,7 +27,7 @@ import UIKit
     func createThumbAtPathWithName(name:String) -> Bool{
         let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let docsDir = dirPaths[0]
-        let cacheDir = docsDir + "mainCache";
+        let cacheDir = docsDir + "/mainCache/";
         let fullFilePath = cacheDir + name + "_thumb";
 
         let fullSizeImage = UIImage(contentsOfFile: cacheDir + name)
