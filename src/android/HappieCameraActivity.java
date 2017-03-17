@@ -211,6 +211,7 @@ public class HappieCameraActivity extends Activity {
                     break;
             }
 
+            int lastLongSide = 0, lastShortSide = 0;
             if (jnLimit != null && validPhotoDimensions.size() != 1) {
                 i = validPhotoDimensions.size();
                 while (--i > 0) {
@@ -224,7 +225,18 @@ public class HappieCameraActivity extends Activity {
                         shortSide = tmp.width;
                     }
                     if (jnLimit.width >= longSide && jnLimit.height >= shortSide) {
-                        break;
+                        if (lastLongSide <= longSide || lastShortSide <= shortSide) {
+                            lastLongSide = longSide;
+                            lastShortSide = shortSide;
+                        } else {
+                            i++;
+                            break;
+                        }
+                    } else {
+                        if(lastLongSide!=0 && lastShortSide!=0) {
+                            i++;
+                            break;
+                        }
                     }
                 }
             }
