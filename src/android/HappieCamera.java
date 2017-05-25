@@ -30,7 +30,9 @@ public class HappieCamera extends CordovaPlugin {
 
         if(action.equals("generateThumbnail")){
             try{
-                return generateThumbnail(args);
+                generateThumbnail(args);
+                callbackContext.success("called build thumbnail");
+                return true;
             }catch (java.io.IOException e){
                 return false;
             }
@@ -66,7 +68,7 @@ public class HappieCamera extends CordovaPlugin {
             }
 
             PluginResult r = new PluginResult(PluginResult.Status.NO_RESULT);
-            r.setKeepCallback(true);
+            r.setKeepCallback(false);
             callbackContext.sendPluginResult(r);
             return true;
         }
