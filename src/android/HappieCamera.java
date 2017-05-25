@@ -24,7 +24,6 @@ public class HappieCamera extends CordovaPlugin {
 
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 
-        this.quality = (Integer) args.getJSONObject(0).get("quality");
         this.callbackContext = callbackContext;
         currentAction = action;
 
@@ -38,11 +37,12 @@ public class HappieCamera extends CordovaPlugin {
             }
 
         }
-
         else if(cordova.hasPermission(CAMERA)) {
+            this.quality = (Integer) args.getJSONObject(0).get("quality");
             return executeLogic(action);
         }
         else {
+            this.quality = (Integer) args.getJSONObject(0).get("quality");
             getCamPermission(CAM_REQUEST_CODE);
             return false;
         }
