@@ -82,13 +82,12 @@ public class HappieCamera extends CordovaPlugin {
         context.startActivity(pictureIntent);
     }
 
-    public boolean generateThumbnail(JSONArray args) throws JSONException, java.io.IOException {
-        final JSONArray arg = args;
+    public boolean generateThumbnail(final JSONArray args) throws JSONException, java.io.IOException {
         final Context context = this.cordova.getActivity().getApplicationContext();
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                 try{
-                    String name = (String) arg.getJSONObject(0).get("name");
+                    String name = args.getString(0);
                     HappieCameraThumb thumbGen = new HappieCameraThumb();
                     try{
                         thumbGen.createThumbAtPathWithName(name, context);}

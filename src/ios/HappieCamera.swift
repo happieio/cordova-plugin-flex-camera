@@ -29,10 +29,8 @@ import UIKit
     }
 
     func generateThumbnail(_ command: CDVInvokedUrlCommand){
-        let params: AnyObject = command.arguments[0] as AnyObject!
-        let name: String = params["name"] as! String
-
-        self.commandDelegate.run { 
+        let name: String = (command.argument(at: 0) as AnyObject) as! String
+        self.commandDelegate.run {
             let thumbGen = HappieCameraThumb();
             let res = thumbGen.createThumbAtPathWithName(name: name);
             if(res){
@@ -45,5 +43,4 @@ import UIKit
             }
         }
     }
-
 }
