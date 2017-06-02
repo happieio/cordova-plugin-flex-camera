@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 
 import java.io.File;
@@ -48,31 +49,27 @@ public class HappieCameraThumb {
         return true;
     }
 
-    public Bitmap createThumbOfImage(File file, byte[] imageData, int degrees) {
-        Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeByteArray(imageData, 0, imageData.length), 400, 400);
-
-        Matrix matrix = new Matrix();
-        if(degrees == 0 || degrees == 180){
-            matrix.postRotate(degrees+90);
-        }else {
-            matrix.postRotate(degrees-90);
-        }
-
-        Bitmap orientedBmp = Bitmap.createBitmap(ThumbImage, 0, 0, ThumbImage.getWidth(), ThumbImage.getHeight(), matrix, true);
+    public Bitmap createThumbOfImage(File file, byte[] imageData, String degrees) {
+        Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeByteArray(imageData, 0, imageData.length), 400, 400);
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        orientedBmp.compress(Bitmap.CompressFormat.JPEG, 85, stream);
+        thumbImage.compress(Bitmap.CompressFormat.JPEG, 80, stream);
         byte[] thumbnailByteArray = stream.toByteArray();
 
         try {
             FileOutputStream fosThumb = new FileOutputStream(file);
             fosThumb.write(thumbnailByteArray);
             fosThumb.close();
+
+            ExifInterface exif = new ExifInterface(file.getAbsolutePath());
+            exif.setAttribute(ExifInterface.TAG_ORIENTATION, degrees);
+            exif.saveAttributes();
+
         } catch (FileNotFoundException e) {
             Log.d("HappieThumb", "File not found: " + e.getMessage());
         } catch (IOException e) {
             Log.d("HappieThumb", "Error accessing file: " + e.getMessage());
         }
-        return ThumbImage;
+        return thumbImage;
     }
 }
