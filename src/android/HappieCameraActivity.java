@@ -465,14 +465,12 @@ public class HappieCameraActivity extends Activity {
                     fos.write(bytes[0]);
                     fos.close();
 
-                    String imageDegrees = computeExifOrientation(degrees);
-
                     ExifInterface exif = new ExifInterface(pictureFiles[0].getAbsolutePath());
-                    exif.setAttribute(ExifInterface.TAG_ORIENTATION, imageDegrees);
+                    exif.setAttribute(ExifInterface.TAG_ORIENTATION, computeExifOrientation(degrees));
                     exif.saveAttributes();
 
                     //save thumbnail
-                    Bitmap thumb = thumbGen.createThumbOfImage(pictureFiles[1], bytes[0], imageDegrees);
+                    Bitmap thumb = thumbGen.createThumbOfImage(pictureFiles[1], bytes[0], degreeForThumbnail(degrees));
 
                     String[] pathAndThumb = new String[3];
                     pathAndThumb[0] = Uri.fromFile(pictureFiles[0]).toString();
@@ -554,6 +552,18 @@ public class HappieCameraActivity extends Activity {
                 return ORIENTATION_ROTATE_180;
             }
             return ORIENTATION_NORMAL;
+        }
+
+        private int degreeForThumbnail(int degrees) {
+            if (degrees >= 315 || degrees < 45) {
+                return 0;
+            } else if (degrees < 315 && degrees >= 225) {
+                return 90;
+            } else if (degrees < 225 && degrees >= 135) {
+                return 180;
+            } else { // orientation <135 && orientation > 45
+                return 270;
+            }
         }
     }
 }
