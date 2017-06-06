@@ -15,16 +15,18 @@ import CoreMotion
     var stillImageInput: AVCaptureDeviceInput? //registers an input port for communicating with the connection
     var stillImageOutput: AVCaptureStillImageOutput? //output
 
+    var canTakePhoto = true;
+
     let filemgr = FileManager.default
     var mediaDir: String = "";
     var thumbDir: String = "";
     var rawOrient: String = "";
-    
+
     var flashState = 2; //0 = off, 1 = On, 2 = Auto
     var quadState = 0; //0 = UL , 1 = UR, 2 = LL, 3 = LR
     var badgeCounter = 0;
     var oldOrientationValue: UIDeviceOrientation = UIDeviceOrientation.portrait;
-    
+
      //send data back to the plugin class
     var jsonGen = HappieCameraJSON();
     var thumbGen = HappieCameraThumb();
@@ -32,7 +34,7 @@ import CoreMotion
     var delegate:cameraDelegate?
 
     var uMM: CMMotionManager!
-    
+
     override func viewWillAppear( _ p: Bool ) {
         super.viewWillAppear( p )
         uMM = CMMotionManager()
@@ -50,13 +52,13 @@ import CoreMotion
         }
         captureSession.startRunning()
     }
-    
+
     override func viewDidDisappear( _ p: Bool ) {
         super.viewDidDisappear( p )
         uMM.stopAccelerometerUpdates()
         captureSession.stopRunning()
     }
-    
+
     //MARK: State Functions
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?){
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil);
@@ -74,7 +76,7 @@ import CoreMotion
         //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(HappieCameraViewController.LongPressDemo))
         //tapGesture.numberOfTapsRequired = 10;
         //demoButton.addGestureRecognizer(tapGesture)
-        
+
         //create documents/media folder to contain captured images
         let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let docsDir = dirPaths[0]
@@ -174,7 +176,7 @@ import CoreMotion
     override var prefersStatusBarHidden : Bool {
         return true
     }
-    
+
     override var shouldAutorotate : Bool {
         return false
     }
@@ -188,7 +190,7 @@ import CoreMotion
             self.beginSession();
         })
     }
-    
+
     //MARK: AVFoundation Implementation
     func beginSession(){
         let currentDevice: UIDevice = UIDevice.current
@@ -216,13 +218,13 @@ import CoreMotion
             width=height;
             height=dummyVar;
         }
-        
+
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
 
         previewLayer?.frame = CGRect(x: 0, y: 0, width: width,height: height)
         previewLayer?.bounds = CGRect(x: 0, y: 0,width: width,height: height)
-        previewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill;        
-        
+        previewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill;
+
         previewLayer?.connection.videoOrientation = AVCaptureVideoOrientation(rawValue: orientation.rawValue)!;
         camPreview.layer.addSublayer(previewLayer!)
 
@@ -249,55 +251,58 @@ import CoreMotion
         UIDevice.current.setValue(oldOrientationValue.rawValue, forKey: "orientation")
         delegate!.cameraFinished(self)
     }
-    
+
     func resetThumbImages(){
         ULuii.image = UIImage(named:"gray.png")
         URuii.image = UIImage(named:"gray.png")
         LLuii.image = UIImage(named:"gray.png")
         LRuii.image = UIImage(named:"gray.png")
     }
-    
+
     @IBAction func captureImage(_ sender: UIButton){
-        let connection = stillImageOutput?.connection(withMediaType: AVMediaTypeVideo)
-        
-        stillImageOutput?.captureStillImageAsynchronously(from: connection) { imageBuffer, error in
-            if((imageBuffer) != nil){
-                let imageData: Data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageBuffer)
-                let UIImageFromData = UIImage(data: imageData)
-                
-                var  orient = UIImageOrientation.right;
-                if(self.rawOrient == "Right"){//case Right // 90 deg CW
-                    orient = UIImageOrientation.down
-                }
-                else if(self.rawOrient == "Left"){ //case Left // 90 deg CCW
-                    orient = UIImageOrientation.up
-                }
-                else if(self.rawOrient == "Up"){ //case Up // default orientation
-                    orient = UIImageOrientation.right
-                }
-                else if(self.rawOrient == "Down"){ //case Down // 180 deg rotation
-                    orient = UIImageOrientation.left
-                }
-                
-                
-                let oImage = UIImage(cgImage: (UIImageFromData?.cgImage!)!, scale: CGFloat(0.0), orientation: orient)
-                
-                let orientedAndScaledNSData: Data =
-                    UIImageJPEGRepresentation(self.sizeUIImage(image: oImage, size: self.getCGFloat()), 0.84)!
-                
-                self.badgeCounter += 1;
-                let fileName = self.generateFileName()
-                let path = self.mediaDir + "/" + fileName
-                let thumbPath = self.thumbDir + "/" + fileName
-                if self.filemgr.createFile(atPath: path, contents: orientedAndScaledNSData, attributes: nil) {
-                    let thumbData = self.thumbGen.createThumbOfImage(thumbPath, data: orientedAndScaledNSData)
-                    self.badgeCount.text = String(self.badgeCounter)
-                    if(self.quadState == 0) {self.ULuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 1}
-                    else if(self.quadState == 1) {self.URuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 2}
-                    else if(self.quadState == 2) {self.LLuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 3}
-                    else if(self.quadState == 3) {self.LRuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 0}
-                }else{
-                    print("failed to write image to path: " + path)
+        if(canTakePhoto){
+            canTakePhoto = false;
+            let connection = stillImageOutput?.connection(withMediaType: AVMediaTypeVideo)
+
+            stillImageOutput?.captureStillImageAsynchronously(from: connection) { imageBuffer, error in
+                if((imageBuffer) != nil){
+                    let imageData: Data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageBuffer)
+                    let UIImageFromData = UIImage(data: imageData)
+
+                    var  orient = UIImageOrientation.right;
+                    if(self.rawOrient == "Right"){//case Right // 90 deg CW
+                        orient = UIImageOrientation.down
+                    }
+                    else if(self.rawOrient == "Left"){ //case Left // 90 deg CCW
+                        orient = UIImageOrientation.up
+                    }
+                    else if(self.rawOrient == "Up"){ //case Up // default orientation
+                        orient = UIImageOrientation.right
+                    }
+                    else if(self.rawOrient == "Down"){ //case Down // 180 deg rotation
+                        orient = UIImageOrientation.left
+                    }
+
+                    let oImage = UIImage(cgImage: (UIImageFromData?.cgImage!)!, scale: CGFloat(0.0), orientation: orient)
+
+                    let orientedAndScaledNSData: Data =
+                        UIImageJPEGRepresentation(self.sizeUIImage(image: oImage, size: self.getCGFloat()), 0.84)!
+
+                    self.badgeCounter += 1;
+                    let fileName = self.generateFileName()
+                    let path = self.mediaDir + "/" + fileName
+                    let thumbPath = self.thumbDir + "/" + fileName
+                    if self.filemgr.createFile(atPath: path, contents: orientedAndScaledNSData, attributes: nil) {
+                        let thumbData = self.thumbGen.createThumbOfImage(thumbPath, data: orientedAndScaledNSData)
+                        self.badgeCount.text = String(self.badgeCounter)
+                        if(self.quadState == 0) {self.ULuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 1}
+                        else if(self.quadState == 1) {self.URuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 2}
+                        else if(self.quadState == 2) {self.LLuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 3}
+                        else if(self.quadState == 3) {self.LRuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 0}
+                    }else{
+                        print("failed to write image to path: " + path)
+                    }
+                    self.canTakePhoto = true;
                 }
             }
         }
