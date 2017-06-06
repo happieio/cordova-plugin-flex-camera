@@ -44,8 +44,8 @@ public class HappieCameraThumb {
             String orientation = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
 
             ExifInterface exifThumb = new ExifInterface(thumbFile.getAbsolutePath());
-            exif.setAttribute(ExifInterface.TAG_ORIENTATION, orientation);
-            exif.saveAttributes();
+            exifThumb.setAttribute(ExifInterface.TAG_ORIENTATION, orientation);
+            exifThumb.saveAttributes();
         } catch (FileNotFoundException e) {
             Log.d("HappieThumb", "File not found: " + e.getMessage());
             return false;
