@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 
 import java.io.File;
@@ -38,6 +39,13 @@ public class HappieCameraThumb {
             FileOutputStream fosThumb = new FileOutputStream(thumbFile);
             fosThumb.write(thumbnailByteArray);
             fosThumb.close();
+
+            ExifInterface exif = new ExifInterface(fullFile.getAbsolutePath());
+            String orientation = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+
+            ExifInterface exifThumb = new ExifInterface(thumbFile.getAbsolutePath());
+            exif.setAttribute(ExifInterface.TAG_ORIENTATION, orientation);
+            exif.saveAttributes();
         } catch (FileNotFoundException e) {
             Log.d("HappieThumb", "File not found: " + e.getMessage());
             return false;
