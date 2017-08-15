@@ -515,7 +515,7 @@ public class HappieCameraActivity extends Activity {
         }
 
         private File[] getOutputMediaFiles(int type) {
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss-S").format(new Date());
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmssSS").format(new Date());
             File[] FileAndThumb = new File[2];
             if (type == MEDIA_TYPE_IMAGE) {
                 FileAndThumb[0] = new File(mediaStorageDir.getPath() + File.separator + timeStamp + "_photo.jpg");

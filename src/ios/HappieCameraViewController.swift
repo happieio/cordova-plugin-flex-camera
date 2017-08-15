@@ -24,7 +24,6 @@ import CoreMotion
     
     var flashState = 2; //0 = off, 1 = On, 2 = Auto
     var quadState = 0; //0 = UL , 1 = UR, 2 = LL, 3 = LR
-    var badgeCounter = 0;
     var oldOrientationValue: UIDeviceOrientation = UIDeviceOrientation.portrait;
     
      //send data back to the plugin class
@@ -71,7 +70,6 @@ import CoreMotion
         var error: NSError?
         quadState = 0;
         badgeCount.text = "0"
-        badgeCounter = 0;
 
         //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(HappieCameraViewController.LongPressDemo))
         //tapGesture.numberOfTapsRequired = 10;
@@ -104,28 +102,26 @@ import CoreMotion
                 let path = mediaDir + "/" + element
                 if(self.quadState == 0){
                     ULuii.image = UIImage(contentsOfFile: path)
-                    self.badgeCounter += 1
                     self.quadState = 1
                 }
                 else if(self.quadState == 1){
                     URuii.image = UIImage(contentsOfFile: path)
-                    self.badgeCounter += 1
                     self.quadState = 2
                 }
                 else if(self.quadState == 2){
                     LLuii.image = UIImage(contentsOfFile: path);
-                    self.badgeCounter += 1
                     self.quadState = 3
                 }
                 else if(self.quadState == 3){
                     LRuii.image = UIImage(contentsOfFile: path);
-                    self.badgeCounter += 1
                     self.quadState = 0
                 }
             }
         }
 
-        badgeCount.text = String(self.badgeCounter)
+        let dirContents = try? filemgr.contentsOfDirectory(atPath: mediaDir)
+        let count = dirContents?.count
+        badgeCount.text = String(describing: count! - 1)
 
         _ = AVCaptureDevice.devices(withMediaType: AVMediaTypeVideo)
 
@@ -299,21 +295,23 @@ import CoreMotion
                     let orientedAndScaledNSData: Data =
                         UIImageJPEGRepresentation(self.sizeUIImage(image: oImage, size: self.getCGFloat()), 0.84)!
 
-                    self.badgeCounter += 1;
                     let fileName = self.generateFileName()
                     let path = self.mediaDir + "/" + fileName
                     let thumbPath = self.thumbDir + "/" + fileName
                     if self.filemgr.createFile(atPath: path, contents: orientedAndScaledNSData, attributes: nil) {
                         let thumbData = self.thumbGen.createThumbOfImage(thumbPath, data: orientedAndScaledNSData)
-                        self.badgeCount.text = String(self.badgeCounter)
                         if(self.quadState == 0) {self.ULuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 1}
                         else if(self.quadState == 1) {self.URuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 2}
                         else if(self.quadState == 2) {self.LLuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 3}
                         else if(self.quadState == 3) {self.LRuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 0}
+                        let dirContents = try? self.filemgr.contentsOfDirectory(atPath: self.mediaDir)
+                        let count = dirContents?.count
+                        self.badgeCount.text = String(describing: count! - 1)
+                        self.canTakePhoto = true;
                     }else{
                         print("failed to write image to path: " + path)
+                        self.canTakePhoto = true;
                     }
-                    self.canTakePhoto = true;
                 }
             }
         }
@@ -456,8 +454,8 @@ import CoreMotion
     func generateFileName() -> String {
         let date = Date()
         let format = DateFormatter()
-        format.dateFormat = "yyyyMMdd_HHmmss"
+        format.dateFormat = "yyyyMMdd_HHmmssSS"
         let stringDate = format.string(from: date)
-        return stringDate + "photo" + String(badgeCounter) + ".jpeg"
+        return stringDate + "_photo.jpeg"
     }
 }
