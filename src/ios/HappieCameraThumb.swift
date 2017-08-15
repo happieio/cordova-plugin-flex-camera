@@ -30,9 +30,12 @@ import UIKit
         let cacheDir = docsDir + "/mainCache/";
         let fullFilePath = cacheDir + name + "_thumb";
 
-        let fullSizeImage = UIImage(contentsOfFile: cacheDir + name)
+        let fullSizeImage:UIImage? = UIImage(contentsOfFile: cacheDir + name)
+        if(fullSizeImage == nil) {return false}
 
-        let size = fullSizeImage?.size.applying(CGAffineTransform(scaleX: 0.08, y: 0.08))
+        let size: CGSize? = fullSizeImage?.size.applying(CGAffineTransform(scaleX: 0.08, y: 0.08))
+        if(size == nil) {return false}
+
         let scale: CGFloat = 0.0 // Automatically use scale factor of main screen
 
         UIGraphicsBeginImageContextWithOptions(size!, false, scale)
@@ -41,27 +44,31 @@ import UIKit
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
 
-        let imageData: Data = UIImageJPEGRepresentation(scaledImage!, 0.7)!;
+        let imageData: Data? = UIImageJPEGRepresentation(scaledImage!, 0.7);
+        if(imageData == nil) {return false}
         filemgr.createFile(atPath: fullFilePath, contents: imageData, attributes: nil)
         return true;
     }
 
-    func createThumbOfCamRollImage(_ image: UIImage) -> String {
+    func createThumbOfCamRollImage(_ image: UIImage?) -> String {
+        if(image == nil) {return ""}
+
         let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let docsDir = dirPaths[0]
         let mediaDir = docsDir + "media";
         let thumbDir = mediaDir + "thumb";
         let fullThumbFilePath = thumbDir + generateFileName();
-        let size = image.size.applying(CGAffineTransform(scaleX: 0.08, y: 0.08))
+        let size = image?.size.applying(CGAffineTransform(scaleX: 0.08, y: 0.08))
         let scale: CGFloat = 0.0 // Automatically use scale factor of main screen
         
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        image.draw(in: CGRect(origin: CGPoint.zero, size: size))
+        UIGraphicsBeginImageContextWithOptions(size!, false, scale)
+        image?.draw(in: CGRect(origin: CGPoint.zero, size: size!))
         
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        let imageData: Data = UIImageJPEGRepresentation(scaledImage!, 0.7)!;
+        let imageData: Data? = UIImageJPEGRepresentation(scaledImage!, 0.7);
+        if(imageData == nil) {return ""}
         filemgr.createFile(atPath: fullThumbFilePath, contents: imageData, attributes: nil)
         
         return fullThumbFilePath

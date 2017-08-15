@@ -21,12 +21,12 @@ import CoreMotion
     var mediaDir: String = "";
     var thumbDir: String = "";
     var rawOrient: String = "";
-
+    
     var flashState = 2; //0 = off, 1 = On, 2 = Auto
     var quadState = 0; //0 = UL , 1 = UR, 2 = LL, 3 = LR
     var badgeCounter = 0;
     var oldOrientationValue: UIDeviceOrientation = UIDeviceOrientation.portrait;
-
+    
      //send data back to the plugin class
     var jsonGen = HappieCameraJSON();
     var thumbGen = HappieCameraThumb();
@@ -34,7 +34,7 @@ import CoreMotion
     var delegate:cameraDelegate?
 
     var uMM: CMMotionManager!
-
+    
     override func viewWillAppear( _ p: Bool ) {
         super.viewWillAppear( p )
         uMM = CMMotionManager()
@@ -52,13 +52,13 @@ import CoreMotion
         }
         captureSession.startRunning()
     }
-
+    
     override func viewDidDisappear( _ p: Bool ) {
         super.viewDidDisappear( p )
         uMM.stopAccelerometerUpdates()
         captureSession.stopRunning()
     }
-
+    
     //MARK: State Functions
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?){
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil);
@@ -76,7 +76,7 @@ import CoreMotion
         //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(HappieCameraViewController.LongPressDemo))
         //tapGesture.numberOfTapsRequired = 10;
         //demoButton.addGestureRecognizer(tapGesture)
-
+        
         //create documents/media folder to contain captured images
         let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let docsDir = dirPaths[0]
@@ -176,7 +176,7 @@ import CoreMotion
     override var prefersStatusBarHidden : Bool {
         return true
     }
-
+    
     override var shouldAutorotate : Bool {
         return false
     }
@@ -190,7 +190,7 @@ import CoreMotion
             self.beginSession();
         })
     }
-
+    
     //MARK: AVFoundation Implementation
     func beginSession(){
         let currentDevice: UIDevice = UIDevice.current
@@ -219,12 +219,23 @@ import CoreMotion
             height=dummyVar;
         }
 
-        let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+        let previewLayer: AVCaptureVideoPreviewLayer? = AVCaptureVideoPreviewLayer(session: captureSession);
+        if(previewLayer == nil) {
+            let alertController = UIAlertController(title: "Camera Preview", message:
+                "There is a problem starting the camera, please try again.", preferredStyle: UIAlertControllerStyle.alert)
+            alertController.addAction(UIAlertAction(title: "Close Camera", style: UIAlertActionStyle.default,handler: {action in
+                self.closeSession(0 as AnyObject);
+            }))
+
+            DispatchQueue.main.async() {
+                self.present(alertController, animated: true, completion: { print("completed")})
+            }
+        }
 
         previewLayer?.frame = CGRect(x: 0, y: 0, width: width,height: height)
         previewLayer?.bounds = CGRect(x: 0, y: 0,width: width,height: height)
         previewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill;
-
+        
         previewLayer?.connection.videoOrientation = AVCaptureVideoOrientation(rawValue: orientation.rawValue)!;
         camPreview.layer.addSublayer(previewLayer!)
 
@@ -251,14 +262,14 @@ import CoreMotion
         UIDevice.current.setValue(oldOrientationValue.rawValue, forKey: "orientation")
         delegate!.cameraFinished(self)
     }
-
+    
     func resetThumbImages(){
         ULuii.image = UIImage(named:"gray.png")
         URuii.image = UIImage(named:"gray.png")
         LLuii.image = UIImage(named:"gray.png")
         LRuii.image = UIImage(named:"gray.png")
     }
-
+    
     @IBAction func captureImage(_ sender: UIButton){
         if(canTakePhoto){
             canTakePhoto = false;

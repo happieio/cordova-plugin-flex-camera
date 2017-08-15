@@ -59,7 +59,6 @@ public class HappieCameraActivity extends Activity {
     private ImageView lowerLeftThumbnail;
     private ImageView lowerRightThumbnail;
     private TextView badgeCount;
-    private int badgeCounter;
     private int quadState;  //0 = UL , 1 = UR, 2 = LL, 3 = LR
     private int flashState = 2;//camera_flash_auto
     private android.content.Context thisRef;
@@ -142,7 +141,6 @@ public class HappieCameraActivity extends Activity {
 
         File thumbDir = new File(filePath);
         String[] files = thumbDir.list();
-        badgeCounter = 0;
         for (String file : files) {
             File image = new File(filePath, file);
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -160,9 +158,11 @@ public class HappieCameraActivity extends Activity {
                 lowerRightThumbnail.setImageBitmap(bitmap);
                 quadState = 0;
             }
-            badgeCounter++;
-            badgeCount.setText(Integer.toString(badgeCounter));
         }
+
+        File mediaDir = new File(HappieCamera.context.getFilesDir() + "/media");
+        String[] mediaFiles = mediaDir.list();
+        badgeCount.setText(Integer.toString(mediaFiles.length - 1));
 
         initCameraSession();
         initCameraPreview();
@@ -305,7 +305,7 @@ public class HappieCameraActivity extends Activity {
     protected void onPause() {
         super.onPause();
         releaseCamera();
-        String JSON = jsonGen.getFinalJSON("queue", true, badgeCounter);
+        String JSON = jsonGen.getFinalJSON("queue", true, 0);
         HappieCamera.sessionFinished(JSON);
         finish();
     }
@@ -342,7 +342,7 @@ public class HappieCameraActivity extends Activity {
     private View.OnClickListener cancelSession = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String JSON = jsonGen.getFinalJSON("cancel", false, badgeCounter);
+            String JSON = jsonGen.getFinalJSON("cancel", false, 0);
             HappieCamera.sessionFinished(JSON);
             finish();
         }
@@ -361,7 +361,7 @@ public class HappieCameraActivity extends Activity {
     private View.OnClickListener cameraFinishToQueue = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String JSON = jsonGen.getFinalJSON("queue", true, badgeCounter);
+            String JSON = jsonGen.getFinalJSON("queue", true, 0);
             HappieCamera.sessionFinished(JSON);
             finish();
         }
@@ -396,9 +396,6 @@ public class HappieCameraActivity extends Activity {
         public void onPictureTaken(byte[] data, Camera camera) {
 
             mCamera.startPreview();
-
-            badgeCounter++;
-            badgeCount.setText(Integer.toString(badgeCounter));
 
             new ProcessImage(quadState, upperLeftThumbnail,
                     upperRightThumbnail, lowerLeftThumbnail, lowerRightThumbnail, thisRef,
@@ -493,6 +490,7 @@ public class HappieCameraActivity extends Activity {
 
             Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
             Bitmap bmp = Bitmap.createBitmap(100, 100, conf);
+
             return bmp;
         }
 
@@ -507,19 +505,24 @@ public class HappieCameraActivity extends Activity {
                 lowerRightThumbnail.setImageBitmap((preview));
             }
 
+            File mediaDir = new File(HappieCamera.context.getFilesDir() + "/media");
+            String[] mediaFiles = mediaDir.list();
+            String count = Integer.toString(mediaFiles.length - 1);
+            badgeCount.setText(count);
+
             //queueRef.setEnabled(true);
             cancelRef.setEnabled(true);
         }
 
         private File[] getOutputMediaFiles(int type) {
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss-S").format(new Date());
             File[] FileAndThumb = new File[2];
             if (type == MEDIA_TYPE_IMAGE) {
-                FileAndThumb[0] = new File(mediaStorageDir.getPath() + File.separator + timeStamp + "photo" + Integer.toString(badgeCounter) + ".jpg");
-                FileAndThumb[1] = new File(mediaThumbStorageDir.getPath() + File.separator + timeStamp + "photo" + Integer.toString(badgeCounter) + ".jpg");
+                FileAndThumb[0] = new File(mediaStorageDir.getPath() + File.separator + timeStamp + "_photo.jpg");
+                FileAndThumb[1] = new File(mediaThumbStorageDir.getPath() + File.separator + timeStamp + "_photo.jpg");
             } else if (type == MEDIA_TYPE_VIDEO) {
-                FileAndThumb[0] = new File(mediaStorageDir.getPath() + File.separator + timeStamp + "vid" + Integer.toString(badgeCounter) + ".mp4");
-                FileAndThumb[1] = new File(mediaThumbStorageDir.getPath() + File.separator + timeStamp + "vid" + Integer.toString(badgeCounter) + ".mp4");
+                FileAndThumb[0] = new File(mediaStorageDir.getPath() + File.separator + timeStamp + "_vid.mp4");
+                FileAndThumb[1] = new File(mediaThumbStorageDir.getPath() + File.separator + timeStamp + "_vid.mp4");
             } else {
                 return null;
             }
