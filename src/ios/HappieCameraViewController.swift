@@ -27,13 +27,12 @@ import CoreMotion
     var oldOrientationValue: UIDeviceOrientation = UIDeviceOrientation.portrait;
     
      //send data back to the plugin class
-    var jsonGen = HappieCameraJSON();
     var thumbGen = HappieCameraThumb();
 
     var delegate:cameraDelegate?
 
     var uMM: CMMotionManager!
-    
+
     override func viewWillAppear( _ p: Bool ) {
         super.viewWillAppear( p )
         uMM = CMMotionManager()
@@ -93,6 +92,8 @@ import CoreMotion
             error = error1
             print("Failed to create thumb dir: \(error!.localizedDescription)")
         }
+
+        HappieCameraJSON.initializeProcessingCount();
 
         let enumerator:FileManager.DirectoryEnumerator = filemgr.enumerator(atPath: mediaDir)!
         while let element = enumerator.nextObject() as? String {
@@ -268,6 +269,7 @@ import CoreMotion
     
     @IBAction func captureImage(_ sender: UIButton){
         if(canTakePhoto){
+            HappieCameraJSON.incrementProcessingCount();
             canTakePhoto = false;
             let connection = stillImageOutput?.connection(withMediaType: AVMediaTypeVideo)
 
@@ -308,9 +310,11 @@ import CoreMotion
                         let count = dirContents?.count
                         self.badgeCount.text = String(describing: count! - 1)
                         self.canTakePhoto = true;
+                        HappieCameraJSON.decrementProcessingCount();
                     }else{
                         print("failed to write image to path: " + path)
                         self.canTakePhoto = true;
+                        HappieCameraJSON.decrementProcessingCount();
                     }
                 }
             }

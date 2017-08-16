@@ -21,6 +21,12 @@ import UIKit
         self.viewController?.present(cameraVC, animated: true, completion:nil)
     }
 
+    func getProcessingCount(_ command: CDVInvokedUrlCommand) {
+        var pluginResult: CDVPluginResult;
+        pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: HappieCameraJSON.getProcessingCount())
+        commandDelegate!.send(pluginResult, callbackId:callBackId)
+    }
+
     func cameraFinished(_ controller: HappieCameraViewController){
         controller.dismiss(animated: true, completion: nil);
         var pluginResult: CDVPluginResult;

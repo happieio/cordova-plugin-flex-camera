@@ -27,7 +27,11 @@ public class HappieCamera extends CordovaPlugin {
         this.callbackContext = callbackContext;
         currentAction = action;
 
-        if(action.equals("generateThumbnail")){
+        if(action.equals("getProcessingCount")){
+            callbackContext.success(HappieCameraJSON.GET_ACTIVE_PROCESSES());
+            return true;
+        }
+        else if(action.equals("generateThumbnail")){
             try{
                 generateThumbnail(args);
                 callbackContext.success("called build thumbnail");
@@ -38,11 +42,11 @@ public class HappieCamera extends CordovaPlugin {
 
         }
         else if(cordova.hasPermission(CAMERA)) {
-            this.quality = (Integer) args.getJSONObject(0).get("quality");
+            quality = (Integer) args.getJSONObject(0).get("quality");
             return executeLogic(action);
         }
         else {
-            this.quality = (Integer) args.getJSONObject(0).get("quality");
+            quality = (Integer) args.getJSONObject(0).get("quality");
             getCamPermission(CAM_REQUEST_CODE);
             return false;
         }

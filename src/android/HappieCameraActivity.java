@@ -69,7 +69,6 @@ public class HappieCameraActivity extends Activity {
     private int degrees = 0;
 
     protected HappieCameraThumb thumbGen = new HappieCameraThumb();
-    protected HappieCameraJSON jsonGen = new HappieCameraJSON();
 
     private Camera mCamera;
 
@@ -177,6 +176,7 @@ public class HappieCameraActivity extends Activity {
 
     protected void initCameraSession() {
         try {
+            HappieCameraJSON.INITIALZIE_ACTIVE_PROCESSES();
             releaseCamera();
             mCamera = Camera.open();
             Camera.Parameters params = mCamera.getParameters();
@@ -305,8 +305,7 @@ public class HappieCameraActivity extends Activity {
     protected void onPause() {
         super.onPause();
         releaseCamera();
-        String JSON = jsonGen.getFinalJSON("queue", true, 0);
-        HappieCamera.sessionFinished(JSON);
+        HappieCamera.sessionFinished("");
         finish();
     }
 
@@ -342,8 +341,7 @@ public class HappieCameraActivity extends Activity {
     private View.OnClickListener cancelSession = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String JSON = jsonGen.getFinalJSON("cancel", false, 0);
-            HappieCamera.sessionFinished(JSON);
+            HappieCamera.sessionFinished("");
             finish();
         }
     };
@@ -361,8 +359,7 @@ public class HappieCameraActivity extends Activity {
     private View.OnClickListener cameraFinishToQueue = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String JSON = jsonGen.getFinalJSON("queue", true, 0);
-            HappieCamera.sessionFinished(JSON);
+            HappieCamera.sessionFinished("");
             finish();
         }
     };
@@ -394,7 +391,7 @@ public class HappieCameraActivity extends Activity {
     private Camera.PictureCallback capturePicture = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-
+            HappieCameraJSON.INCREMENT_ACTIVE_PROCESSES();
             mCamera.startPreview();
 
             new ProcessImage(quadState, upperLeftThumbnail,
@@ -456,7 +453,6 @@ public class HappieCameraActivity extends Activity {
                 }
 
                 try {
-
                     //save image
                     FileOutputStream fos = new FileOutputStream(pictureFiles[0]);
                     fos.write(bytes[0]);
@@ -472,7 +468,6 @@ public class HappieCameraActivity extends Activity {
                     String[] pathAndThumb = new String[3];
                     pathAndThumb[0] = Uri.fromFile(pictureFiles[0]).toString();
                     pathAndThumb[1] = Uri.fromFile(pictureFiles[1]).toString();
-                    jsonGen.addToPathArray(pathAndThumb);
 
                     return thumb;
 
@@ -512,6 +507,7 @@ public class HappieCameraActivity extends Activity {
 
             //queueRef.setEnabled(true);
             cancelRef.setEnabled(true);
+            HappieCameraJSON.DECREMENT_ACTIVE_PROCESSES();
         }
 
         private File[] getOutputMediaFiles(int type) {
@@ -526,7 +522,6 @@ public class HappieCameraActivity extends Activity {
             } else {
                 return null;
             }
-
             return FileAndThumb;
         }
 

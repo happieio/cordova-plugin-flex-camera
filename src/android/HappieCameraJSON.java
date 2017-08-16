@@ -2,6 +2,7 @@ package io.happie.cordovaCamera;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.*;
@@ -9,59 +10,21 @@ import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 public class HappieCameraJSON {
 
-    public HappieCameraJSON() {
-        if (!jacksonModulesRegistered) {
-            jacksonMapper.registerModule(new AfterburnerModule());
-            jacksonModulesRegistered = true;
-        }
+    private static AtomicInteger ACTIVE_PROCESSES;
+
+    public static void INITIALZIE_ACTIVE_PROCESSES(){
+        ACTIVE_PROCESSES.set(0);
     }
 
-    public static final ObjectMapper jacksonMapper = new ObjectMapper();
-    static Boolean jacksonModulesRegistered = false;
-    public List<String[]> paths = new ArrayList<String[]>();
-
-    public void addToPathArray(String[] path) {
-        paths.add(path);
+    public static void INCREMENT_ACTIVE_PROCESSES(){
+        ACTIVE_PROCESSES.incrementAndGet();
     }
 
-    public String getFinalJSON(String route, Boolean shouldSave, int count) {
-        if (shouldSave) {
-            JsonNode json = jacksonMapper.createObjectNode();
-            JsonNode jsonPaths = jacksonMapper.createArrayNode();
-
-            for (String[] strings : paths)
-                ((ArrayNode) jsonPaths).addObject().put("url", strings[0]).put("thumb", strings[1]);
-
-            ((ObjectNode) json).put("route", route);
-            ((ObjectNode) json).put("count", count);
-            ((ObjectNode) json).put("paths", jsonPaths);
-            System.out.println(json.toString());
-            resetJSON();
-            return json.toString();
-        } else {
-            deleteCapturedImages();
-            resetJSON();
-            return "{\"route\":\"cancel\", \"paths\":null, \"count\":" + count +"}";
-        }
-    }
-    
-    private void deleteCapturedImages() {
-    
+    public static void DECREMENT_ACTIVE_PROCESSES(){
+        ACTIVE_PROCESSES.decrementAndGet();
     }
 
-    private void resetJSON() {
-        paths.clear();
+    public static int GET_ACTIVE_PROCESSES(){
+        return ACTIVE_PROCESSES.intValue();
     }
 }
-/**
- * EXAMPLE RESULTING JSON STRING
- * {
- * paths: [
- * {
- * url:"full/size/path",
- * thumb: "thumb/path"
- * }
- * ],
- * route: "queue",// options: queue || selection
- * }
- */
