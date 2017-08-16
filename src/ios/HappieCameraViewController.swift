@@ -122,7 +122,6 @@ import CoreMotion
         let count = dirContents?.count
         badgeCount.text = String(describing: count! - 1)
 
-        HappieCameraJSON.setTotalImages(imageCount: count! - 1);
         HappieCameraJSON.initializeProcessingCount();
 
         _ = AVCaptureDevice.devices(withMediaType: AVMediaTypeVideo)
@@ -311,7 +310,6 @@ import CoreMotion
                         let count = dirContents?.count
                         self.badgeCount.text = String(describing: count! - 1)
                         self.canTakePhoto = true;
-                        HappieCameraJSON.setTotalImages(imageCount: count! - 1);
                         HappieCameraJSON.decrementProcessingCount();
                     }else{
                         print("failed to write image to path: " + path)

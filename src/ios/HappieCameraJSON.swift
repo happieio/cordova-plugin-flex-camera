@@ -4,17 +4,14 @@ import Foundation
     override init(){ super.init() }
     //index 0 = original image path, 1 = thumb path
 
+    static private let filemgr = FileManager.default
+
     static private var queue = DispatchQueue(label: "image.processing.count.queue")
 
     static private (set) var count: Int = 0
-    static private (set) var total: Int = 0
 
     static func initializeProcessingCount(){
         queue.sync { count = 0 }
-    }
-
-    static func setTotalImages(imageCount:Int){
-        queue.sync { total = imageCount }
     }
 
     static func incrementProcessingCount(){
@@ -30,7 +27,12 @@ import Foundation
     }
 
     static func getTotalImages() -> Int{
-        return total;
+        let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        let docsDir = dirPaths[0]
+        let mediaDir = docsDir + "/media"
+        let dirContents = try? filemgr.contentsOfDirectory(atPath: mediaDir)
+        let count = dirContents?.count
+        return count! - 1;
     }
 
     private static var quality = 3;
