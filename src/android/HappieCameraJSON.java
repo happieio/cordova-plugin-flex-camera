@@ -11,9 +11,14 @@ import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 public class HappieCameraJSON {
 
     private static AtomicInteger ACTIVE_PROCESSES;
+    private static AtomicInteger TOTAL_IMAGES;
 
     public static void INITIALZIE_ACTIVE_PROCESSES(){
         ACTIVE_PROCESSES.set(0);
+    }
+
+    public static void SET_TOTAL_IMAGES(int count){
+        TOTAL_IMAGES.set(count);
     }
 
     public static void INCREMENT_ACTIVE_PROCESSES(){
@@ -26,5 +31,9 @@ public class HappieCameraJSON {
 
     public static int GET_ACTIVE_PROCESSES(){
         return ACTIVE_PROCESSES.intValue();
+    }
+
+    public static int GET_TOTAL_IMAGES(){
+        return TOTAL_IMAGES.intValue();
     }
 }

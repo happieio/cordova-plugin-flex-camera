@@ -93,8 +93,6 @@ import CoreMotion
             print("Failed to create thumb dir: \(error!.localizedDescription)")
         }
 
-        HappieCameraJSON.initializeProcessingCount();
-
         let enumerator:FileManager.DirectoryEnumerator = filemgr.enumerator(atPath: mediaDir)!
         while let element = enumerator.nextObject() as? String {
             if (element.hasSuffix("jpeg") &&
@@ -123,6 +121,9 @@ import CoreMotion
         let dirContents = try? filemgr.contentsOfDirectory(atPath: mediaDir)
         let count = dirContents?.count
         badgeCount.text = String(describing: count! - 1)
+
+        HappieCameraJSON.setTotalImages(imageCount: count!);
+        HappieCameraJSON.initializeProcessingCount();
 
         _ = AVCaptureDevice.devices(withMediaType: AVMediaTypeVideo)
 
@@ -310,6 +311,7 @@ import CoreMotion
                         let count = dirContents?.count
                         self.badgeCount.text = String(describing: count! - 1)
                         self.canTakePhoto = true;
+                        HappieCameraJSON.setTotalImages(imageCount: count!);
                         HappieCameraJSON.decrementProcessingCount();
                     }else{
                         print("failed to write image to path: " + path)

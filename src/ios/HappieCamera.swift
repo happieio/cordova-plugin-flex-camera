@@ -23,7 +23,8 @@ import UIKit
 
     func getProcessingCount(_ command: CDVInvokedUrlCommand) {
         var pluginResult: CDVPluginResult;
-        pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: HappieCameraJSON.getProcessingCount())
+        let message = "{\"count\":" + String(HappieCameraJSON.getProcessingCount()) + ", \"total\":" + String(HappieCameraJSON.getTotalImages()) + "}"
+        pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: message)
         commandDelegate!.send(pluginResult, callbackId:callBackId)
     }
 

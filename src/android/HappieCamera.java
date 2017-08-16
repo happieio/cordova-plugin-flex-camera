@@ -28,7 +28,7 @@ public class HappieCamera extends CordovaPlugin {
         currentAction = action;
 
         if(action.equals("getProcessingCount")){
-            callbackContext.success(HappieCameraJSON.GET_ACTIVE_PROCESSES());
+            callbackContext.success("{\"count\":"+ HappieCameraJSON.GET_ACTIVE_PROCESSES() + ", \"total\":" + HappieCameraJSON.GET_TOTAL_IMAGES() +"}");
             return true;
         }
         else if(action.equals("generateThumbnail")){

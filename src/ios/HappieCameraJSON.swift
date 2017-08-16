@@ -6,22 +6,31 @@ import Foundation
 
     static private var queue = DispatchQueue(label: "image.processing.count.queue")
 
-    static private (set) var value: Int = 0
+    static private (set) var count: Int = 0
+    static private (set) var total: Int = 0
 
     static func initializeProcessingCount(){
-        queue.sync { value = 0 }
+        queue.sync { count = 0 }
+    }
+
+    static func setTotalImages(imageCount:Int){
+        queue.sync { total = imageCount }
     }
 
     static func incrementProcessingCount(){
-        queue.sync { value += 1 }
+        queue.sync { count += 1 }
     }
 
     static func decrementProcessingCount(){
-        queue.sync { value -= 1 }
+        queue.sync { count -= 1 }
     }
 
     static func getProcessingCount() -> Int{
-        return value;
+        return count;
+    }
+
+    static func getTotalImages() -> Int{
+        return total;
     }
 
     private static var quality = 3;
