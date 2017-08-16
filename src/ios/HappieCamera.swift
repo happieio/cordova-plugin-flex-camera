@@ -6,8 +6,6 @@ import UIKit
     //let cameraRoll: HappieCameraRoll = HappieCameraRoll();
     //let cameraView = HappieCameraViewController(nibName:"HappieCameraView", bundle:nil);
 
-    var callBackId: String = "";
-
     func openCamera(_ command: CDVInvokedUrlCommand) {
         //cameraRoll.delegate = self;
         let params: AnyObject = command.arguments[0] as AnyObject!
@@ -17,7 +15,6 @@ import UIKit
         cameraVC.delegate = self;
         cameraVC.modalTransitionStyle = UIModalTransitionStyle.coverVertical;
         cameraVC.modalPresentationStyle = UIModalPresentationStyle.fullScreen;
-        callBackId = command.callbackId;
         self.viewController?.present(cameraVC, animated: true, completion:nil)
     }
 
@@ -25,14 +22,11 @@ import UIKit
         var pluginResult: CDVPluginResult;
         let message = "{\"count\":" + String(HappieCameraJSON.getProcessingCount()) + ", \"total\":" + String(HappieCameraJSON.getTotalImages()) + "}"
         pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: message)
-        commandDelegate!.send(pluginResult, callbackId:callBackId)
+        commandDelegate!.send(pluginResult, callbackId:command.callbackId)
     }
 
     func cameraFinished(_ controller: HappieCameraViewController){
         controller.dismiss(animated: true, completion: nil);
-        var pluginResult: CDVPluginResult;
-        pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: "true")
-        commandDelegate!.send(pluginResult, callbackId:callBackId)
     }
 
     func generateThumbnail(_ command: CDVInvokedUrlCommand) {
@@ -42,11 +36,11 @@ import UIKit
 
             if(thumbGen.createThumbAtPathWithName(name: name)){
                 let pluginResult: CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: "true")
-                self.commandDelegate!.send(pluginResult, callbackId:self.callBackId)
+                self.commandDelegate!.send(pluginResult, callbackId:command.callbackId)
             }
             else {
                 let pluginResult: CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: "false")
-                self.commandDelegate!.send(pluginResult, callbackId:self.callBackId)
+                self.commandDelegate!.send(pluginResult, callbackId:command.callbackId)
             }
         }
     }
