@@ -164,7 +164,6 @@ public class HappieCameraActivity extends Activity {
         badgeCount.setText(Integer.toString(mediaFiles.length - 1));
 
         HappieCameraJSON.INITIALZIE_ACTIVE_PROCESSES();
-        HappieCameraJSON.SET_TOTAL_IMAGES(mediaFiles.length - 1);
 
         initCameraSession();
         initCameraPreview();
@@ -510,7 +509,6 @@ public class HappieCameraActivity extends Activity {
             //queueRef.setEnabled(true);
             cancelRef.setEnabled(true);
             HappieCameraJSON.DECREMENT_ACTIVE_PROCESSES();
-            HappieCameraJSON.SET_TOTAL_IMAGES(mediaFiles.length - 1);
         }
 
         private File[] getOutputMediaFiles(int type) {
