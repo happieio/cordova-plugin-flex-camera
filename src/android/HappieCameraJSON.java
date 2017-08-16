@@ -8,7 +8,7 @@ public class HappieCameraJSON {
     private static AtomicInteger ACTIVE_PROCESSES;
 
     public static void INITIALZIE_ACTIVE_PROCESSES(){
-        ACTIVE_PROCESSES.set(0);
+        ACTIVE_PROCESSES = new AtomicInteger(0);
     }
 
     public static void INCREMENT_ACTIVE_PROCESSES(){
@@ -20,6 +20,9 @@ public class HappieCameraJSON {
     }
 
     public static int GET_ACTIVE_PROCESSES(){
+        if(ACTIVE_PROCESSES == null){
+            ACTIVE_PROCESSES = new AtomicInteger(0);
+        }
         return ACTIVE_PROCESSES.intValue();
     }
 
