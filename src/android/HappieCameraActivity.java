@@ -72,6 +72,8 @@ public class HappieCameraActivity extends Activity {
 
     private Camera mCamera;
 
+    private HappieCameraJSON base;
+
     /**
      * UI State Functions
      */
@@ -93,6 +95,8 @@ public class HappieCameraActivity extends Activity {
                 degrees = arg0;
             }
         };
+
+        base = new HappieCameraJSON();
 
         display = getWindowManager().getDefaultDisplay();
 
