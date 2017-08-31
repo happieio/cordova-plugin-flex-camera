@@ -26,6 +26,7 @@ public class HappieCamera extends CordovaPlugin {
 
         this.callbackContext = callbackContext;
         currentAction = action;
+        context = this.cordova.getActivity().getApplicationContext();
 
         if(action.equals("getProcessingCount")){
             callbackContext.success("{\"count\":"+ HappieCameraJSON.GET_ACTIVE_PROCESSES() + ", \"total\":" + HappieCameraJSON.GET_TOTAL_IMAGES() +"}");
@@ -80,7 +81,6 @@ public class HappieCamera extends CordovaPlugin {
     }
 
     public void openCamera() {
-        context = this.cordova.getActivity().getApplicationContext();
         Intent pictureIntent = new Intent(context, io.happie.cordovaCamera.HappieCameraActivity.class);
         pictureIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(pictureIntent);
