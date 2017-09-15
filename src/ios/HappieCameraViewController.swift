@@ -460,6 +460,6 @@ import CoreMotion
         let format = DateFormatter()
         format.dateFormat = "yyyyMMdd_HHmmssSS"
         let stringDate = format.string(from: date)
-        return stringDate + "_photo.jpeg"
+        return stringDate + "_photo.jpg"
     }
 }
