@@ -27,8 +27,8 @@
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
             <uses-permission android:name="android.permission.CAMERA"/>
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-            <uses-feature android:name="android.hardware.camera" android:required="true"/>
-            <uses-feature android:name="android.hardware.camera.autofocus"/>
+            <uses-feature android:name="android.hardware.camera" android:required="false"/>
+            <uses-feature android:name="android.hardware.location" android:required="false"/>
         </config-file>
         <config-file target="AndroidManifest.xml" parent="application">
             <activity android:configChanges="orientation|keyboardHidden|screenSize"
