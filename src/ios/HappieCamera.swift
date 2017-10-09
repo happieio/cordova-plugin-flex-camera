@@ -6,6 +6,7 @@ import UIKit
     //let cameraRoll: HappieCameraRoll = HappieCameraRoll();
     //let cameraView = HappieCameraViewController(nibName:"HappieCameraView", bundle:nil);
 
+    @objc(openCamera:)
     func openCamera(_ command: CDVInvokedUrlCommand) {
         //cameraRoll.delegate = self;
         let params: [String: Any] = command.arguments[0] as! [String: Any]
@@ -18,6 +19,7 @@ import UIKit
         self.viewController?.present(cameraVC, animated: true, completion:nil)
     }
 
+    @objc(getProcessingCount:)
     func getProcessingCount(_ command: CDVInvokedUrlCommand) {
         var pluginResult: CDVPluginResult;
         let message = "{\"count\":" + String(HappieCameraJSON.getProcessingCount()) + ", \"total\":" + String(HappieCameraJSON.getTotalImages()) + "}"
@@ -29,6 +31,7 @@ import UIKit
         controller.dismiss(animated: true, completion: nil);
     }
 
+    @objc(generateThumbnail:)
     func generateThumbnail(_ command: CDVInvokedUrlCommand) {
         let name: String = (command.argument(at: 0) as AnyObject) as! String
         self.commandDelegate.run {
