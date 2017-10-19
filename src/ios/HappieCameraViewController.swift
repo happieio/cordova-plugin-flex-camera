@@ -8,10 +8,6 @@ import CoreMotion
 @objc protocol cameraDelegate{ func cameraFinished(_ controller: HappieCameraViewController) }
 
 @objc(HappieCameraViewController) class HappieCameraViewController : UIViewController, AVCaptureFileOutputRecordingDelegate  {
-    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
-
-    }
-
 
     //MARK: Class Variables
     let captureSession = AVCaptureSession() //provides a UI context for capturing media
@@ -128,16 +124,16 @@ import CoreMotion
 
         HappieCameraJSON.initializeProcessingCount();
 
-        _ = AVCaptureDevice.devices(for: AVMediaType.video)
+        _ = AVCaptureDevice.devices(withMediaType: AVMediaTypeVideo)
 
         let devices = AVCaptureDevice.devices()
 
         // Loop through all the capture devices on this phone
-        for device in devices {
+        for device in devices! {
             // Make sure this particular device supports video
-            if ((device as AnyObject).hasMediaType(AVMediaType.video)) {
+            if ((device as AnyObject).hasMediaType(AVMediaTypeVideo)) {
                 // Finally check the position and confirm we've got the back camera
-                if((device as AnyObject).position == AVCaptureDevice.Position.back) {
+                if((device as AnyObject).position == AVCaptureDevicePosition.back) {
                     backCameraDevice = device as? AVCaptureDevice
                 }
             }
@@ -145,23 +141,23 @@ import CoreMotion
 
         let possibleCameraInput: AnyObject?
         do {
-            possibleCameraInput = try AVCaptureDeviceInput(device: backCameraDevice!)
+            possibleCameraInput = try AVCaptureDeviceInput(device: backCameraDevice)
         } catch let error1 as NSError {
             error = error1
             possibleCameraInput = nil
         }
         let backCameraInput = possibleCameraInput as? AVCaptureDeviceInput
-        if captureSession.canAddInput(backCameraInput!) {
-            captureSession.addInput(backCameraInput!)
+        if captureSession.canAddInput(backCameraInput) {
+            captureSession.addInput(backCameraInput)
         }
 
         stillImageOutput = AVCaptureStillImageOutput()
-        if captureSession.canAddOutput(stillImageOutput!) {
+        if captureSession.canAddOutput(stillImageOutput) {
             stillImageOutput?.isHighResolutionStillImageOutputEnabled = true;
             stillImageOutput?.outputSettings = [AVVideoCodecKey : AVVideoCodecJPEG];
-            captureSession.addOutput(stillImageOutput!)
+            captureSession.addOutput(stillImageOutput)
         }
-        captureSession.sessionPreset = AVCaptureSession.Preset.photo
+        captureSession.sessionPreset = AVCaptureSessionPresetPhoto
         setFlashModeToAuto(backCameraDevice!)
         beginSession()
     }
@@ -235,9 +231,9 @@ import CoreMotion
 
         previewLayer?.frame = CGRect(x: 0, y: 0, width: width,height: height)
         previewLayer?.bounds = CGRect(x: 0, y: 0,width: width,height: height)
-        previewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill;
+        previewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill;
         
-        previewLayer?.connection?.videoOrientation = AVCaptureVideoOrientation(rawValue: orientation.rawValue)!;
+        previewLayer?.connection.videoOrientation = AVCaptureVideoOrientation(rawValue: orientation.rawValue)!;
         camPreview.layer.addSublayer(previewLayer!)
 
         captureSession.startRunning()
@@ -275,11 +271,11 @@ import CoreMotion
         if(canTakePhoto){
             HappieCameraJSON.incrementProcessingCount();
             canTakePhoto = false;
-            let connection = stillImageOutput?.connection(with: AVMediaType.video)
+            let connection = stillImageOutput?.connection(withMediaType: AVMediaTypeVideo)
 
-            stillImageOutput?.captureStillImageAsynchronously(from: connection!) { imageBuffer, error in
+            stillImageOutput?.captureStillImageAsynchronously(from: connection) { imageBuffer, error in
                 if((imageBuffer) != nil){
-                    let imageData: Data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageBuffer!)!
+                    let imageData: Data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageBuffer)
                     let UIImageFromData = UIImage(data: imageData)
 
                     var  orient = UIImageOrientation.right;
@@ -372,9 +368,9 @@ import CoreMotion
     }
 
     //MARK: Utility Functions
-    func deviceWithMediaType(_ mediaType : AVMediaType, preferringPosition: AVCaptureDevice.Position) -> AVCaptureDevice{
-        let devices : [AVCaptureDevice] = AVCaptureDevice.devices(for: mediaType)
-        var captureDevice: AVCaptureDevice = devices.first as! AVCaptureDevice
+    func deviceWithMediaType(_ mediaType: NSString, preferringPosition: AVCaptureDevicePosition) -> AVCaptureDevice{
+        let devices: NSArray = AVCaptureDevice.devices(withMediaType: mediaType as String) as NSArray
+        var captureDevice: AVCaptureDevice = devices.firstObject as! AVCaptureDevice
 
         for device in devices{
             if((device as AnyObject).position == preferringPosition){
@@ -389,13 +385,13 @@ import CoreMotion
         do{
             try device.lockForConfiguration();
             if(backCameraDevice!.hasFlash){
-                if(backCameraDevice!.isFlashModeSupported(AVCaptureDevice.FlashMode.auto)){
-                    device.flashMode = AVCaptureDevice.FlashMode.auto;
+                if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.auto)){
+                    device.flashMode = AVCaptureFlashMode.auto;
                     let image = UIImage(named: "camera_flash_auto.png") as UIImage!
                     flashUIButton.setImage(image, for: UIControlState())
                 }
-                if(backCameraDevice!.isTorchModeSupported(AVCaptureDevice.TorchMode.off)){
-                    device.torchMode = AVCaptureDevice.TorchMode.off;
+                if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.off)){
+                    device.torchMode = AVCaptureTorchMode.off;
                 }
             }else{
                 let image = UIImage(named: "camera_flash_off.png") as UIImage!
@@ -417,36 +413,36 @@ import CoreMotion
                 try device.lockForConfiguration();
 
                 if(flashState == 0){
-                    if(backCameraDevice!.isFlashModeSupported(AVCaptureDevice.FlashMode.off)){
-                        device.flashMode = AVCaptureDevice.FlashMode.off;
+                    if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.off)){
+                        device.flashMode = AVCaptureFlashMode.off;
                         let image = UIImage(named: "camera_flash_off.png") as UIImage!
                         flashUIButton.setImage(image, for: UIControlState())
                     }
-                    if(backCameraDevice!.isTorchModeSupported(AVCaptureDevice.TorchMode.off)){
-                        device.torchMode = AVCaptureDevice.TorchMode.off;
+                    if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.off)){
+                        device.torchMode = AVCaptureTorchMode.off;
                     }
                     flashState = 1;
                 }
 
                 else if(flashState == 1){
-                    if(backCameraDevice!.isFlashModeSupported(AVCaptureDevice.FlashMode.auto)){
-                        device.flashMode = AVCaptureDevice.FlashMode.auto;
+                    if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.auto)){
+                        device.flashMode = AVCaptureFlashMode.auto;
                         let image = UIImage(named: "camera_flash_auto.png") as UIImage!
                         flashUIButton.setImage(image, for: UIControlState())
                     }
-                    if(backCameraDevice!.isTorchModeSupported(AVCaptureDevice.TorchMode.off)){
-                        device.torchMode = AVCaptureDevice.TorchMode.off;
+                    if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.off)){
+                        device.torchMode = AVCaptureTorchMode.off;
                     }
                     flashState = 2
                 }
                 else if(flashState == 2){
-                    if(backCameraDevice!.isFlashModeSupported(AVCaptureDevice.FlashMode.off)){
-                        device.flashMode = AVCaptureDevice.FlashMode.off;
+                    if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.off)){
+                        device.flashMode = AVCaptureFlashMode.off;
                         let image = UIImage(named: "camera_flash_on.png") as UIImage!
                         flashUIButton.setImage(image, for: UIControlState())
                     }
-                    if(backCameraDevice!.isTorchModeSupported(AVCaptureDevice.TorchMode.on)){
-                        device.torchMode = AVCaptureDevice.TorchMode.on;
+                    if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.on)){
+                        device.torchMode = AVCaptureTorchMode.on;
                     }
 
                     flashState = 0;
