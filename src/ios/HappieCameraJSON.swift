@@ -1,4 +1,5 @@
 import Foundation
+import Raygun4iOS
 
 @objc class HappieCameraJSON : NSObject  {
     override init(){ super.init() }
@@ -26,22 +27,45 @@ import Foundation
         return count;
     }
 
-    static func getTotalImages() -> Int{
+    static func getTotalImages(user:String, jnid:String) -> Int{
         let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let docsDir = dirPaths[0]
-        let mediaDir = docsDir + "/media"
-        let dirContents = try? filemgr.contentsOfDirectory(atPath: mediaDir)
-        let count = dirContents?.count
-        return count! - 1;
+        let mediaDir = docsDir + "/media/" + user + "/" + jnid
+        let dir = try? FileManager.default.contentsOfDirectory(at: URL(string: mediaDir)!, includingPropertiesForKeys:nil, options: .skipsHiddenFiles)
+        var count = 0;
+        for file in dir! {
+            if(!file.absoluteString.contains(".json")){
+                count += 1
+            }
+        }
+        return count - 1;
     }
 
     private static var quality = 3;
+    private static var user = "nouser";
+    private static var jnid = "noid";
     
     static func getQuality()->Int{
         return HappieCameraJSON.quality;
     }
+
+    static func getUser()->String{
+        return HappieCameraJSON.user;
+    }
+
+    static func getJnid()->String{
+        return HappieCameraJSON.jnid;
+    }
     
     static func setQuality(newQual:Int){
         HappieCameraJSON.quality = newQual;
+    }
+
+    static func setUser(newUser:String){
+        HappieCameraJSON.user = newUser;
+    }
+
+    static func setJnid(jnid:String){
+        HappieCameraJSON.jnid = jnid;
     }
 }

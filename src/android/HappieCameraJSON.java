@@ -27,7 +27,7 @@ public class HappieCameraJSON {
     }
 
     public static int GET_TOTAL_IMAGES(){
-        File mediaDir = new File(HappieCamera.context.getFilesDir() + "/media");
+        File mediaDir = new File(HappieCamera.filesDir + "/media/" + HappieCamera.userId + "/" + HappieCamera.jnId);
         String[] mediaFiles = mediaDir.list();
         return mediaFiles.length - 1;
     }

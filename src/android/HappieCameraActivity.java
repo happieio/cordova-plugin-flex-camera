@@ -25,8 +25,6 @@ import android.widget.TextView;
 
 import com.jobnimbus.JobNimbus2.R; //parent project package
 
-import org.apache.cordova.PluginResult;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -34,6 +32,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * import com.jobnimbus.moderncamera.R; //Used For testing with the intenral ionic project
@@ -62,8 +61,8 @@ public class HappieCameraActivity extends Activity {
     private int quadState;  //0 = UL , 1 = UR, 2 = LL, 3 = LR
     private int flashState = 2;//camera_flash_auto
     private android.content.Context thisRef;
-    File mediaStorageDir;
-    File mediaThumbStorageDir;
+    File mediaDir;
+    File mediaThumbDir;
     Display display;
 
     private int degrees = 0;
@@ -125,27 +124,24 @@ public class HappieCameraActivity extends Activity {
 
         thisRef = this;
 
-        mediaStorageDir = new File(HappieCamera.context.getFilesDir() + "/media");
-        mediaThumbStorageDir = new File(HappieCamera.context.getFilesDir() + "/media/thumb");
-        if (mediaStorageDir.mkdirs()) {
+        mediaDir = new File(HappieCamera.filesDir + "/media/" + HappieCamera.userId + "/" + HappieCamera.jnId);
+        mediaThumbDir = new File(HappieCamera.filesDir + "/media/"+ HappieCamera.userId + "/" + HappieCamera.jnId + "/thumb");
+
+        if (mediaDir.mkdirs()) {
             Log.d(TAG, "media directory created");
         } else {
             Log.d(TAG, "media directory already created");
         }
 
-        if (mediaThumbStorageDir.mkdirs()) {
+        if (mediaThumbDir.mkdirs()) {
             Log.d(TAG, "media thumbnail directory created");
         } else {
             Log.d(TAG, "media thumbnail directory already created");
         }
 
-
-        String filePath = HappieCamera.context.getFilesDir() + "/media/thumb";
-
-        File thumbDir = new File(filePath);
-        String[] files = thumbDir.list();
-        for (String file : files) {
-            File image = new File(filePath, file);
+        String[] thumbFiles = mediaThumbDir.list();
+        for (String file : thumbFiles) {
+            File image = new File(mediaThumbDir, file);
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
             if (quadState == 0) {
@@ -163,7 +159,6 @@ public class HappieCameraActivity extends Activity {
             }
         }
 
-        File mediaDir = new File(HappieCamera.context.getFilesDir() + "/media");
         String[] mediaFiles = mediaDir.list();
         badgeCount.setText(Integer.toString(mediaFiles.length - 1));
 
@@ -171,7 +166,6 @@ public class HappieCameraActivity extends Activity {
 
         initCameraSession();
         initCameraPreview();
-
     }
 
     protected void initCameraPreview() {
@@ -401,7 +395,7 @@ public class HappieCameraActivity extends Activity {
 
             new ProcessImage(quadState, upperLeftThumbnail,
                     upperRightThumbnail, lowerLeftThumbnail, lowerRightThumbnail, thisRef,
-                    mediaStorageDir, mediaThumbStorageDir, queue, cancel, degrees).execute(data);
+                    mediaDir, mediaThumbDir, queue, cancel, degrees).execute(data);
 
             if (quadState == 0) {
                 quadState = 1;
@@ -505,7 +499,6 @@ public class HappieCameraActivity extends Activity {
                 lowerRightThumbnail.setImageBitmap((preview));
             }
 
-            File mediaDir = new File(HappieCamera.context.getFilesDir() + "/media");
             String[] mediaFiles = mediaDir.list();
             String count = Integer.toString(mediaFiles.length - 1);
             badgeCount.setText(count);
@@ -516,14 +509,18 @@ public class HappieCameraActivity extends Activity {
         }
 
         private File[] getOutputMediaFiles(int type) {
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmssSS").format(new Date());
+            String id = Long.toString(System.currentTimeMillis(), 36) + 
+                Long.toString(ThreadLocalRandom.current().nextLong(0, 78364164095l)) +
+                Long.toString(System.currentTimeMillis() % 37, 36) +
+                ".jpg";
+
             File[] FileAndThumb = new File[2];
             if (type == MEDIA_TYPE_IMAGE) {
-                FileAndThumb[0] = new File(mediaStorageDir.getPath() + File.separator + timeStamp + "_photo.jpg");
-                FileAndThumb[1] = new File(mediaThumbStorageDir.getPath() + File.separator + timeStamp + "_photo.jpg");
+                FileAndThumb[0] = new File(mediaStorageDir.getPath() + File.separator + id);
+                FileAndThumb[1] = new File(mediaThumbStorageDir.getPath() + File.separator + id);
             } else if (type == MEDIA_TYPE_VIDEO) {
-                FileAndThumb[0] = new File(mediaStorageDir.getPath() + File.separator + timeStamp + "_vid.mp4");
-                FileAndThumb[1] = new File(mediaThumbStorageDir.getPath() + File.separator + timeStamp + "_vid.mp4");
+                FileAndThumb[0] = new File(mediaStorageDir.getPath() + File.separator + id);
+                FileAndThumb[1] = new File(mediaThumbStorageDir.getPath() + File.separator + id);
             } else {
                 return null;
             }

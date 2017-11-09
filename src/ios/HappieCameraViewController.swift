@@ -8,6 +8,10 @@ import CoreMotion
 @objc protocol cameraDelegate{ func cameraFinished(_ controller: HappieCameraViewController) }
 
 @objc(HappieCameraViewController) class HappieCameraViewController : UIViewController, AVCaptureFileOutputRecordingDelegate  {
+    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+
+    }
+
 
     //MARK: Class Variables
     let captureSession = AVCaptureSession() //provides a UI context for capturing media
@@ -77,14 +81,14 @@ import CoreMotion
         //create documents/media folder to contain captured images
         let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let docsDir = dirPaths[0]
-        mediaDir = docsDir + "/media"
+        mediaDir = docsDir + "/media/" + HappieCameraJSON.getUser() + "/" + HappieCameraJSON.getJnid();
         do {
             try filemgr.createDirectory(atPath: mediaDir, withIntermediateDirectories: true, attributes: nil)
         } catch let error1 as NSError {
             error = error1
             print("Failed to create media dir: \(error!.localizedDescription)")
         }
-        //create documents/media/thumb to contain thumbnails of captured images
+        //create documents/media/user/jnid/thumb to contain thumbnails of captured images
         thumbDir = mediaDir + "/thumb";
         do {
             try filemgr.createDirectory(atPath: thumbDir, withIntermediateDirectories: true, attributes: nil)
@@ -95,7 +99,7 @@ import CoreMotion
 
         let enumerator:FileManager.DirectoryEnumerator = filemgr.enumerator(atPath: mediaDir)!
         while let element = enumerator.nextObject() as? String {
-            if (element.hasSuffix("jpeg") &&
+            if (element.hasSuffix("jpg") &&
                 (element as NSString).contains("thumb") &&
                 element != "thumb"){
                 let path = mediaDir + "/" + element
@@ -118,22 +122,20 @@ import CoreMotion
             }
         }
 
-        let dirContents = try? filemgr.contentsOfDirectory(atPath: mediaDir)
-        let count = dirContents?.count
-        badgeCount.text = String(describing: count! - 1)
+        badgeCount.text = String(describing: HappieCameraJSON.getTotalImages(user: HappieCameraJSON.getUser(), jnid: HappieCameraJSON.getJnid()))
 
         HappieCameraJSON.initializeProcessingCount();
 
-        _ = AVCaptureDevice.devices(withMediaType: AVMediaTypeVideo)
+        _ = AVCaptureDevice.devices(for: AVMediaType.video)
 
         let devices = AVCaptureDevice.devices()
 
         // Loop through all the capture devices on this phone
-        for device in devices! {
+        for device in devices {
             // Make sure this particular device supports video
-            if ((device as AnyObject).hasMediaType(AVMediaTypeVideo)) {
+            if ((device as AnyObject).hasMediaType(AVMediaType.video)) {
                 // Finally check the position and confirm we've got the back camera
-                if((device as AnyObject).position == AVCaptureDevicePosition.back) {
+                if((device as AnyObject).position == AVCaptureDevice.Position.back) {
                     backCameraDevice = device as? AVCaptureDevice
                 }
             }
@@ -141,23 +143,23 @@ import CoreMotion
 
         let possibleCameraInput: AnyObject?
         do {
-            possibleCameraInput = try AVCaptureDeviceInput(device: backCameraDevice)
+            possibleCameraInput = try AVCaptureDeviceInput(device: backCameraDevice!)
         } catch let error1 as NSError {
             error = error1
             possibleCameraInput = nil
         }
         let backCameraInput = possibleCameraInput as? AVCaptureDeviceInput
-        if captureSession.canAddInput(backCameraInput) {
-            captureSession.addInput(backCameraInput)
+        if captureSession.canAddInput(backCameraInput!) {
+            captureSession.addInput(backCameraInput!)
         }
 
         stillImageOutput = AVCaptureStillImageOutput()
-        if captureSession.canAddOutput(stillImageOutput) {
+        if captureSession.canAddOutput(stillImageOutput!) {
             stillImageOutput?.isHighResolutionStillImageOutputEnabled = true;
             stillImageOutput?.outputSettings = [AVVideoCodecKey : AVVideoCodecJPEG];
-            captureSession.addOutput(stillImageOutput)
+            captureSession.addOutput(stillImageOutput!)
         }
-        captureSession.sessionPreset = AVCaptureSessionPresetPhoto
+        captureSession.sessionPreset = AVCaptureSession.Preset.photo
         setFlashModeToAuto(backCameraDevice!)
         beginSession()
     }
@@ -231,9 +233,9 @@ import CoreMotion
 
         previewLayer?.frame = CGRect(x: 0, y: 0, width: width,height: height)
         previewLayer?.bounds = CGRect(x: 0, y: 0,width: width,height: height)
-        previewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill;
+        previewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill;
         
-        previewLayer?.connection.videoOrientation = AVCaptureVideoOrientation(rawValue: orientation.rawValue)!;
+        previewLayer?.connection?.videoOrientation = AVCaptureVideoOrientation(rawValue: orientation.rawValue)!;
         camPreview.layer.addSublayer(previewLayer!)
 
         captureSession.startRunning()
@@ -271,11 +273,11 @@ import CoreMotion
         if(canTakePhoto){
             HappieCameraJSON.incrementProcessingCount();
             canTakePhoto = false;
-            let connection = stillImageOutput?.connection(withMediaType: AVMediaTypeVideo)
+            let connection = stillImageOutput?.connection(with: AVMediaType.video)
 
-            stillImageOutput?.captureStillImageAsynchronously(from: connection) { imageBuffer, error in
+            stillImageOutput?.captureStillImageAsynchronously(from: connection!) { imageBuffer, error in
                 if((imageBuffer) != nil){
-                    let imageData: Data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageBuffer)
+                    let imageData: Data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageBuffer!)!
                     let UIImageFromData = UIImage(data: imageData)
 
                     var  orient = UIImageOrientation.right;
@@ -306,9 +308,7 @@ import CoreMotion
                         else if(self.quadState == 1) {self.URuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 2}
                         else if(self.quadState == 2) {self.LLuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 3}
                         else if(self.quadState == 3) {self.LRuii.image = UIImage(data: thumbData, scale: 1); self.quadState = 0}
-                        let dirContents = try? self.filemgr.contentsOfDirectory(atPath: self.mediaDir)
-                        let count = dirContents?.count
-                        self.badgeCount.text = String(describing: count! - 1)
+                        self.badgeCount.text = String(describing: HappieCameraJSON.getTotalImages(user: HappieCameraJSON.getUser(), jnid: HappieCameraJSON.getJnid()))
                         self.canTakePhoto = true;
                         HappieCameraJSON.decrementProcessingCount();
                     }else{
@@ -368,9 +368,9 @@ import CoreMotion
     }
 
     //MARK: Utility Functions
-    func deviceWithMediaType(_ mediaType: NSString, preferringPosition: AVCaptureDevicePosition) -> AVCaptureDevice{
-        let devices: NSArray = AVCaptureDevice.devices(withMediaType: mediaType as String) as NSArray
-        var captureDevice: AVCaptureDevice = devices.firstObject as! AVCaptureDevice
+    func deviceWithMediaType(_ mediaType : AVMediaType, preferringPosition: AVCaptureDevice.Position) -> AVCaptureDevice{
+        let devices : [AVCaptureDevice] = AVCaptureDevice.devices(for: mediaType)
+        var captureDevice: AVCaptureDevice = devices.first as! AVCaptureDevice
 
         for device in devices{
             if((device as AnyObject).position == preferringPosition){
@@ -385,13 +385,13 @@ import CoreMotion
         do{
             try device.lockForConfiguration();
             if(backCameraDevice!.hasFlash){
-                if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.auto)){
-                    device.flashMode = AVCaptureFlashMode.auto;
+                if(backCameraDevice!.isFlashModeSupported(AVCaptureDevice.FlashMode.auto)){
+                    device.flashMode = AVCaptureDevice.FlashMode.auto;
                     let image = UIImage(named: "camera_flash_auto.png") as UIImage!
                     flashUIButton.setImage(image, for: UIControlState())
                 }
-                if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.off)){
-                    device.torchMode = AVCaptureTorchMode.off;
+                if(backCameraDevice!.isTorchModeSupported(AVCaptureDevice.TorchMode.off)){
+                    device.torchMode = AVCaptureDevice.TorchMode.off;
                 }
             }else{
                 let image = UIImage(named: "camera_flash_off.png") as UIImage!
@@ -413,36 +413,36 @@ import CoreMotion
                 try device.lockForConfiguration();
 
                 if(flashState == 0){
-                    if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.off)){
-                        device.flashMode = AVCaptureFlashMode.off;
+                    if(backCameraDevice!.isFlashModeSupported(AVCaptureDevice.FlashMode.off)){
+                        device.flashMode = AVCaptureDevice.FlashMode.off;
                         let image = UIImage(named: "camera_flash_off.png") as UIImage!
                         flashUIButton.setImage(image, for: UIControlState())
                     }
-                    if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.off)){
-                        device.torchMode = AVCaptureTorchMode.off;
+                    if(backCameraDevice!.isTorchModeSupported(AVCaptureDevice.TorchMode.off)){
+                        device.torchMode = AVCaptureDevice.TorchMode.off;
                     }
                     flashState = 1;
                 }
 
                 else if(flashState == 1){
-                    if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.auto)){
-                        device.flashMode = AVCaptureFlashMode.auto;
+                    if(backCameraDevice!.isFlashModeSupported(AVCaptureDevice.FlashMode.auto)){
+                        device.flashMode = AVCaptureDevice.FlashMode.auto;
                         let image = UIImage(named: "camera_flash_auto.png") as UIImage!
                         flashUIButton.setImage(image, for: UIControlState())
                     }
-                    if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.off)){
-                        device.torchMode = AVCaptureTorchMode.off;
+                    if(backCameraDevice!.isTorchModeSupported(AVCaptureDevice.TorchMode.off)){
+                        device.torchMode = AVCaptureDevice.TorchMode.off;
                     }
                     flashState = 2
                 }
                 else if(flashState == 2){
-                    if(backCameraDevice!.isFlashModeSupported(AVCaptureFlashMode.off)){
-                        device.flashMode = AVCaptureFlashMode.off;
+                    if(backCameraDevice!.isFlashModeSupported(AVCaptureDevice.FlashMode.off)){
+                        device.flashMode = AVCaptureDevice.FlashMode.off;
                         let image = UIImage(named: "camera_flash_on.png") as UIImage!
                         flashUIButton.setImage(image, for: UIControlState())
                     }
-                    if(backCameraDevice!.isTorchModeSupported(AVCaptureTorchMode.on)){
-                        device.torchMode = AVCaptureTorchMode.on;
+                    if(backCameraDevice!.isTorchModeSupported(AVCaptureDevice.TorchMode.on)){
+                        device.torchMode = AVCaptureDevice.TorchMode.on;
                     }
 
                     flashState = 0;
@@ -456,10 +456,23 @@ import CoreMotion
     }
     
     func generateFileName() -> String {
-        let date = Date()
-        let format = DateFormatter()
-        format.dateFormat = "yyyyMMdd_HHmmssSS"
-        let stringDate = format.string(from: date)
-        return stringDate + "_photo.jpg"
+        //use simpleflake id as filename
+        return String(UInt64(NSDate().timeIntervalSince1970 * 1000.0), radix: 36) +
+        String(randomNumber(inRange: 1...78364164095), radix:36) +
+        String(UInt64(NSDate().timeIntervalSince1970 * 1000.0) % 37, radix: 36) +
+        ".jpg";
     }
+
+    func randomNumber<T : SignedInteger>(inRange range: ClosedRange<T> = 1...6) -> T {
+        let length = Int64(range.upperBound - range.lowerBound + 1)
+        let value = Int64(arc4random()) % length + Int64(range.lowerBound)
+        return T(value)
+    }
+
+    //swift 3 implementation
+//    func randomNumber<T : SignedInteger>(inRange range: ClosedRange<T> = 1...6) -> T {
+//        let length = (range.upperBound - range.lowerBound + 1).toIntMax()
+//        let value = arc4random().toIntMax() % length + range.lowerBound.toIntMax()
+//        return T(value)
+//    }
 }
