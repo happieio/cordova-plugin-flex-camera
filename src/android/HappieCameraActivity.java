@@ -34,6 +34,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import main.java.com.mindscapehq.android.raygun4android.RaygunClient;
+
 /**
  * import com.jobnimbus.moderncamera.R; //Used For testing with the intenral ionic project
  */
@@ -158,9 +160,7 @@ public class HappieCameraActivity extends Activity {
                 quadState = 0;
             }
         }
-
-        String[] mediaFiles = mediaDir.list();
-        badgeCount.setText(Integer.toString(mediaFiles.length - 1));
+        badgeCount.setText(HappieCameraJSON.GET_TOTAL_IMAGES());
 
         HappieCameraJSON.INITIALZIE_ACTIVE_PROCESSES();
 
@@ -351,7 +351,12 @@ public class HappieCameraActivity extends Activity {
             //queue.setEnabled(false);
             shutter.setEnabled(false);
             cancel.setEnabled(false);
-            mCamera.takePicture(null, null, capturePicture); //shutter, raw, jpeg
+            try{
+                mCamera.takePicture(null, null, capturePicture); //shutter, raw, jpeg
+            }
+            catch(Exception e){
+                RaygunClient.send(e);
+            }
         }
     };
 
@@ -499,9 +504,7 @@ public class HappieCameraActivity extends Activity {
                 lowerRightThumbnail.setImageBitmap((preview));
             }
 
-            String[] mediaFiles = mediaDir.list();
-            String count = Integer.toString(mediaFiles.length - 1);
-            badgeCount.setText(count);
+            badgeCount.setText(HappieCameraJSON.GET_TOTAL_IMAGES());
 
             //queueRef.setEnabled(true);
             cancelRef.setEnabled(true);

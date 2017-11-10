@@ -28,7 +28,7 @@ import Raygun4iOS
                 (Raygun.sharedReporter() as! Raygun).send("failed to write photo json", withReason: "unknown", withTags:nil, withUserCustomData:nil)
             }
         }
-        let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: "message")
+        let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: "finished writing json")
         commandDelegate!.send(pluginResult, callbackId:command.callbackId)
     }
     

@@ -10,8 +10,16 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import main.java.com.mindscapehq.android.raygun4android.RaygunClient;
 
 public class HappieCamera extends CordovaPlugin {
 
@@ -38,6 +46,58 @@ public class HappieCamera extends CordovaPlugin {
             callbackContext.success("{\"count\":"+ HappieCameraJSON.GET_ACTIVE_PROCESSES() + ", \"total\":" + HappieCameraJSON.GET_TOTAL_IMAGES() +"}");
             return true;
         }
+        else if(action.equals("writePhotoMeta")){
+            String user = args.toString(0);
+            String jnid = args.toString(1);
+            JSONArray array = args.getJSONArray(2);
+
+            for (int i=0; i<array.length(); i++) {
+                JSONObject item = array.getJSONObject(i);
+                String fileName = item.getString("id");
+                String json = item.getString("data");
+
+                try{
+                    String filePath = appContext.getFilesDir() + "/media" + "/" + user + "/" + jnid;
+                    File jsonFile = new File(filePath, fileName);
+                    FileOutputStream fos = new FileOutputStream(jsonFile);
+                    fos.write(json.getBytes("UTF-8"));
+                    fos.close();
+                }
+                catch(Exception e){
+                    RaygunClient.send(e);
+                }
+            }
+            callbackContext.success("finished writing json");
+            return false;
+        }
+        else if(action.equals("readPhotoMeta")){
+            String user = args.toString(0);
+            String jnid = args.toString(1);
+
+            String filePath = appContext.getFilesDir() + "/media" + "/" + user + "/" + jnid;
+            File sessionDir = new File(filePath);
+
+            StringBuilder output = new StringBuilder();
+            output.append("[");
+
+            if (sessionDir.exists()) {
+                File[] files = sessionDir.listFiles();
+                for (File file : files) {
+                    try{
+                        FileInputStream fin = new FileInputStream(file);
+                        output.append(convertStreamToString(fin) + ",");
+                        fin.close();
+                    }
+                    catch(Exception e){
+                        RaygunClient.send(e);
+                    }
+                }
+            }
+            output.deleteCharAt(output.lastIndexOf(","));
+            output.append("]");
+            callbackContext.success(output.toString());
+            return false;
+        }
         else if(action.equals("generateThumbnail")){
             try{
                 generateThumbnail(args);
@@ -61,6 +121,17 @@ public class HappieCamera extends CordovaPlugin {
             getCamPermission(CAM_REQUEST_CODE);
             return false;
         }
+    }
+
+    public static String convertStreamToString(InputStream is) throws Exception {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line).append("\n");
+        }
+        reader.close();
+        return sb.toString();
     }
 
     public boolean executeLogic(String action) {

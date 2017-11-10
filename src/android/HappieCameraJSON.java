@@ -28,7 +28,12 @@ public class HappieCameraJSON {
 
     public static int GET_TOTAL_IMAGES(){
         File mediaDir = new File(HappieCamera.filesDir + "/media/" + HappieCamera.userId + "/" + HappieCamera.jnId);
-        String[] mediaFiles = mediaDir.list();
-        return mediaFiles.length - 1;
+        File[] mediaFiles = mediaDir.listFiles();
+        int total = 0;
+        for(File file : mediaFiles){
+            String name = file.getName();
+            if(!name.contains(".json")) total++;
+        }
+        return total - 1;
     }
 }
