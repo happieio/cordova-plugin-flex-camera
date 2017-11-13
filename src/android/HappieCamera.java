@@ -56,15 +56,18 @@ public class HappieCamera extends CordovaPlugin {
                 String fileName = item.getString("id");
                 String json = item.getString("data");
 
-                try{
+                FileOutputStream fos = null;
+                try {
                     String filePath = appContext.getFilesDir() + "/media" + "/" + user + "/" + jnid;
                     File jsonFile = new File(filePath, fileName);
-                    FileOutputStream fos = new FileOutputStream(jsonFile);
+                    fos = new FileOutputStream(jsonFile);
                     fos.write(json.getBytes("UTF-8"));
-                    fos.close();
-                }
-                catch(Exception e){
-                    RaygunClient.send(e);
+                } catch (Exception e) {
+                } finally {
+                    try {
+                        fos.close();
+                    } catch (Exception ex) {
+                    }
                 }
             }
             callbackContext.success("finished writing json");
@@ -83,13 +86,17 @@ public class HappieCamera extends CordovaPlugin {
             if (sessionDir.exists()) {
                 File[] files = sessionDir.listFiles();
                 for (File file : files) {
-                    try{
-                        FileInputStream fin = new FileInputStream(file);
-                        output.append(convertStreamToString(fin) + ",");
-                        fin.close();
+                    FileInputStream fin = null;
+                    try {
+                        fin = new FileInputStream(file);
+                        output.append(convertStreamToString(fin));
+                    } catch (Exception e) {
                     }
-                    catch(Exception e){
-                        RaygunClient.send(e);
+                    finally {
+                        try {
+                            fin.close();
+                        } catch (Exception ex) {
+                        }
                     }
                 }
             }
@@ -124,14 +131,26 @@ public class HappieCamera extends CordovaPlugin {
     }
 
     public static String convertStreamToString(InputStream is) throws Exception {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            sb.append(line).append("\n");
+        BufferedReader reader = null;
+        try{
+            reader = new BufferedReader(new InputStreamReader(is));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            return sb.toString();
         }
-        reader.close();
-        return sb.toString();
+        catch(Exception e){
+            return "";
+        }
+        finally {
+            try{
+                reader.close();
+            }
+            catch (Exception e){
+            }
+        }
     }
 
     public boolean executeLogic(String action) {
