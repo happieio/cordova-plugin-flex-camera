@@ -27,13 +27,19 @@ public class HappieCameraJSON {
     }
 
     public static int GET_TOTAL_IMAGES(){
-        File mediaDir = new File(HappieCamera.filesDir + "/media/" + HappieCamera.userId + "/" + HappieCamera.jnId);
-        File[] mediaFiles = mediaDir.listFiles();
-        int total = 0;
-        for(File file : mediaFiles){
-            String name = file.getName();
-            if(!name.contains(".json")) total++;
+        try{
+            File mediaDir = new File(HappieCamera.filesDir + "/media/" + HappieCamera.userId + "/" + HappieCamera.jnId);
+            File[] mediaFiles = mediaDir.listFiles();
+            int total = 0;
+            for(File file : mediaFiles){
+                String name = file.getName();
+                if(!name.contains(".json")) total++;
+            }
+            return total - 1;
         }
-        return total - 1;
+        catch(Exception e){
+            RaygunClient.send(e);
+            return -1;
+        }
     }
 }
