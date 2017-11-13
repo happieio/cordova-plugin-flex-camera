@@ -9,19 +9,15 @@ import android.media.ThumbnailUtils;
 
 import java.io.File;
 
-import android.util.Log;
-
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
-/**
- * Created by jobnimbus on 5/13/15.
- */
-public class HappieCameraThumb {
+import main.java.com.mindscapehq.android.raygun4android.RaygunClient;
 
-    public boolean createThumbAtPathWithName(String name, Context context) throws java.io.IOException{
+
+class HappieCameraThumb {
+
+    boolean createThumbAtPathWithName(String name, Context context) throws java.io.IOException{
 
         String filePath = context.getFilesDir() + "/mainCache";
         File fullFile = new File(filePath, name);
@@ -35,10 +31,10 @@ public class HappieCameraThumb {
         ThumbImage.compress(Bitmap.CompressFormat.JPEG, 85, stream);
         byte[] thumbnailByteArray = stream.toByteArray();
 
+        FileOutputStream fosThumb = null;
         try {
-            FileOutputStream fosThumb = new FileOutputStream(thumbFile);
+            fosThumb = new FileOutputStream(thumbFile);
             fosThumb.write(thumbnailByteArray);
-            fosThumb.close();
 
             ExifInterface exif = new ExifInterface(fullFile.getAbsolutePath());
             String orientation = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
@@ -46,17 +42,22 @@ public class HappieCameraThumb {
             ExifInterface exifThumb = new ExifInterface(thumbFile.getAbsolutePath());
             exifThumb.setAttribute(ExifInterface.TAG_ORIENTATION, orientation);
             exifThumb.saveAttributes();
-        } catch (FileNotFoundException e) {
-            Log.d("HappieThumb", "File not found: " + e.getMessage());
+        } catch (Exception e) {
+            RaygunClient.send(e);
             return false;
-        } catch (IOException e) {
-            Log.d("HappieThumb", "Error accessing file: " + e.getMessage());
-            return false;
+        }
+        finally {
+            try{
+                fosThumb.close();
+            }
+            catch (NullPointerException e){
+                RaygunClient.send(e);
+            }
         }
         return true;
     }
 
-    public Bitmap createThumbOfImage(File file, byte[] imageData, int degrees) {
+    Bitmap createThumbOfImage(File file, byte[] imageData, int degrees) {
         Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeByteArray(imageData, 0, imageData.length), 400, 400);
 
         Matrix matrix = new Matrix();
@@ -72,14 +73,20 @@ public class HappieCameraThumb {
         orientedBmp.compress(Bitmap.CompressFormat.JPEG, 85, stream);
         byte[] thumbnailByteArray = stream.toByteArray();
 
+        FileOutputStream fosThumb = null;
         try {
-            FileOutputStream fosThumb = new FileOutputStream(file);
+            fosThumb = new FileOutputStream(file);
             fosThumb.write(thumbnailByteArray);
-            fosThumb.close();
-        } catch (FileNotFoundException e) {
-            Log.d("HappieThumb", "File not found: " + e.getMessage());
-        } catch (IOException e) {
-            Log.d("HappieThumb", "Error accessing file: " + e.getMessage());
+        } catch (Exception e) {
+            RaygunClient.send(e);
+        }
+        finally {
+            try{
+                fosThumb.close();
+            }
+            catch (Exception e){
+                RaygunClient.send(e);
+            }
         }
         return ThumbImage;
     }

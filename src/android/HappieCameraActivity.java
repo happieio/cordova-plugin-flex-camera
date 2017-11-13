@@ -29,8 +29,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -73,8 +71,6 @@ public class HappieCameraActivity extends Activity {
 
     private Camera mCamera;
 
-    private HappieCameraJSON base;
-
     /**
      * UI State Functions
      */
@@ -97,30 +93,30 @@ public class HappieCameraActivity extends Activity {
             }
         };
 
-        base = new HappieCameraJSON();
+        HappieCameraJSON base = new HappieCameraJSON();
 
         display = getWindowManager().getDefaultDisplay();
 
         if (orientationListener.canDetectOrientation()) orientationListener.enable();
 
-        cancel = (ImageButton) findViewById(R.id.cancel);
+        cancel = findViewById(R.id.cancel);
         cancel.setOnClickListener(cancelSession);
 
-        shutter = (ImageButton) findViewById(R.id.shutter);
+        shutter = findViewById(R.id.shutter);
         shutter.setOnClickListener(captureImage);
 
-        queue = (ImageButton) findViewById(R.id.confirm);
+        queue = findViewById(R.id.confirm);
         queue.setOnClickListener(cameraFinishToQueue);
 
 
-        flash = (ImageButton) findViewById(R.id.flashToggle);
+        flash = findViewById(R.id.flashToggle);
         flash.setOnClickListener(switchFlash);
 
-        upperLeftThumbnail = (ImageView) findViewById(R.id.UpperLeft);
-        upperRightThumbnail = (ImageView) findViewById(R.id.UpperRight);
-        lowerLeftThumbnail = (ImageView) findViewById(R.id.LowerLeft);
-        lowerRightThumbnail = (ImageView) findViewById(R.id.LowerRight);
-        badgeCount = (TextView) findViewById(R.id.badgeCount);
+        upperLeftThumbnail = findViewById(R.id.UpperLeft);
+        upperRightThumbnail = findViewById(R.id.UpperRight);
+        lowerLeftThumbnail = findViewById(R.id.LowerLeft);
+        lowerRightThumbnail = findViewById(R.id.LowerRight);
+        badgeCount = findViewById(R.id.badgeCount);
 
         quadState = 0;
 
@@ -160,7 +156,8 @@ public class HappieCameraActivity extends Activity {
                 quadState = 0;
             }
         }
-        badgeCount.setText(HappieCameraJSON.GET_TOTAL_IMAGES());
+
+        badgeCount.setText(Integer.toString(HappieCameraJSON.GET_TOTAL_IMAGES(HappieCamera.userId, HappieCamera.jnId)));
 
         HappieCameraJSON.INITIALZIE_ACTIVE_PROCESSES();
 
@@ -170,7 +167,7 @@ public class HappieCameraActivity extends Activity {
 
     protected void initCameraPreview() {
         HappieCameraPreview mPreview = new HappieCameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        FrameLayout preview = findViewById(R.id.camera_preview);
         preview.addView(mPreview);
     }
 
@@ -304,7 +301,7 @@ public class HappieCameraActivity extends Activity {
     protected void onPause() {
         super.onPause();
         releaseCamera();
-        HappieCamera.sessionFinished("");
+        HappieCamera.sessionFinished();
         finish();
     }
 
@@ -340,7 +337,7 @@ public class HappieCameraActivity extends Activity {
     private View.OnClickListener cancelSession = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            HappieCamera.sessionFinished("");
+            HappieCamera.sessionFinished();
             finish();
         }
     };
@@ -363,7 +360,7 @@ public class HappieCameraActivity extends Activity {
     private View.OnClickListener cameraFinishToQueue = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            HappieCamera.sessionFinished("");
+            HappieCamera.sessionFinished();
             finish();
         }
     };
@@ -504,7 +501,7 @@ public class HappieCameraActivity extends Activity {
                 lowerRightThumbnail.setImageBitmap((preview));
             }
 
-            badgeCount.setText(HappieCameraJSON.GET_TOTAL_IMAGES());
+            badgeCount.setText(Integer.toString(HappieCameraJSON.GET_TOTAL_IMAGES(HappieCamera.userId, HappieCamera.jnId)));
 
             //queueRef.setEnabled(true);
             cancelRef.setEnabled(true);

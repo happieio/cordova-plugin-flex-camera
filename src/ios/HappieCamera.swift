@@ -41,21 +41,21 @@ import Raygun4iOS
         let mediaDir = docsDir + "/media/" + user + "/" + jnid
         
         let dir = try? FileManager.default.contentsOfDirectory(at: URL(string: mediaDir)!, includingPropertiesForKeys:nil, options: .skipsHiddenFiles)
-        var output = "[";
+        var array:[String] = [];
         do{
             for file in dir! {
                 if(file.absoluteString.contains(".json")){
-                    output += try String(contentsOf: file)
+                    let data = try JSONSerialization.data(withJSONObject: array, options: [])
+                    array.append(String(describing: data))
                 }
             }
-            output += "]"
+            
+            let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: String(format: "[%@]", array.joined(separator: ",")))
+            commandDelegate!.send(pluginResult, callbackId:command.callbackId)
         }
         catch{
             (Raygun.sharedReporter() as! Raygun).send("failed to read photo json", withReason: "Failure in readPhotoMeta iOS", withTags:nil, withUserCustomData:nil)
         }
-        
-        let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: output)
-        commandDelegate!.send(pluginResult, callbackId:command.callbackId)
     }
 
     @objc(openCamera:)
