@@ -99,24 +99,24 @@ public class HappieCameraActivity extends Activity {
 
         if (orientationListener.canDetectOrientation()) orientationListener.enable();
 
-        cancel = findViewById(R.id.cancel);
+        cancel = (ImageButton) findViewById(R.id.cancel);
         cancel.setOnClickListener(cancelSession);
 
-        shutter = findViewById(R.id.shutter);
+        shutter = (ImageButton) findViewById(R.id.shutter);
         shutter.setOnClickListener(captureImage);
 
-        queue = findViewById(R.id.confirm);
+        queue = (ImageButton) findViewById(R.id.confirm);
         queue.setOnClickListener(cameraFinishToQueue);
 
 
-        flash = findViewById(R.id.flashToggle);
+        flash = (ImageButton) findViewById(R.id.flashToggle);
         flash.setOnClickListener(switchFlash);
 
-        upperLeftThumbnail = findViewById(R.id.UpperLeft);
-        upperRightThumbnail = findViewById(R.id.UpperRight);
-        lowerLeftThumbnail = findViewById(R.id.LowerLeft);
-        lowerRightThumbnail = findViewById(R.id.LowerRight);
-        badgeCount = findViewById(R.id.badgeCount);
+        upperLeftThumbnail = (ImageView) findViewById(R.id.UpperLeft);
+        upperRightThumbnail = (ImageView) findViewById(R.id.UpperRight);
+        lowerLeftThumbnail = (ImageView) findViewById(R.id.LowerLeft);
+        lowerRightThumbnail = (ImageView) findViewById(R.id.LowerRight);
+        badgeCount = (TextView) findViewById(R.id.badgeCount);
 
         quadState = 0;
 
@@ -167,7 +167,7 @@ public class HappieCameraActivity extends Activity {
 
     protected void initCameraPreview() {
         HappieCameraPreview mPreview = new HappieCameraPreview(this, mCamera);
-        FrameLayout preview = findViewById(R.id.camera_preview);
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
     }
 
