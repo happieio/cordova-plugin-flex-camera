@@ -458,21 +458,20 @@ import CoreMotion
     func generateFileName() -> String {
         //use simpleflake id as filename
         return String(UInt64(NSDate().timeIntervalSince1970 * 1000.0), radix: 36) +
-        String(randomNumber(inRange: 1...78364164095), radix:36) +
-        String(UInt64(NSDate().timeIntervalSince1970 * 1000.0) % 37, radix: 36) +
-        ".jpg";
+               random(7) +
+               String(UInt64(NSDate().timeIntervalSince1970 * 1000.0) % 37, radix: 36) +
+               ".jpg";
     }
-
-    func randomNumber<T : SignedInteger>(inRange range: ClosedRange<T> = 1...6) -> T {
-        let length = Int64(range.upperBound - range.lowerBound + 1)
-        let value = Int64(arc4random()) % length + Int64(range.lowerBound)
-        return T(value)
+    
+    func random(_ n: Int) -> String
+    {
+        let a = "abcdefghijklmnopqrstuvwxyz1234567890"
+        var s = ""
+        for _ in 0..<n
+        {
+            let r = Int(arc4random_uniform(UInt32(a.count)))
+            s += String(a[a.index(a.startIndex, offsetBy: r)])
+        }
+        return s
     }
-
-    //swift 3 implementation
-//    func randomNumber<T : SignedInteger>(inRange range: ClosedRange<T> = 1...6) -> T {
-//        let length = (range.upperBound - range.lowerBound + 1).toIntMax()
-//        let value = arc4random().toIntMax() % length + range.lowerBound.toIntMax()
-//        return T(value)
-//    }
 }
