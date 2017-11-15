@@ -96,8 +96,7 @@ public class HappieCamera extends CordovaPlugin {
                         FileInputStream fin = null;
                         try {
                             fin = new FileInputStream(file);
-                            JSONObject test =  new JSONObject(convertStreamToString(fin));
-                            responseBuffer.add(test.toString());
+                            responseBuffer.add(convertStreamToString(fin));
                         } catch (Exception e) {
                             RaygunClient.send(e);
                         }

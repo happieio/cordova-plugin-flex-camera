@@ -45,8 +45,8 @@ import Raygun4iOS
         do{
             for file in dir! {
                 if(file.absoluteString.contains(".json")){
-                    let data = try JSONSerialization.data(withJSONObject: array, options: [])
-                    array.append(String(describing: data))
+                    let meta = try String(contentsOf: file, encoding: .utf8);
+                    array.append(meta)
                 }
             }
             
