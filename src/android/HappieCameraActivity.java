@@ -510,7 +510,7 @@ public class HappieCameraActivity extends Activity {
 
         private File[] getOutputMediaFiles(int type) {
             String id = Long.toString(System.currentTimeMillis(), 36) + 
-                Long.toString(ThreadLocalRandom.current().nextLong(0, 78364164095l)) +
+                Long.toString(ThreadLocalRandom.current().nextLong(0, 78364164095l), 36) +
                 Long.toString(System.currentTimeMillis() % 37, 36) +
                 ".jpg";
 
