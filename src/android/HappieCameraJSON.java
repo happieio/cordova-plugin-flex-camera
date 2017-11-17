@@ -30,14 +30,22 @@ class HappieCameraJSON {
 
     static int GET_TOTAL_IMAGES(String user, String jnid){
         try{
+            //TODO convert this code to a glob
+
+            //get directory of current photo session
             File mediaDir = new File(HappieCamera.filesDir + "/media/" + user + "/" + jnid);
+
+            //list all of the files
             File[] mediaFiles = mediaDir.listFiles();
             int total = 0;
+
+            //count all of the photos, excluding the .json and thumb directory
             for(File file : mediaFiles){
-                String name = file.getName();
-                if(!name.contains(".json")) total++;
+                if(!file.getName().contains(".json") && !file.isDirectory()) total++;
             }
-            return total - 1;
+
+            //return total
+            return total;
         }
         catch(Exception e){
             RaygunClient.send(e);

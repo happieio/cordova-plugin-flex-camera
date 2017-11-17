@@ -48,7 +48,7 @@ public class HappieCamera extends CordovaPlugin {
         if (action.equals("getProcessingCount")) {
             String user = args.getString(0);
             String jnid = args.getString(1);
-            callbackContext.success("{\"count\":" + HappieCameraJSON.GET_ACTIVE_PROCESSES() + ", \"total\":" + HappieCameraJSON.GET_TOTAL_IMAGES(user,jnid) + "}");
+            callbackContext.success("{\"count\":" + HappieCameraJSON.GET_ACTIVE_PROCESSES() + ", \"total\":" + HappieCameraJSON.GET_TOTAL_IMAGES(user, jnid) + "}");
             return true;
         } else if (action.equals("writePhotoMeta")) {
 
@@ -92,15 +92,14 @@ public class HappieCamera extends CordovaPlugin {
             if (sessionDir.exists()) {
                 File[] files = sessionDir.listFiles();
                 for (File file : files) {
-                    if(file.getName().contains(".json")){
+                    if (file.getName().contains(".json")) {
                         FileInputStream fin = null;
                         try {
                             fin = new FileInputStream(file);
                             responseBuffer.add(convertStreamToString(fin));
                         } catch (Exception e) {
                             RaygunClient.send(e);
-                        }
-                        finally {
+                        } finally {
                             try {
                                 fin.close();
                             } catch (Exception ex) {
@@ -121,11 +120,13 @@ public class HappieCamera extends CordovaPlugin {
                 return false;
             }
 
-        } else if (cordova.hasPermission(CAMERA)) {
+        }
+        //handle camera open as last known action
+        else if (cordova.hasPermission(CAMERA)) {
             quality = args.getInt(0);
             userId = args.getString(1);
             jnId = args.getString(2);
-            return executeLogic(action);
+            return willOpenCamera();
         } else {
             quality = args.getInt(0);
             userId = args.getString(1);
@@ -137,7 +138,7 @@ public class HappieCamera extends CordovaPlugin {
 
     private static String convertStreamToString(InputStream is) throws Exception {
         BufferedReader reader = null;
-        try{
+        try {
             reader = new BufferedReader(new InputStreamReader(is));
             StringBuilder sb = new StringBuilder();
             String line;
@@ -145,44 +146,31 @@ public class HappieCamera extends CordovaPlugin {
                 sb.append(line).append("\n");
             }
             return sb.toString();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             return "";
-        }
-        finally {
-            try{
+        } finally {
+            try {
                 reader.close();
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 RaygunClient.send(e);
             }
         }
     }
 
-    private boolean executeLogic(String action) {
-        if (action.equals("openCamera")) {
-            try {
-                if (action.equals("openCamera")) { //run thread safe camera
-                    cordova.getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            openCamera();
-                        }
-                    });
+    private boolean willOpenCamera() {
+        try {
+            cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    openCamera();
                 }
-            } catch (IllegalArgumentException e) {
-                staticCallbackContext.error("Illegal Argument Exception");
-                PluginResult r = new PluginResult(PluginResult.Status.ERROR);
-                staticCallbackContext.sendPluginResult(r);
-                return true;
-            }
+            });
 
-            PluginResult r = new PluginResult(PluginResult.Status.NO_RESULT);
-            r.setKeepCallback(false);
-            staticCallbackContext.sendPluginResult(r);
+        } catch (IllegalArgumentException e) {
+            RaygunClient.send(e);
             return true;
         }
-        return false;
+        return true;
     }
 
     private void openCamera() {
@@ -220,7 +208,7 @@ public class HappieCamera extends CordovaPlugin {
         }
         switch (requestCode) {
             case CAM_REQUEST_CODE:
-                executeLogic(currentAction);
+                willOpenCamera();
                 break;
         }
     }

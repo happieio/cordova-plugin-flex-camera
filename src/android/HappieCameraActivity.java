@@ -301,8 +301,6 @@ public class HappieCameraActivity extends Activity {
     protected void onPause() {
         super.onPause();
         releaseCamera();
-        HappieCamera.sessionFinished();
-        finish();
     }
 
     @Override
@@ -319,9 +317,18 @@ public class HappieCameraActivity extends Activity {
         }
     }
 
+    protected void onStop() {
+        releaseCamera();
+        HappieCamera.sessionFinished();
+        finish();// release the camera immediately on destroy event
+        super.onStop();
+    }
+
     protected void onDestroy() {
+        releaseCamera();              // release the camera immediately on destroy event
+        HappieCamera.sessionFinished();
+        finish();
         super.onDestroy();
-        releaseCamera();              // release the camera immediately on pause event
     }
 
     private void releaseCamera() {
@@ -337,6 +344,7 @@ public class HappieCameraActivity extends Activity {
     private View.OnClickListener cancelSession = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            releaseCamera();
             HappieCamera.sessionFinished();
             finish();
         }
@@ -360,6 +368,7 @@ public class HappieCameraActivity extends Activity {
     private View.OnClickListener cameraFinishToQueue = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            releaseCamera();
             HappieCamera.sessionFinished();
             finish();
         }
