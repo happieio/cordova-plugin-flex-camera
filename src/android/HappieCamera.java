@@ -78,7 +78,7 @@ public class HappieCamera extends CordovaPlugin {
                 }
             }
             callbackContext.success("finished writing json");
-            return false;
+            return true;
         } else if (action.equals("readPhotoMeta")) {
             String user = args.getString(0);
             String jnid = args.getString(1);
@@ -110,7 +110,7 @@ public class HappieCamera extends CordovaPlugin {
                 }
             }
             callbackContext.success("[" + TextUtils.join(",", responseBuffer) + "]");
-            return false;
+            return true;
         } else if (action.equals("generateThumbnail")) {
             try {
                 generateThumbnail(args);
@@ -132,7 +132,7 @@ public class HappieCamera extends CordovaPlugin {
             userId = args.getString(1);
             jnId = args.getString(2);
             getCamPermission(CAM_REQUEST_CODE);
-            return false;
+            return true;
         }
     }
 
@@ -168,7 +168,7 @@ public class HappieCamera extends CordovaPlugin {
 
         } catch (IllegalArgumentException e) {
             RaygunClient.send(e);
-            return true;
+            return false;
         }
         return true;
     }
