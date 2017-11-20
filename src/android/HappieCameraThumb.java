@@ -17,22 +17,26 @@ import main.java.com.mindscapehq.android.raygun4android.RaygunClient;
 
 class HappieCameraThumb {
 
-    boolean createThumbAtPathWithName(String name, Context context) throws java.io.IOException{
-
-        String filePath = context.getFilesDir() + "/mainCache";
-        File fullFile = new File(filePath, name);
-
-        File thumbFile = new File(filePath, name + "_thumb");
-
-        byte[] imageBytes = org.apache.commons.io.FileUtils.readFileToByteArray(fullFile);
-        Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length), 400, 400);
-
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        ThumbImage.compress(Bitmap.CompressFormat.JPEG, 85, stream);
-        byte[] thumbnailByteArray = stream.toByteArray();
-
+    boolean createThumbAtPathWithName(String name, String user, String jnid, Context context) throws java.io.IOException {
         FileOutputStream fosThumb = null;
         try {
+            File fullFile;
+            File thumbFile;
+            if (user.length() > 0 && jnid.length() > 0) {
+                fullFile = new File(context.getFilesDir() + "/media/" + user + "/" + jnid, name);
+                thumbFile = new File(context.getFilesDir() + "/media/" + user + "/" + jnid + "/thumb", name);
+            } else {
+                fullFile = new File(context.getFilesDir() + "/mainCache", name);
+                thumbFile = new File(context.getFilesDir() + "/mainCache", name + "_thumb");
+            }
+
+            byte[] imageBytes = org.apache.commons.io.FileUtils.readFileToByteArray(fullFile);
+            Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length), 400, 400);
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            ThumbImage.compress(Bitmap.CompressFormat.JPEG, 85, stream);
+            byte[] thumbnailByteArray = stream.toByteArray();
+
             fosThumb = new FileOutputStream(thumbFile);
             fosThumb.write(thumbnailByteArray);
 
@@ -45,12 +49,10 @@ class HappieCameraThumb {
         } catch (Exception e) {
             RaygunClient.send(e);
             return false;
-        }
-        finally {
-            try{
+        } finally {
+            try {
                 fosThumb.close();
-            }
-            catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 RaygunClient.send(e);
             }
         }

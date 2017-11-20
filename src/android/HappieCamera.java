@@ -185,8 +185,17 @@ public class HappieCamera extends CordovaPlugin {
             public void run() {
                 try {
                     String name = args.getString(0);
+                    String user = "";
+                    String jnid = "";
+                    try{
+                        user = args.getString(1);
+                        jnid = args.getString(2);
+                    }
+                    catch(Exception e){
+                        RaygunClient.send(e);
+                    }
                     HappieCameraThumb thumbGen = new HappieCameraThumb();
-                    thumbGen.createThumbAtPathWithName(name, context);
+                    thumbGen.createThumbAtPathWithName(name,user, jnid, context);
                 } catch (Exception e) {
                     RaygunClient.send(e);
                 }
