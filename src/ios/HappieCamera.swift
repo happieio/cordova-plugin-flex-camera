@@ -3,10 +3,7 @@ import UIKit
 import Raygun4iOS
 
 @objc(HappieCamera) class HappieCamera : CDVPlugin, cameraDelegate  {
-
-    //let cameraRoll: HappieCameraRoll = HappieCameraRoll();
-    //let cameraView = HappieCameraViewController(nibName:"HappieCameraView", bundle:nil);
-
+    
     @objc(writePhotoMeta:)
     func writePhotoMeta(_ command: CDVInvokedUrlCommand) {
         let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
@@ -92,10 +89,12 @@ import Raygun4iOS
     @objc(generateThumbnail:)
     func generateThumbnail(_ command: CDVInvokedUrlCommand) {
         let name: String = (command.argument(at: 0) as AnyObject) as! String
+        let user: String = (command.argument(at: 1) as AnyObject) as! String;
+        let jnid: String = (command.argument(at: 2) as AnyObject) as! String;
+        
         self.commandDelegate.run {
             let thumbGen = HappieCameraThumb();
-
-            if(thumbGen.createThumbAtPathWithName(name: name)){
+            if thumbGen.createThumbAtPathWithName(name: name, user:user, jnid:jnid){
                 let pluginResult: CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: "true")
                 self.commandDelegate!.send(pluginResult, callbackId:command.callbackId)
             }
