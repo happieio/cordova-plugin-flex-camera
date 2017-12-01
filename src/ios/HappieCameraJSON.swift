@@ -27,19 +27,33 @@ import Raygun4iOS
         return count;
     }
 
-    static func getTotalImages(user:String, jnid:String) -> Int{
-        let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-        let docsDir = dirPaths[0]
-        let mediaDir = docsDir + "/media/" + user + "/" + jnid
-        let dir = try? FileManager.default.contentsOfDirectory(at: URL(string: mediaDir)!, includingPropertiesForKeys:nil, options: .skipsHiddenFiles)
-        var count = 0;
-        for file in dir! {
-            if(!file.absoluteString.contains(".json")){
-                count += 1
-            }
-        }
-        return count - 1;
-    }
+	static func getTotalImages(user:String, jnid:String) -> Int{
+	        do {
+	            //get the sandbox Documents path
+	            let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+	            let docsDir = dirPaths[0]
+            
+	            //define the current session path
+	            let mediaDir = docsDir + "/media/" + user + "/" + jnid
+            
+	            //try to collect the contents of the current session directory
+	            let dir = try FileManager.default.contentsOfDirectory(at: URL(string: mediaDir)!, includingPropertiesForKeys:nil, options: .skipsHiddenFiles)
+	            var count = 0;
+            
+	            //count the photos in the directory
+	            for file in dir {
+	                if(!file.absoluteString.contains(".json")){
+	                    count += 1
+	                }
+	            }
+	            //return the total less the thumbnail images
+	            return count - 1;
+	        }
+	        catch{
+	            //on error return -1, which will cause the UI to try again gracefully
+	            return -1;
+	        }
+	    }
 
     private static var quality = 3;
     private static var user = "nouser";

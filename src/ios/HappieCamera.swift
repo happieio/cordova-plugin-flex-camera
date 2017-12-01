@@ -29,31 +29,33 @@ import Raygun4iOS
         commandDelegate!.send(pluginResult, callbackId:command.callbackId)
     }
     
-    @objc(readPhotoMeta:)
-    func readPhotoMeta(_ command: CDVInvokedUrlCommand) {
-        let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-        let docsDir = dirPaths[0]
-        let user = command.arguments[0] as! String
-        let jnid = command.arguments[1] as! String
-        let mediaDir = docsDir + "/media/" + user + "/" + jnid
+	@objc(readPhotoMeta:)
+	    func readPhotoMeta(_ command: CDVInvokedUrlCommand) {
+	        let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+	        let docsDir = dirPaths[0]
+	        let user = command.arguments[0] as! String
+	        let jnid = command.arguments[1] as! String
+	        let mediaDir = docsDir + "/media/" + user + "/" + jnid
         
-        let dir = try? FileManager.default.contentsOfDirectory(at: URL(string: mediaDir)!, includingPropertiesForKeys:nil, options: .skipsHiddenFiles)
-        var array:[String] = [];
-        do{
-            for file in dir! {
-                if(file.absoluteString.contains(".json")){
-                    let meta = try String(contentsOf: file, encoding: .utf8);
-                    array.append(meta)
-                }
-            }
+	        do{
+	            let dir = try FileManager.default.contentsOfDirectory(at: URL(string: mediaDir)!, includingPropertiesForKeys:nil, options: .skipsHiddenFiles)
+	            var array:[String] = [];
+	            for file in dir {
+	                if(file.absoluteString.contains(".json")){
+	                    let meta = try String(contentsOf: file, encoding: .utf8);
+	                    array.append(meta)
+	                }
+	            }
             
-            let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: String(format: "[%@]", array.joined(separator: ",")))
-            commandDelegate!.send(pluginResult, callbackId:command.callbackId)
-        }
-        catch{
-            (Raygun.sharedReporter() as! Raygun).send("failed to read photo json", withReason: "Failure in readPhotoMeta iOS", withTags:nil, withUserCustomData:nil)
-        }
-    }
+	            let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: String(format: "[%@]", array.joined(separator: ",")))
+	            commandDelegate!.send(pluginResult, callbackId:command.callbackId)
+	        }
+	        catch{
+	            (Raygun.sharedReporter() as! Raygun).send("failed to read photo json", withReason: "Failure in readPhotoMeta iOS", withTags:nil, withUserCustomData:nil)
+	            let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: String(format: "[]"))
+	            commandDelegate!.send(pluginResult, callbackId:command.callbackId)
+	        }
+	    }
 
     @objc(openCamera:)
     func openCamera(_ command: CDVInvokedUrlCommand) {
