@@ -90,6 +90,6 @@ class HappieCameraThumb {
                 RaygunClient.send(e);
             }
         }
-        return ThumbImage;
+        return orientedBmp;
     }
 }
