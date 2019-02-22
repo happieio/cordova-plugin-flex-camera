@@ -1,4 +1,4 @@
-# OBSOLETE WILL BE DELETED SOON
+# Will be migrated to React Native Soon
 a custom cordova camera that can take multiple images, create thumbnails and store data in custom locations. Supports iOS and Android
 
 This plugin provides a modern camera for cordova projects. It has the following requirements
