@@ -238,7 +238,9 @@ public class HappieCameraActivity extends Activity {
             }
             Camera.Size currentSize = params.getPictureSize();
             Camera.Size maxSize = validPhotoDimensions.get(i);
-            if (currentSize.height < maxSize.height || currentSize.width < maxSize.width) {
+            if (currentSize.height > maxSize.height || currentSize.width > maxSize.width) {
+                Log.d(TAG, "current size greater than max size, resize to max size " + maxSize.width + "x" + maxSize.height);
+
                 params.setPictureSize(maxSize.width, maxSize.height);
             }
 
@@ -251,8 +253,9 @@ public class HappieCameraActivity extends Activity {
             if (params.getSupportedPictureSizes() != null) {
                 Camera.Size currentSize = params.getPictureSize();
                 Camera.Size maxSize = params.getSupportedPictureSizes().get(0);
-                if (currentSize.height < maxSize.height ||
-                        currentSize.width < maxSize.width) {
+                if (currentSize.height > maxSize.height || currentSize.width > maxSize.width) {
+                    Log.d(TAG, "exception: current size greater than max size, resize to max size " + maxSize.width + "x" + maxSize.height);
+
                     params.setPictureSize(maxSize.width, maxSize.height);
                 }
             }
